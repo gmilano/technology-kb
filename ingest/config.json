@@ -1,0 +1,13 @@
+{
+  "topics": ["devops", "developer-tools", "code-review", "observability", "ai-coding", "mlops"],
+  "agentKeywords": "AI coding developer assistant code review agent open source",
+  "repoKeywords": "AI developer tools devops code generation open source",
+  "verticalKeywords": "developer platform IDE CI/CD open source self-hosted",
+  "minStars": 500,
+  "licenses": ["MIT", "Apache-2.0"],
+  "keywords": {
+    "agents": ["coding agent", "code review AI", "DevOps agent", "test generation"],
+    "repos": ["OpenDevin", "SWE-agent", "Aider", "Continue.dev", "Gitea", "Grafana"],
+    "verticals": ["Gitea", "Grafana", "Prometheus", "Jenkins", "GitLab CE", "Plane"]
+  }
+}
