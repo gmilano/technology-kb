@@ -727,6 +727,98 @@ la API `search/repositories` declaró de menos en 4 casos** (`in-toto`, `conftes
 ninguno.** Sumado a `plannotator`, el patrón es consistente: **la API se equivoca por omisión,
 no por invención.** Eso importa porque el escáner de licencias del cliente lee ese mismo campo.
 
+## 🧠 Comprensión: del código que nadie escribió este siglo al grafo — **sección nueva (pase 12)**
+
+> **Por qué existe esta sección.** Ocho pases midieron con qué construir un agente, cómo evaluarlo,
+> encerrarlo, pagarlo, alimentarlo y entregarlo. Ninguno midió **el código que ya está ahí** —
+> COBOL, Java 7, RPG, PL/I— que es el punto de partida real de un engagement de modernización.
+> Antes de este pase, `COBOL`, `mainframe`, `tree-sitter`, `joern` y `knowledge graph` tenían
+> **cero menciones** en los 9 archivos de esta KB.
+>
+> **La asimetría que ordena la sección: 152 472★ para *entender* el código legado, 234★ para
+> *migrarlo*. 651x.** Y el mercado va para el lado chico: modernización de aplicaciones
+> **USD 27 460 M en 2026 → USD 67 910 M en 2031** (Mordor), con **mainframe y mid-range al 43,64%**.
+
+### Capa 1 — El substrato determinista (el que no alucina)
+
+| Repo | Licencia | ★ | Último push | Para qué |
+|------|----------|---|-------------|----------|
+| [tree-sitter/tree-sitter](https://github.com/tree-sitter/tree-sitter) | **MIT** | 27 554 | 2026-11-23 | Parser incremental. **Todo lo de las capas 2 y 3 lo usa por debajo.** Desde 2013-11-06. |
+| [joernio/joern](https://github.com/joernio/joern) | **Apache-2.0** | 3 663 | 2026-11-23 | **Code Property Graph**: AST + CFG + data flow consultable. La capa que hace *verificable* lo que el LLM afirma. Desde 2019-03-14. |
+
+**Asimetría social, otra vez la misma forma:** el grafo con LLM arriba tiene 152 472★; el CPG que
+permite probar sus afirmaciones, **3 663★ — 42x**. Es la misma observación que el pase 10 hizo con
+`spiffe/spire`: **la capa que vuelve defendible el resultado es la que menos tracción tiene.**
+
+### Capa 2 — Grafo de código a escala (la categoría de un año que ya está en seis cifras)
+
+| Repo | Licencia | ★ | Creado | Para qué |
+|------|----------|---|--------|----------|
+| [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | **Apache-2.0** | **152 472** | 2026-04-03 | Código + docs + esquemas SQL + configs + PDFs → **un** grafo consultable, por AST determinista (tree-sitter). **El repo más grande del plano.** Licencia leída del archivo (`master/LICENSE`, 11 358B). |
+| [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything) | **MIT** | **93 776** | 2026-03-15 | Grafo interactivo consumible por Claude Code, Codex y Cursor. |
+| [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph) | **MIT** | **78 507** | 2026-01-18 | Grafo de código **local** para agentes (sin salida de datos). |
+| [vitali87/code-graph-rag](https://github.com/vitali87/code-graph-rag) | **MIT** | 5 402 | 2025-06-16 | RAG sobre grafo de código. El más viejo de la capa y el más chico. |
+| [DeusData/codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) | **MIT** | 49 079 | 2026-02-24 | Servidor MCP: grafo persistente de funciones, clases, cadenas de llamada y rutas en 158 lenguajes. **Ya estaba en esta KB** (48 956★ en el pase 5 → 49 079★ hoy). ⚠️ El *"−99% de tokens"* es **claim de vendor**, no medición de esta KB. |
+
+**Las cinco son MIT o Apache-2.0 y suman ~379 000★.** Cuatro nacieron en 2026 y **ninguna de las
+cuatro estaba listada acá**: van **cuatro pases consecutivos** en que el principal productor de
+ausencias de esta KB es el **filtro de categoría**, no la falta de búsqueda.
+
+### Capa 3 — Memoria y consulta del grafo
+
+| Repo | Licencia | ★ | Último push | Para qué |
+|------|----------|---|-------------|----------|
+| [mnemon-dev/mnemon](https://github.com/mnemon-dev/mnemon) | **Apache-2.0** | 737 | 2026-11-23 | Memoria persistente consultable. Activo hoy. |
+| [AtomGraph/LinkedDataHub](https://github.com/AtomGraph/LinkedDataHub) | **Apache-2.0** | 640 | 2026-11-23 | Grafo RDF operable con UI y control de acceso. **Desde 2017 y activo hoy**: el único de la capa con 9 años de historia. |
+| [Muvon/octocode](https://github.com/Muvon/octocode) | **Apache-2.0** | 530 | 2026-11-08 | Indexador semántico de código con grafo. |
+
+### Capa 4 — ⚠️ Compiladores y parsers de lenguajes legados: **la licencia está al revés de lo que busca Globant**
+
+**Ninguna pieza que de verdad toca COBOL es MIT ni Apache.** Esto decide arquitectura, no papeleo:
+
+| Repo | Licencia **leída del archivo** | ★ | Estado | Consecuencia |
+|------|-------------------------------|---|--------|--------------|
+| [OCamlPro/gnucobol](https://github.com/OCamlPro/gnucobol) | **GPL-3.0** (`COPYING`, 35 149B) **+ LGPL-3.0** (`COPYING.LESSER`, 7 652B) **+ GFDL** (`COPYING.DOC`, 22 964B) | 72 | activo 2026-11-23 | **Compilador GPL, runtime LGPL, docs GFDL.** Compilar con él no contamina el COBOL del cliente; **distribuir un compilador modificado sí**. |
+| [opensourcecobol/opensourcecobol4j](https://github.com/opensourcecobol/opensourcecobol4j) | **GPL-3.0** (`COPYING`, 35 147B) | 127 | activo 2026-11-17 | **El transpilador COBOL→Java mantenido del ecosistema abierto, y es GPL-3.0.** El Java que emite y el pipeline que lo invoca necesitan análisis legal antes de prometer entrega. |
+| [TypeCobolTeam/TypeCobol](https://github.com/TypeCobolTeam/TypeCobol) | **CeCILL-C** (`master/LICENSE.md`, 21 750B) | 86 | activo 2026-08-31 | API: `NOASSERTION`. Licencia libre de **CEA + CNRS + INRIA**, copyleft débil tipo LGPL, **con ley aplicable francesa**. **Primer artefacto jurídico específicamente de EMEA que registra esta KB.** |
+| [eclipse-che4z/che-che4z-lsp-for-cobol](https://github.com/eclipse-che4z/che-che4z-lsp-for-cobol) | **EPL-2.0** (`master/LICENSE.md`, 45 989B) | 119 | activo 2026-11-19 | API: `NOASSERTION`. Language Server de COBOL: autocompletado y navegación sobre el fuente del cliente. Copyleft por archivo. |
+| [uwol/proleap-cobol](https://github.com/uwol/proleap-cobol) | **AGPL-3.0** (34 522B) | 46 | **dormido desde 2024-03-24** | El parser ANTLR de referencia académica. **AGPL + dormido = no entra a una entrega.** |
+
+**⚠️ Regla nueva, séptima variante de trampa de esta KB: cuando hay tres archivos de licencia, la
+API declara uno y elige el menos restrictivo.** GnuCOBOL vía OCamlPro: el campo `license` de la API
+dice **`LGPL-3.0`**, que es la del **runtime**; el **compilador es GPL-3.0** y está en `COPYING`.
+El pase 9 encontró a la API colapsando `LICENSE-APACHE`+`LICENSE-MIT` y escondiendo la opción
+*favorable*; **acá esconde la desfavorable.** Para todo repo de esta capa: listar el directorio raíz
+y leer **todos** los `COPYING*` / `LICENSE*`, no el primero.
+
+### Capa 5 — Verificación y benchmark: existe, es permisiva, y la pieza central **está archivada**
+
+| Repo | Licencia | ★ | Estado | Para qué |
+|------|----------|---|--------|----------|
+| [Factory-AI/legacy-bench](https://github.com/Factory-AI/legacy-bench) | **Apache-2.0** | **21** | activo 2026-07-30 | **El benchmark que define el plano, con 21★.** COBOL 46% / Java 7 32% / BASIC 6% / C89 5% / Fortran 5% / ASM 5%. ⚠️ Sólo **10 de cientos** de tareas son públicas. Slug canónico con mayúsculas: `Factory-AI`. |
+| [laude-institute/harbor](https://github.com/laude-institute/harbor) | **Apache-2.0** | — | activo | El runner de tareas sobre el que corre Legacy-Bench. ⚠️ **Falso negativo del índice de búsqueda**: `ls-remote` LIVE y `LICENSE` legible, `search/repositories` no lo devuelve. |
+| [QuesmaOrg/CompileBench](https://github.com/QuesmaOrg/CompileBench) | **MIT** | 62 | activo 2026-11-16 | Mide si un agente logra **compilar** software viejo. El complemento práctico del anterior. |
+| [zorse-project/COBOLEval](https://github.com/zorse-project/COBOLEval) | **MIT** | 45 | **dormido desde 2024-05-09** | El primer benchmark de COBOL. Histórico: sirve para comparar contra 2024, no para medir hoy. |
+| [openmainframeproject/cobol-check](https://github.com/openmainframeproject/cobol-check) | **Apache-2.0** | 107 | ❌ **`archived: true`** (2026-05-28) | **Pruebas unitarias de COBOL: la herramienta con la que se demuestra que el programa migrado hace lo mismo.** Archivada. `cobol unit test stars:>=20` → **2**; los sucesores son repos personales de **0–2★**. |
+
+**El dato de fuente primaria que ordena toda la sección** (README de Legacy-Bench, leído del repo,
+no de prensa): **16,9%–42,5%** de pass rate en 12 combinaciones modelo-agente, cuando **los mismos
+modelos superan 70% en SWE-bench Verified y Terminal-Bench 2**; **arreglar bugs ≈ 2x implementar
+≈ 2x migrar**; de las 44 tareas que ningún modelo resuelve **31 son COBOL**; y
+**en el 97% de los fallos el agente cree que resolvió la tarea.**
+
+⚠️ **Conflicto declarado y no resuelto:** la tabla por modelo (Droid+Opus 4.6 34,6%, Claude Code+
+Opus 4.6 33%, Droid+GLM-5 32,2% según `docs.factory.ai`; Gemini-3.1-Pro 38,7% "el perfil más
+balanceado" según el blog) **no se pudo verificar: `docs.factory.ai` no resuelve desde este
+entorno.** El rango y el 97% sí salen del README. Igual que `arxiv.org`, que deja sin verificar el
+paper de CI/CD portable para COBOL (`2604.00936`) que apareció en las búsquedas.
+
+**La conclusión de la capa, y es la razón de la receta 22:** hay **20 repos con ≥500★ para
+*entender*** el código y **cero con ≥50★ para *probar que la migración preservó el
+comportamiento***. La categoría que los modelos hacen peor, con el modo de falla más silencioso,
+sin capa de verificación abierta y con la única herramienta de test unitario archivada.
+**Eso no es un producto que falta: es servicio, y es exactamente lo que vende una consultora.**
+
 ## Brechas medidas, no silenciadas
 
 Consultas corridas sobre `search/repositories` el **2026-11-23**.
@@ -761,6 +853,29 @@ Una brecha informada es información; el silencio parece cobertura.
 | `agente despliegue stars:>=10` | **0** | **Nuevo (pase 9).** Ídem |
 | `SBOM español stars:>=5` | **0** | **Nuevo (pase 9).** Con piso **5★**. **El plano de entrega tampoco habla español, y es el plano donde el auditor del cliente sí lo hace** |
 | `release agent stars:>=1000` / `test generation agent stars:>=1000` | **7 y 1 — todos colisión de keyword** | **Nuevo (pase 9).** `release agent` devuelve awesome-lists y un panel de ops; `test generation agent` devuelve **un repo de CAD**. **El falso positivo por colisión es tan peligroso como el falso cero**: una consulta que "devuelve resultados" puede no tener ninguno del dominio buscado |
+
+
+### Pase 12 — el plano de legado y comprensión
+
+| Consulta (con piso explícito) | Resultado | Lectura |
+|---|---|---|
+| `code knowledge graph stars:>=500` | **20** | El plano de **entender** está poblado y es nuevo: 9 de los 20 creados en 2026. |
+| `legacy code comprehension stars:>=100` | **0** | …pero **no bajo ese nombre**. Misma lección del pase 11: el sustantivo angosto produce falsos ceros. |
+| `mainframe modernization stars:>=100` | **2** | |
+| `legacy modernization agent stars:>=50` | **2** | |
+| `cobol java migration stars:>=50` | **0** | **La consulta literal de lo que el mercado compra: cero.** |
+| `business rule extraction stars:>=50` | **0** | Extraer la regla de negocio del COBOL es el 80% del trabajo real. |
+| `cobol documentation generator stars:>=10` | **0** | Con piso **10★**. |
+| `behavioral equivalence testing migration stars:>=50` | **0** | **La brecha central del pase.** |
+| `differential testing migration stars:>=100` | **0** | Segunda formulación, mismo cero. |
+| `golden master testing stars:>=50` | **2** | La técnica correcta existe con otro nombre, y con 2 repos. |
+| `mainframe agent mcp stars:>=10` | **0** | Nadie expuso el mainframe por MCP. |
+| `cobol unit test stars:>=20` | **2** | Y el canónico (`cobol-check`) **está archivado**. |
+| `cics jcl stars:>=20` / `rpg as400 stars:>=50` / `pl/i parser stars:>=10` | **3 / 3 / 1** | El resto del mundo legado prácticamente no existe en abierto. |
+| `cobol stars:>=500` | **5** | Un curso (CC-BY-4.0), **un Minecraft**, un framework web, un wrapper dormido y una colisión. **Cero herramientas de modernización.** |
+| `Legacy-Modernization-Agents` | **151** | Mayor: 234★. Segundo: 21★. **6 de los 20 primeros: 0★.** Un sample con 150 copias. |
+| `cobol agente español stars:>=5` | **0** | **Séptimo pase consecutivo con cero en español.** |
+| `legacy modernization portugues stars:>=1` | **0** | Con piso **1★**. Y Brasil es donde el problema tiene nombre y edad (ver `intel/market.md` → LATAM). |
 
 ---
 *Ver también: `verticals/solutions.md` para plataformas verticales completas y

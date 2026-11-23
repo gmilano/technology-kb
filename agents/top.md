@@ -9,8 +9,27 @@ updated: 2026-11-23
 > Agentes y harnesses open source para ingeniería de software. Foco: MIT / Apache 2.0 / BSD.
 > **Toda fila re-verificada el 2026-11-23** (pases 6 y 10): existencia por `git ls-remote`, estrellas /
 > `pushed_at` / `archived` por `search/repositories`, y **licencia leída del archivo de licencia**,
-> no del badge ni del campo de la API. **58 filas reales, cero filas de ejemplo** (32 del pase 6 + 8 del pase 9 + 6 del pase 10 + **11 del pase 11**; una fila lista dos repos).
+> no del badge ni del campo de la API. **64 filas reales, cero filas de ejemplo** (32 del pase 6 + 8 del pase 9 + 6 del pase 10 + 11 del pase 11 + **6 del pase 12**; una fila lista dos repos).
 >
+> **Pase 12 (2026-11-23, séptimo pase del día): 6 filas nuevas, y la más grande tiene 234★ — eso
+> es el hallazgo, no un defecto del muestreo.** Este pase midió el plano del **código legado**
+> (COBOL, mainframe, modernización), ausente de esta KB hasta hoy: `COBOL`, `mainframe`,
+> `modernization` tenían **0 menciones** en los 9 archivos. **Asimetría medida: entender el código
+> legado tiene un repo de 152 472★ ([graphify](https://github.com/Graphify-Labs/graphify),
+> Apache-2.0, en `repos/foundations.md`); migrarlo tiene uno de 234★. 651x** — y el mercado
+> (USD 27 460 M en 2026, 43,64% mainframe y mid-range) está del lado chico.
+>
+> **Decisión de clasificación, declarada:** las cuatro máquinas de grafo de código del plano
+> (graphify 152 472★, Understand-Anything 93 776★, codegraph 78 507★, code-graph-rag 5 402★) **NO
+> entran en este archivo** aunque sumen ~330 000★: **no deciden nada, construyen un grafo.** Van a
+> `repos/foundations.md`. Llamarlas agentes infla este archivo y miente sobre la forma del
+> ecosistema, **que es justamente el hallazgo del pase: en el plano de legado lo grande no es
+> agente, y lo que es agente es un sample.**
+>
+> **Y el dato que ordena el plano, de fuente primaria (README de Legacy-Bench, Apache-2.0, 21★):
+> arreglar bugs ≈ 2x implementar ≈ 2x migrar, y en el 97% de los fallos el agente cree que
+> resolvió la tarea.** Migrar es la peor categoría de las tres y es lo que el cliente compra.
+
 > **Pase 11 (2026-11-23, sexto pase del día): barrido de verificación completo de la KB —
 > 251 URLs de repo, las 251 vivas, cero 404.** Las 47 filas previas siguen vivas, **las 47 licencias
 > coinciden con el archivo leído** y la deriva máxima de estrellas en ~1 h fue **+286** (`morluto/rea`):
@@ -169,6 +188,13 @@ updated: 2026-11-23
 | **Adrian** | [secureagentics/Adrian](https://github.com/secureagentics/Adrian) | Apache-2.0 (11 358B) | **598** | 2026-10-21 | **NUEVO.** Herramienta de seguridad **en runtime**: monitorea y **controla** agentes, atrapando comportamiento malicioso mientras ocurre. Creado 2026-05-11. Chico, pero es de los pocos que dice *controlar* y no sólo *observar*. |
 | **AEGIS** | [Justin0504/Aegis](https://github.com/Justin0504/Aegis) | **MIT** (1 066B, © 2024 AgentGuard) | **524** | 2026-10-31 | **NUEVO, y es la definición más limpia del plano que faltaba:** *"Every tool call. Intercepted. Classified. Blocked — **before it executes**"*. Trae **audit trail criptográfico, aprobaciones human-in-the-loop y kill switch** — los tres requisitos que esta KB sostiene desde el pase 4 y que ninguna pieza medida cubría junta. Paper arXiv 2603.12621 y cobertura de USC Viterbi (ago-2026): **respaldo académico, no sólo un repo**. Creado 2026-03-04. ✅ **Tiene `COMMERCIAL.md` y NO es un carve-out** — ver "casos limpios" abajo. |
 | **OpenGuardrails** | [openguardrails/openguardrails](https://github.com/openguardrails/openguardrails) | Apache-2.0 (11 357B) | **372** | 2026-11-18 | **NUEVO.** Decide cada tool call **en la máquina, con reglas locales y sin red**, y sólo escala al modelo lo que una regla no puede resolver. Tres detalles que lo separan del resto: **distingue "inseguro" de "es tu decisión"** (una credencial saliendo a un host desconocido se rechaza sin preguntar; una compra se pregunta); **los secretos se reemplazan por placeholders antes de salir de la máquina** y el tool recibe el valor real sólo después de que la llamada fue permitida; y **una negativa no termina la tarea** — le dice al agente qué sí puede hacer. ⚠️ **Límite declarado por el propio repo: la API del modelo todavía no es pública**, así que hoy sólo la mitad de reglas locales es desplegable. Probado end-to-end contra Hermes, OpenClaw y DeepSeek Harness. |
+| Legacy-Modernization-Agents | [Azure-Samples/Legacy-Modernization-Agents](https://github.com/Azure-Samples/Legacy-Modernization-Agents) | MIT | 234 | 2026-11-22 | **Pase 12.** Multiagente COBOL→Java/C# (Semantic Kernel / MS Agent Framework): análisis, conversión y mapa de dependencias. **Es el repo más grande de todo el plano de modernización de legado — con 234★.** `Legacy-Modernization-Agents` devuelve **151 repos**: el segundo tiene 21★ y 6 de los 20 primeros tienen 0★. **Punto de partida real, pero es un sample, no un producto.** |
+| sample-ai-modernization-flow | [aws-samples/sample-ai-modernization-flow](https://github.com/aws-samples/sample-ai-modernization-flow) | **MIT-0** | 15 | 2026-11-23 | **Pase 12.** Flujo agentic de modernización de AWS. **MIT-0 = MIT sin requisito de atribución: la licencia más permisiva medida en esta KB.** Activo hoy. |
+| prime-rl-dotnet-legacy-modernization | [mitkox/prime-rl-dotnet-legacy-modernization](https://github.com/mitkox/prime-rl-dotnet-legacy-modernization) | Apache-2.0 | 8 | 2026-08-09 | **Pase 12.** RL aplicado a modernización de .NET legacy. El único del plano que no es COBOL ni sample de hyperscaler. |
+| agent-mesh-for-sw-modernization | [rh-ai-quickstart/agent-mesh-for-sw-modernization](https://github.com/rh-ai-quickstart/agent-mesh-for-sw-modernization) | MIT | 2 | 2026-11-23 | **Pase 12.** Malla de agentes de Red Hat para modernización. Activo hoy, 2★. |
+| agent-mesh-code-understanding | [redhat-ai-americas/agent-mesh-code-understanding](https://github.com/redhat-ai-americas/agent-mesh-code-understanding) | MIT | 1 | 2026-09-17 | **Pase 12.** La variante de *comprensión* de la malla anterior. |
+| cobol-modernization-agents | [fabioalvesalmeida/cobol-modernization-agents](https://github.com/fabioalvesalmeida/cobol-modernization-agents) | Apache-2.0 | **0** | 2026-10-22 | **Pase 12. El diseño correcto del plano, con cero estrellas y un mes de vida:** servicios Java sobre Kubernetes, **cada regla de negocio citada a sus líneas fuente**, revisión humana obligatoria y verificación de **equivalencia de comportamiento**. Creado 2026-10-21. **Se lista por la arquitectura, no por la tracción — y la tracción se declara: 0.** |
+
 
 ## ⚠️ Verificar antes de usar — trampas medidas
 
@@ -234,6 +260,35 @@ updated: 2026-11-23
 | [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | 194 730★ MIT, aparece como agente top en rankings externos | Su propia descripción: **"an agent-managed museum exhibit"**, Rust, "desarrollado y mantenido sin intervención humana". Es una **pieza de arte/demostración**, no una base de entrega. |
 | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) | 128 464★ MIT, listado como "agente" | Es una **awesome-list** de archivos `DESIGN.md`. Recurso curado, no software ejecutable. |
 
+## ⚠️ Trampas del plano de legado y comprensión — **pase 12**
+
+| Repo | Lo que parece | Lo que es realmente |
+|------|---------------|---------------------|
+| [squid-protocol/gitgalaxy](https://github.com/squid-protocol/gitgalaxy) (67★) | API: `NOASSERTION`. **Y es la pieza mejor diseñada del plano**: repo→conocimiento en 59 lenguajes sin build ni compilador, y sobre eso un **traductor CICS→Java que prueba cada programa portado contra el original**. | **PolyForm Noncommercial License 1.0.0 — no es open source.** Uso comercial prohibido. **Lo único que une comprensión con migración verificada, y una consultora no lo puede usar.** |
+| [AxiomCodeAI/axiomcodegraph](https://github.com/AxiomCodeAI/axiomcodegraph) (786★) | API: `NOASSERTION`; nombre y README de grafo de código. | **Functional Source License 1.1 (Apache 2.0 Future License)** — **familia de licencia nueva para esta KB**. Prohíbe el *Competing Use*; se vuelve Apache-2.0 **dos años** después de cada release. |
+| [scabench-org/hound](https://github.com/scabench-org/hound) (838★) | `LICENSE.txt` arranca: *"Apache License 2.0, **with additional terms outlined below regarding commercial use**. By using this software, you agree to these terms."* | **Los términos adicionales no están en el archivo.** 11 186B = Apache-2.0 canónica + apéndice estándar; *commercial* aparece 2 veces (ese encabezado y el boilerplate de responsabilidad, línea 169). **Trampa inversa, nueva: anuncia restricciones que no escribe. No se declara ni Apache-2.0 ni restringido — se declara irresoluble desde el archivo y se pregunta al autor antes de usarlo.** |
+| [harshkedia177/axon](https://github.com/harshkedia177/axon) (821★) | 821★, grafo de código, activo hasta 2026-08-03. | **Sin archivo de licencia** en ninguna ubicación estándar, ni en `main` ni en `master`. Por omisión: todos los derechos reservados. |
+| [NeuralInverse/neuralinverse](https://github.com/NeuralInverse/neuralinverse) (220★) | Apache-2.0, `archived: false`, `pushed_at` 2026-10-19. | README: ***"Development of Neural Inverse OSS has stopped"***, sin revisión de issues ni PRs, y **Build/Govern son comerciales y no se construyen con este código**. **`archived: false` no significa vivo.** |
+| [giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode) (3 381★) | Tercer repo de grafo de código por estrellas, activo 2026-11-22. | **AGPL-3.0** (archivo, 35 430B). Entra en el vertical por tamaño; la licencia decide la arquitectura. |
+| [openmainframeproject/cobol-check](https://github.com/openmainframeproject/cobol-check) (107★) | Apache-2.0, Open Mainframe Project, **la** herramienta de pruebas unitarias de COBOL. | **`archived: true`** (último push 2026-05-28). **La capa de verificación del plano más débil del benchmark está archivada.** Sucesores: repos personales de 0–2★. |
+
+### Colisiones de keyword — lo que un pipeline compilaría como hallazgo
+
+| Repo | Aparece en | Qué es de verdad |
+|------|------------|------------------|
+| [platinum-hill/cobolt](https://github.com/platinum-hill/cobolt) (228★) | `cobol llm stars:>=10` | App de escritorio de **LLM local + MCP**. **Nada que ver con COBOL**: el nombre juega con *cobalt*. |
+| [sentrux/sentrux](https://github.com/sentrux/sentrux) (3 344★) | `cobol stars:>=500` | Sensor de calidad de código con MCP. |
+| [meyfa/CobolCraft](https://github.com/meyfa/CobolCraft) (706★, MIT) | `cobol stars:>=500` | **Un servidor de Minecraft escrito en COBOL.** |
+| [azac/cobol-on-wheelchair](https://github.com/azac/cobol-on-wheelchair) (1 033★, MIT) | `cobol stars:>=500` | Micro-framework web **en** COBOL. Sin push desde 2024-08-10. |
+| [IonicaBizau/node-cobol](https://github.com/IonicaBizau/node-cobol) (727★, MIT) | `cobol stars:>=500` | Wrapper de Node para COBOL. Dormido desde 2025-02-13. |
+| [openmainframeproject/cobol-programming-course](https://github.com/openmainframeproject/cobol-programming-course) (3 673★) | `cobol stars:>=500` — el #1 | **Un curso**, y su licencia es **CC-BY-4.0: licencia de contenido, no de software.** |
+| [feststelltaste/awesome-agentic-software-modernization](https://github.com/feststelltaste/awesome-agentic-software-modernization) (47★) | `Legacy-Modernization-Agents` | **Awesome-list** (licencia CC). Se **degrada**, como `VoltAgent/awesome-design-md` en el pase 5. |
+
+**Los cinco repos con `cobol` y ≥500★ son un curso, un Minecraft, un framework web, un wrapper
+dormido y una colisión. Cero herramientas de modernización en el top-5 por estrellas.**
+**Regla de método: en este plano, ordenar por estrellas no ordena por utilidad.**
+
+
 ## Correcciones de slug canónico medidas este pase
 
 | Slug que circula | Slug canónico medido | Evidencia |
@@ -243,6 +298,12 @@ updated: 2026-11-23
 | `qodo-ai/pr-agent` / `Codium-ai/pr-agent` | **`The-PR-Agent/pr-agent`** | **Los tres slugs comparten HEAD** (`48edc526…`), así que es un traspaso, no un fork divergente. 16 593★, push de hoy. **La licencia cambió con el traspaso:** `AGPL-3.0` en v0.35.0 → `Apache-2.0` en v0.36.0–v0.39.0 → **`MIT` desde v0.40.0**, con copyright "© 2026 The PR Agent". La descripción del repo aclara la separación: *"not the Qodo free tier"*. |
 | `apache/incubator-devlake` | **`apache/devlake`** | Mismo HEAD (`aff36620…`); el proyecto **graduó de la incubadora de la ASF**. 3 205★, Apache-2.0, push de hoy. El slug viejo responde a `ls-remote` pero **devuelve 422 en el índice de búsqueda**: el mismo patrón que `sst/opencode`. |
 | `sst/opencode` | **`anomalyco/opencode`** | Confirmado por tercer pase: mismo HEAD, solo el segundo es indexable. |
+
+
+**Pase 12.** `factory-ai/legacy-bench` → el slug canónico es **`Factory-AI/legacy-bench`**
+(mayúsculas). `ls-remote` responde LIVE para los dos; el índice de búsqueda devuelve el canónico.
+Y **`laude-institute/harbor`** es **falso negativo del índice**: `ls-remote` LIVE y `LICENSE`
+Apache-2.0 legible, pero `search/repositories` no lo devuelve — el mismo 2,4% que midió el pase 11.
 
 ## Nota de método: tres límites reales del entorno, medidos con control
 

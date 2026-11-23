@@ -19,8 +19,16 @@ updated: 2026-11-23
 > faltante (autorizar e identificar al agente **en el momento de la llamada**) no se resuelve con
 > una librería: se resuelve con sistemas que un equipo opera. **Y dos trampas nuevas donde más
 > duele:** `netbird` (31 231★) es BSD-3-Clause **excepto su control plane, que es AGPL-3.0**, y
-> `mksglu/context-mode` (34 419★) es **Elastic License 2.0**, no open source. **27 filas reales,
+> `mksglu/context-mode` (34 419★) es **Elastic License 2.0**, no open source. **27 filas reales en el pase 10,
 > cero filas de ejemplo.**
+>
+> **Pase 12:** **tres plataformas nuevas del plano de legado**, y por una vez **no son de 2026 ni
+> son de un autor solo**: **Zowe** (EPL-2.0) y **Galasa** (EPL-2.0) son de la **Open Mainframe
+> Project / Linux Foundation**, y **GnuCOBOL** es el compilador libre que permite correr el COBOL
+> del cliente en CI. **Las tres tienen entre 16 y 139 estrellas** — contra 152 472★ del grafo de
+> código que no toca el mainframe. **El respaldo institucional y la tracción social apuntan para
+> lados opuestos, y acá conviene el institucional.** ⚠️ Ninguna de las tres es MIT ni Apache:
+> dos EPL-2.0 y una **GPL+LGPL+GFDL**. **30 filas reales, cero filas de ejemplo.**
 >
 > **Pase 11:** no se agregan plataformas —**ninguna de las piezas medidas este pase es un sistema
 > que un equipo opera**, son librerías y CLIs, y se listan en `repos/foundations.md` donde
@@ -76,6 +84,10 @@ updated: 2026-11-23
 | **IBM MCP Context Forge** | [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) | **Apache-2.0** (11 357B) | 4876 | Python | Gateway + **registry** + proxy delante de MCP, A2A y REST/gRPC, con respaldo de IBM. **Duplica la tracción de ToolHive.** Donde ToolHive aísla cada server, esto centraliza el catálogo: **se despliegan juntos, no se eligen.** |
 | **SkillHub** | [iflytek/skillhub](https://github.com/iflytek/skillhub) | **Apache-2.0** (11 346B) | 5478 | — | **Registry de skills de agentes self-hosted para empresa**: publicar, versionar, auditar qué skill corre en qué agente. La contraparte de catálogo del escaneo (SkillSpector). Origen iFlytek — **relevante para un despliegue APAC con localización de datos.** |
 | **SPIRE** | [spiffe/spire](https://github.com/spiffe/spire) | **Apache-2.0** (11 358B) | 2633 | Go | Implementación de referencia de **SPIFFE**, **CNCF graduado**: emite identidad de workload verificable (SVID) sin secretos estáticos. **Es el supuesto de base de todos los borradores IETF de identidad de agentes.** Se despliega, se opera y **exige expertise propia** — no es un `docker run` y listo. |
+| **Zowe** | [zowe/zowe-cli](https://github.com/zowe/zowe-cli) | **EPL-2.0** | 139 | TypeScript, Node, z/OSMF | **Pase 12.** El marco open source de la **Open Mainframe Project (Linux Foundation)** para hablarle a z/OS: CLI, API y plugins. Es la puerta por la que un agente puede leer datasets, enviar jobs y consultar CICS/Db2 **sin credenciales de operador pegadas en un script**. **La plataforma de entrada del plano de legado.** Copyleft por archivo: los plugins propios se pueden mantener separados. |
+| **Galasa** | [galasa-dev/galasa](https://github.com/galasa-dev/galasa) | **EPL-2.0** | 16 | Java, Kubernetes | **Pase 12.** Pruebas **de integración** automatizadas contra z/OS, también de la Open Mainframe Project. **Es la pieza operable más cercana a "probar que el sistema migrado hace lo mismo"** — el hueco que dejó `cobol-check` al ser archivado. 16★: tracción social mínima, respaldo institucional máximo. |
+| **GnuCOBOL (OCamlPro)** | [OCamlPro/gnucobol](https://github.com/OCamlPro/gnucobol) | ⚠️ **GPL-3.0 (compilador) + LGPL-3.0 (runtime) + GFDL (docs)** | 72 | C, COBOL | **Pase 12.** Compilador COBOL libre: permite **correr y testear el COBOL del cliente fuera del mainframe**, en un contenedor de CI, sin licencias por MIPS. **Es lo que hace posible el expediente de equivalencia de la receta 22.** ⚠️ La API declara sólo `LGPL-3.0`: el compilador es **GPL-3.0**, leído de `COPYING`. Sin extensiones específicas de z/OS. |
+
 
 ## ⚠️ Lo que los listados recomiendan y no conviene tomar
 

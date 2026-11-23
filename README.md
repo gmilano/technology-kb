@@ -44,8 +44,140 @@ technology-kb/
    2026-09-11 y el plazo de alerta temprana es de 24 horas.**
 10. **Antes de escalar una flota de agentes**: `compose/patterns.md` → Receta 17. **Tomar la línea
     base de entrega ocho semanas antes; después, cualquier número es una opinión.**
-11. **Mantenerse al día**: el curador automático actualiza este KB por rotación horaria.
+11. **Cliente con COBOL, mainframe o "sistemas legados"**: `compose/patterns.md` → Receta 22
+    (expediente de equivalencia), 23 (registro DORA, EMEA) y 24 (cosecha de conocimiento, LATAM y
+    APAC) + `repos/foundations.md` → 🧠 comprensión. **El entregable no es el código migrado: es la
+    evidencia de que hace lo mismo. En el 97% de los fallos el agente cree que acertó.**
+12. **Mantenerse al día**: el curador automático actualiza este KB por rotación horaria.
     `agents/trending.md` y `repos/trending.md` son **append-only**: la sección más reciente arriba
+
+## Estado de verificación (2026-11-23 — pase 12)
+
+**Séptimo pase del día.** El pase 11 barrió las 251 URLs de la KB y concluyó que no había nada que
+reescribir. Este pase no re-mide eso: **mide el plano que esta KB nunca había mirado en doce pases —
+el código que el cliente no escribió este siglo.** Control previo en el repo: `COBOL`, `mainframe`,
+`modernization`, `knowledge graph`, `tree-sitter`, `joern` → **cero menciones en los 9 archivos.**
+
+### 1. El hallazgo es una asimetría de dos órdenes de magnitud, y el dinero está del lado chico
+
+| Lo que se busca | Repo más grande | Licencia | ★ |
+|---|---|---|---|
+| **Entender** el código legado | `Graphify-Labs/graphify` | Apache-2.0 | **152 472** |
+| **Migrar** el COBOL | `Azure-Samples/Legacy-Modernization-Agents` | MIT | **234** |
+
+**651x.** Mercado: **modernización de aplicaciones USD 27 460 M en 2026 → USD 67 910 M en 2031**
+(Mordor), con **mainframe y mid-range al 43,64%**. `cobol java migration stars:>=50` → **0**.
+`Legacy-Modernization-Agents` devuelve **151 repos**: el mayor 234★, **el segundo 21★**, **6 de los
+20 primeros con 0★**. **Los tres hyperscalers publicaron su sample —Microsoft (MIT), AWS (MIT-0),
+Red Hat (MIT)— y ninguno creció. No es una categoría con competidores: es un sample con 150 copias.**
+
+### 2. Lo que faltaba pesa 379 000★ y es permisivo
+
+`repos/foundations.md` tiene una **sección 🧠 nueva en cinco capas**. Las cuatro máquinas de grafo de
+código —**graphify (152 472★, Apache-2.0), Understand-Anything (93 776★, MIT), codegraph (78 507★,
+MIT), code-graph-rag (5 402★, MIT)**— **nacieron en 2025-2026 y ninguna estaba listada acá**. Van
+**cuatro pases consecutivos** en que el mayor productor de ausencias es el **filtro de categoría**.
+
+**Decisión de clasificación declarada:** esas cuatro **no entran a `agents/top.md`** aunque sumen
+~330 000★. **No deciden nada: construyen un grafo.** Llamarlas agentes mentiría sobre la forma del
+ecosistema, que es el hallazgo: **en este plano lo grande no es agente, y lo que es agente es un
+sample.** `agents/top.md` suma **6 filas** y **la más grande tiene 234★**.
+
+### 3. El dato que ordena el plano, de fuente primaria
+
+Del README de [Factory-AI/legacy-bench](https://github.com/Factory-AI/legacy-bench) (Apache-2.0,
+**21★** — el benchmark que define el plano tiene 21 estrellas):
+
+- **16,9%–42,5%** de pass rate en 12 combinaciones modelo-agente, cuando **los mismos modelos
+  superan 70% en SWE-bench Verified y Terminal-Bench 2**.
+- **Arreglar bugs ≈ 2x implementar ≈ 2x migrar.** **Migrar es la peor de las tres, y es lo que el
+  mercado compra.**
+- De las 44 tareas que ningún modelo resuelve, **31 son COBOL**; *"los bugs de COBOL son silenciosos
+  — una salida incorrecta se ve correcta"*.
+- **En el 97% de los fallos, el agente cree que resolvió la tarea.**
+
+**Consecuencia comercial directa: en este plano la confianza del agente no tiene valor informativo,
+así que el entregable no puede ser el código migrado — tiene que ser la evidencia de equivalencia.**
+→ Receta 22.
+
+⚠️ **Conflicto declarado y no resuelto:** la tabla por modelo (34,6% / 33% / 32,2% según los docs;
+38,7% según el blog) **no se pudo verificar: `docs.factory.ai` no resuelve desde este entorno**, como
+`arxiv.org`. **Las dos tienen que habilitarse en la política de red de la sesión.** El rango, el 97%
+y el 31/44 salen del README.
+
+### 4. La brecha es la cuarta forma, y esta vez la pieza existía y se apagó
+
+[openmainframeproject/cobol-check](https://github.com/openmainframeproject/cobol-check) —Apache-2.0,
+107★— está **`archived: true`**. Es el framework de **pruebas unitarias de COBOL**: con lo que se
+demuestra que el programa migrado hace lo mismo. `cobol unit test stars:>=20` → **2**, sucesores de
+**0–2★**. Alrededor: `behavioral equivalence testing migration stars:>=50` → **0**;
+`differential testing migration stars:>=100` → **0**; `business rule extraction stars:>=50` → **0**;
+`mainframe agent mcp stars:>=10` → **0**; contra `code knowledge graph stars:>=500` → **20**.
+
+**Veinte formas de entender el código y ninguna de probar que la migración preservó el
+comportamiento** — la categoría que los modelos hacen peor, con el modo de falla más silencioso, sin
+verificación abierta. **Las piezas existen y son permisivas o institucionales; falta el ensamblado,
+y eso es servicio facturable, no I+D.**
+
+### 5. En el plano de legado **las licencias están al revés** — y aparecen dos reglas nuevas
+
+**Cero MIT, cero Apache** en la capa que de verdad toca COBOL: GnuCOBOL (**GPL+LGPL+GFDL**),
+opensourcecobol4j (**GPL-3.0**, el transpilador mantenido), TypeCobol (**CeCILL-C, ley francesa** —
+primer artefacto jurídico específicamente de EMEA que registra esta KB), proleap-cobol (**AGPL-3.0**,
+dormido), che4z LSP / Zowe / Galasa (**EPL-2.0**). Lo permisivo está **arriba** (los grafos) y lo
+copyleft **abajo**, pegado al lenguaje.
+
+- **Séptima variante de trampa:** cuando hay **tres** archivos de licencia, **la API declara uno y
+  elige el menos restrictivo.** GnuCOBOL: `COPYING`=GPL-3.0, `COPYING.LESSER`=LGPL-3.0,
+  `COPYING.DOC`=GFDL; la API dice **`LGPL-3.0`** — la del runtime, **no la del compilador**.
+- **Trampa inversa, nueva:** `scabench-org/hound` (838★) **anuncia en su `LICENSE.txt` términos
+  adicionales sobre uso comercial que después no escribe.** **Se declara irresoluble desde el
+  archivo**, no Apache-2.0 ni restringido.
+- **Familia nueva:** `AxiomCodeAI/axiomcodegraph` (786★) es **Functional Source License 1.1**
+  (Apache-2.0 recién a los dos años). Sexta familia no-OSI del vertical.
+- **Y la que más duele:** [squid-protocol/gitgalaxy](https://github.com/squid-protocol/gitgalaxy)
+  (67★) es **el único repo del mundo que une comprensión con migración verificada** —traductor
+  CICS→Java que **prueba cada programa portado contra el original**— bajo **PolyForm Noncommercial
+  1.0.0**. **La pieza mejor diseñada del plano está prohibida para uso comercial, y la API dice
+  `NOASSERTION`.** Más `harshkedia177/axon` (821★) **sin licencia** y
+  `NeuralInverse/neuralinverse` (220★) con **"development has stopped"** y `archived: false`:
+  **`archived: false` no significa vivo.**
+
+### 6. Aviso de método: **en este plano, ordenar por estrellas no ordena por utilidad**
+
+Los cinco repos con `cobol` y ≥500★ son **un curso** (3 673★, **CC-BY-4.0: licencia de contenido**),
+**un servidor de Minecraft escrito en COBOL** (706★), un framework web en COBOL (1 033★, dormido), un
+wrapper de Node dormido (727★) y una **colisión de keyword**. **Cero herramientas de modernización en
+el top-5.** Dos colisiones más que un pipeline compilaría como hallazgos: `platinum-hill/cobolt`
+(228★, app de LLM local — el nombre juega con *cobalt*) y `sentrux/sentrux` (3 344★).
+
+### 7. Tres recetas nuevas, y las cuatro regiones con el plano colocado
+
+**Receta 22 — el expediente de equivalencia** (global, la receta madre: el entregable no es el Java,
+es la prueba de que hace lo mismo, con las 9 piezas y la decisión GPL de la primera semana).
+**Receta 23 — registro de ICT legado para DORA** (EMEA: el inventario que pide el regulador,
+generado del grafo; Art. 28(3) confirmado por el DNB con fecha **20-mar-2026**, Art. 8 **marcado
+como no confirmado**). **Receta 24 — cosecha de conocimiento antes de la jubilación** (LATAM y APAC:
+4–8 semanas, sin tocar producción, con el modelo de embeddings elegido **por el idioma del
+comentario del código**).
+
+**Regiones:** **NA** tiene las referencias con volumen (Toyota NA **40 M de líneas**, Morgan Stanley
+**17 M**, Kyndryl/DMV de Carolina del Norte) y el evento que movió el precio (**IBM −13% en una
+rueda** tras el anuncio de Anthropic de feb-2026, ⚠️ prensa secundaria). **EMEA** es la única región
+donde **el inventario del legado tiene artículo y fecha**. **APAC** tiene el caso con respaldo
+ministerial (METI, *precipicio digital de 2025*; **COBOL PARK** de FPT+SCSK, ~¥500 000 M; Fujitsu
+vendiendo **documentos de diseño**, no migración). **LATAM** tiene el problema, el talento y **cero
+software abierto en su idioma**. **Huecos declarados: nada de India, nada de adopción por país de
+EMEA, y la cifra de ¥12 billones de METI es de blog secundario.**
+
+### 8. Verificación de este pase
+
+**43 repos nuevos, 43 vivos por `git ls-remote`** (control corrido: slug falso → `ec=128`), **cada
+licencia leída del archivo** en `main` **y** `master` —y **cuando el repo trae tres archivos de
+licencia, los tres**—, estrellas / `pushed_at` / `archived` por `search/repositories`. **Las 251 URLs
+del pase 11 no se re-verificaron** (se midieron hace una hora). Corrección de slug:
+**`Factory-AI/legacy-bench`** lleva mayúsculas; **`laude-institute/harbor`** es falso negativo del
+índice de búsqueda, el mismo 2,4% ya medido.
 
 ## Estado de verificación (2026-11-23 — pase 11)
 

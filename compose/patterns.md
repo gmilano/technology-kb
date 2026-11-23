@@ -1003,6 +1003,146 @@ del paso 1 corren en paralelo al resto del engagement, no lo bloquean.**
 eval de calidad es una hipótesis (tendencia 20) y con eval sigue siendo un número que puede salir
 mal — **lo que cambia es que se sabe.**
 
+## Receta 22 — **El expediente de equivalencia**: el entregable no es el Java, es la prueba de que hace lo mismo *(nueva, pase 12 — global, y la receta madre del plano de legado)*
+
+**Cuándo.** El cliente tiene COBOL en producción y pide "modernización". **Esta receta va antes de
+traducir una sola línea**, y es la que convierte el pedido en algo que se puede firmar.
+
+**Por qué existe.** Tres hechos medidos el 2026-11-23 que apuntan al mismo lugar:
+
+1. **Migrar es la peor de las tres categorías** del benchmark (bug fixing ≈ 2x implementar ≈ 2x
+   migrar; pass rate global 16,9–42,5% contra >70% de los mismos modelos en SWE-bench Verified).
+2. **En el 97% de los fallos el agente cree que resolvió la tarea**, y *"los bugs de COBOL son
+   silenciosos: una salida incorrecta se ve correcta"*.
+3. **No existe producto abierto que verifique la equivalencia**
+   (`behavioral equivalence testing migration stars:>=50` → **0**;
+   `differential testing migration stars:>=100` → **0**) y la única herramienta de test unitario de
+   COBOL, `cobol-check`, **está archivada**.
+
+**Por lo tanto: el riesgo del proyecto no está en traducir, está en no poder demostrar.** Y el
+cliente no compra código, compra poder pasar el *change management* de un core.
+
+**Las piezas, todas verificadas el 2026-11-23 (licencia leída del archivo):**
+
+| Paso | Pieza | Licencia | Por qué ésta |
+|---|---|---|---|
+| 0. Inventario | [graphify](https://github.com/Graphify-Labs/graphify) | **Apache-2.0** (152 472★) | AST determinista con tree-sitter sobre código + JCL + configs + docs. **Permisiva y la más grande del plano.** |
+| 0b. Grafo verificable | [joern](https://github.com/joernio/joern) | **Apache-2.0** (3 663★) | Code Property Graph: data flow real, no afirmación del LLM. **Es lo que hace auditable el paso 1.** |
+| 1. Reglas de negocio | el agente, con **cita obligatoria a líneas fuente** | — | El patrón está en [fabioalvesalmeida/cobol-modernization-agents](https://github.com/fabioalvesalmeida/cobol-modernization-agents) (Apache-2.0, **0★**): cada regla **citada a su programa y sus líneas**. Sin cita, no entra al expediente. |
+| 2. Correr el original fuera del mainframe | [GnuCOBOL (OCamlPro)](https://github.com/OCamlPro/gnucobol) | ⚠️ **GPL-3.0** compilador / **LGPL-3.0** runtime | Permite ejecutar el COBOL del cliente **en un contenedor de CI** y capturar su comportamiento real. Sin extensiones z/OS: lo que no compile se marca y se prueba en el mainframe. |
+| 3. **Golden master** | salidas del original sobre datos de producción enmascarados | — | `golden master testing stars:>=50` → **2**: la técnica correcta casi no tiene software. Se arma: fijar entradas, capturar salidas, versionarlas como artefacto firmado. |
+| 4. Traducir | [Azure-Samples/Legacy-Modernization-Agents](https://github.com/Azure-Samples/Legacy-Modernization-Agents) (MIT, 234★) y/o [opensourcecobol4j](https://github.com/opensourcecobol/opensourcecobol4j) | MIT / ⚠️ **GPL-3.0** | **Decisión de la primera semana, no de la última:** el transpilador mantenido es **GPL-3.0**. Si corre en la infraestructura de Globant como servicio, hay que resolverlo legalmente antes. |
+| 5. Diferencial | ejecutar original y migrado sobre el mismo golden master | — | **El paso que no se puede saltar.** Toda diferencia es un hallazgo, no un ajuste. |
+| 6. Integración contra z/OS | [Galasa](https://github.com/galasa-dev/galasa) | **EPL-2.0** (16★, Open Mainframe Project) | La pieza operable más cercana al hueco que dejó `cobol-check`. 16★ y respaldo de Linux Foundation: **se elige por el respaldo, no por la tracción.** |
+| 7. Acceso al mainframe | [Zowe](https://github.com/zowe/zowe-cli) | **EPL-2.0** (139★) | Datasets, jobs, CICS/Db2 **sin credenciales de operador en un script**. `mainframe agent mcp stars:>=10` → **0**: el servidor MCP sobre Zowe **no existe y es IP propia** (ver receta 13 para la forma). |
+| 8. Jaula y evidencia | recetas **7**, **18** y **16** de esta KB | Apache-2.0 / MIT | El agente toca fuente del core: autorización por llamada (18) y evidencia firmada (16) no son opcionales acá. |
+
+**Lo que se entrega (y es el producto):** un expediente por programa migrado con (a) la regla de
+negocio citada a líneas fuente, (b) el golden master usado, (c) el diferencial corrido y su
+resultado, (d) la firma y el hash de los artefactos, (e) la lista explícita de **lo que no se pudo
+probar**. **Ese último punto es el que da credibilidad al resto** — y es lo que un agente, por el
+97%, nunca va a declarar solo.
+
+**Lo que NO hay que prometer:** porcentaje de automatización. Las cifras de vendor que circulan
+(70–85%, 93%) **no tienen fuente primaria** y el único número con metodología publicada dice que
+**migrar es la categoría más débil**. Se promete el expediente y la cobertura, no la tasa.
+
+---
+
+## Receta 23 — **Registro de ICT legado para DORA**: el inventario que pide el regulador, generado del código *(nueva, pase 12 — la receta de EMEA)*
+
+**Cuándo.** Entidad financiera europea, con mainframe o sistemas de más de 15 años, que ya pasó por
+el primer ciclo del registro de información de DORA.
+
+**El gancho regulatorio, con lo confirmado separado de lo que no:**
+
+- ✅ **Confirmado (DNB, banco central neerlandés):** el **registro de información** de acuerdos con
+  terceros de TIC (**Art. 28(3)**) tuvo su **primer ciclo obligatorio en 2026**, con fecha de
+  reporte **20 de marzo de 2026** en Países Bajos; **las ventanas varían por autoridad nacional**.
+  Es, según comentario de práctica, **el artefacto de DORA más escrutado del año**, con validaciones
+  más estrictas que el simulacro de 2024.
+- ⚠️ **No confirmado contra el Diario Oficial desde este entorno:** que **DORA nombre explícitamente
+  los sistemas heredados** y exija **evaluarlos al menos anualmente y antes de conectarles
+  tecnología nueva** (**Art. 8**). Fuentes de vendor coinciden; **hay que verificar el texto antes
+  de ponerlo en una propuesta.** La receta funciona igual, porque el registro del Art. 28(3) sí está
+  confirmado y necesita el mismo insumo.
+
+**La receta.** Lo que el regulador pide es un **inventario con dueño, dependencia y estado de
+soporte**. Eso **es la salida de la capa de comprensión**:
+
+1. **graphify** (Apache-2.0) sobre el monorepo del core + JCL + configs → qué programas existen, qué
+   llaman, qué datasets tocan.
+2. **joern** (Apache-2.0) → data flow: qué programa toca datos de cliente. **Esto es lo que
+   convierte un inventario de TI en un inventario de riesgo**, que es lo que DORA mira.
+3. Cruce con el **registro de contratos de terceros**: los componentes sin contrato vigente y sin
+   dueño son el hallazgo. **El punto débil que el comentario de práctica señala para 2026 son
+   justamente los contratos de legado sin renegociar.**
+4. **Evidencia:** receta 16 (expediente CRA) ya monta firma y hash; se reusa tal cual. El entregable
+   es reproducible: se regenera y se vuelve a firmar en cada ciclo anual.
+5. **Salida** en el formato del regulador nacional, no en un dashboard.
+
+**Por qué es servicio y no producto:** `CRA cyber resilience act sbom stars:>=50` devolvió **1** (una
+awesome-list) en el pase 9, y este pase no encontró **nada** que ensamble el inventario contra el
+artículo. **Las piezas son Apache-2.0 y el ensamblado contra el reglamento no existe.** Mismo patrón
+que la receta 16, otro reglamento, otra fecha.
+
+⚠️ **Nota de licencia específica de EMEA:** si se usa [TypeCobol](https://github.com/TypeCobolTeam/TypeCobol)
+para el parsing incremental, su licencia es **CeCILL-C** —copyleft débil con **ley aplicable
+francesa**— y la API la reporta `NOASSERTION`. **Un cliente europeo con oficina legal propia lo va a
+mirar; conviene llegar con la respuesta.**
+
+---
+
+## Receta 24 — **Cosecha de conocimiento antes de la jubilación** *(nueva, pase 12 — LATAM y APAC)*
+
+**Cuándo.** El cliente tiene COBOL en producción y **tres personas que lo entienden**, dos de ellas
+a menos de cinco años de jubilarse. **Esta receta no migra nada, y ahí está su valor: se puede
+vender y entregar en 4–8 semanas, sin tocar producción.**
+
+**Por qué estas dos regiones.** Dos señales independientes, por caminos distintos, apuntan al mismo
+riesgo —**la gente, no el código**:
+
+- **APAC / Japón:** el informe de **METI** sobre el *precipicio digital de 2025* plantea que los
+  ingenieros de COBOL **se jubilan más rápido de lo que los sistemas se modernizan**, y el mercado
+  se organizó alrededor de eso (**COBOL PARK**, la JV de **FPT + SCSK**, ~¥500 000 M; **Fujitsu
+  Application Transform**, cuyo producto declarado es **generar documentos de diseño desde el código
+  fuente** — o sea: **el vendor más grande de la región ya validó que lo que se compra primero es la
+  documentación, no la migración**).
+- **LATAM / Brasil:** la edad promedio reportada de los programadores COBOL activos supera los **55
+  años** (⚠️ sin fuente primaria), mientras la modernización del core ya es práctica común por
+  **Pix y Open Finance**, con **~R$ 50,4 mil millones** de inversión bancaria en tecnología en 2026
+  (⚠️ vía blogs que citan la **Pesquisa FEBRABAN/Deloitte 2026**) y **Strangler Fig** como patrón
+  recomendado: el legado **se queda** como ledger. **Si el legado se queda, entenderlo no es un paso
+  previo a la migración: es el entregable.**
+
+**La receta, y el detalle que la hace de esta región:**
+
+1. **graphify** (Apache-2.0) o **Understand-Anything** (MIT) sobre el repositorio completo → grafo.
+2. **joern** (Apache-2.0) → dependencias reales y flujo de datos.
+3. **Entrevistar a las tres personas contra el grafo**, no contra una hoja en blanco. El grafo
+   produce las preguntas: *"este programa escribe en este dataset y nadie lo llama, ¿por qué
+   existe?"*. **Es la diferencia entre 6 semanas y 6 meses.**
+4. ⚠️ **El modelo de embeddings se elige por el idioma del comentario del código, no por el ranking
+   global.** Los comentarios del COBOL de un banco brasileño están **en portugués**, y los de uno
+   mexicano **en español**. Vale la tendencia 24 completa (MTEB-BR: un modelo **3.º global queda
+   49.º** en portugués de Brasil) y el costo de la tendencia 18 (español y portugués consumen
+   **30–60% más tokens**). → **Correr la receta 14 primero**: una semana, y decide el stack.
+5. **Entregables:** documentación por programa con cita a líneas fuente, mapa de dependencias,
+   **lista de zonas sin dueño**, y el grafo como servicio consultable que queda operando.
+6. **Después**, y sólo después, se discute migrar — con la receta 22 y el expediente.
+
+**El cero que lo justifica:** `cobol agente español stars:>=5` → **0**;
+`legacy modernization portugues stars:>=1` → **0**; `cobol documentation generator stars:>=10` →
+**0**. **Séptimo pase consecutivo con cero en español, y esta vez el plano es el que más duele: el
+código está comentado en el idioma de la región y el analista que queda también habla en ese
+idioma.** No hay producto que competir: hay un hueco donde Globant ya tiene la gente.
+
+**Lo que NO hay que prometer:** que el grafo reemplaza a las tres personas. Las reemplaza **en
+parte** y recién después de que ellas lo corrijan. **Se vende como seguro, no como sustitución** — y
+esa honestidad es lo que hace que las tres personas colaboren en vez de bloquear el proyecto.
+
+---
+
 ## Lo que NO conviene prometer
 
 1. **Merge automático.** Ninguna receta acá mergea sin humano. Gartner proyecta >40% de

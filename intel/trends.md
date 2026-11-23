@@ -778,3 +778,146 @@ proyecto y pasó a ser el entregable.**
 > sus encuestas 2026; los reportes primarios no fueron leídos. Las de Menlo Ventures vienen de un
 > fondo de venture, parte interesada (misma cautela que la tendencia 31). **La dirección de las
 > tres fuentes coincide; las magnitudes exactas no deben citarse a un cliente como dato cerrado.**
+
+
+## 35. La asimetría más grande que midió esta KB: **entender el código legado vale 152 472★; migrarlo, 234★**
+
+**Medido el 2026-11-23 (pase 12), con la licencia leída del archivo en los dos casos.**
+
+| Lo que se busca | Repo más grande | Licencia | ★ |
+|---|---|---|---|
+| **Entender** el código legado | `Graphify-Labs/graphify` | Apache-2.0 | **152 472** |
+| **Migrar** el COBOL | `Azure-Samples/Legacy-Modernization-Agents` | MIT | **234** |
+
+**651x.** Y el dinero va para el lado chico: **modernización de aplicaciones USD 27 460 M en 2026**
+(Mordor), con **mainframe y mid-range al 43,64%** y **refactoring liderando con 39,3%**.
+
+**La forma del plano de migración, con números:** `Legacy-Modernization-Agents` devuelve **151
+repos**; el mayor tiene 234★, **el segundo 21★**, y **6 de los 20 primeros tienen 0★**. Los tres
+hyperscalers publicaron su sample —Microsoft (MIT, 234★), AWS (**MIT-0**, 15★), Red Hat (MIT, 2★ y
+1★)— y **ninguno creció**. `cobol java migration stars:>=50` → **0**.
+
+**No es una categoría con competidores: es un sample con 150 copias.** Y es la primera vez en doce
+pases que esta KB encuentra **el mercado más grande con el ecosistema abierto más chico** —todas las
+brechas anteriores eran de capa (nadie decide, nada verifica), ésta es de **plano entero**.
+
+---
+
+## 36. El agente no sabe que se equivocó, y por primera vez hay un número: **97%**
+
+De fuente primaria (README de [Factory-AI/legacy-bench](https://github.com/Factory-AI/legacy-bench),
+Apache-2.0, 21★):
+
+- **16,9%–42,5%** de pass rate en 12 combinaciones modelo-agente sobre código legado, cuando **los
+  mismos modelos superan 70% en SWE-bench Verified y Terminal-Bench 2**. **La brecha no es de
+  capacidad general: es de dominio.**
+- **Arreglar bugs ≈ 2x implementar ≈ 2x migrar.** **Migrar es la peor de las tres**, y es lo que
+  el mercado de USD 27 460 M está comprando.
+- De las **44 tareas que ningún modelo resuelve, 31 son COBOL**, con COBOL al 46% del benchmark.
+  La causa declarada: ***"los bugs de COBOL son silenciosos — una salida incorrecta se ve
+  correcta"***. La iteración del agente funciona donde el error es visible (Java 7 tiene *stack
+  traces*; COBOL no).
+- **Y el dato que cambia cómo se vende el plano: en el 97% de los fallos, el agente cree que
+  resolvió la tarea.**
+
+**Consecuencia directa, y es comercial antes que técnica:** en este plano **la confianza del agente
+no tiene valor informativo**, así que el entregable no puede ser el código migrado — tiene que ser
+**la evidencia externa de equivalencia**. Es la diferencia entre vender un rewrite y vender un
+expediente. **Toda la tendencia 32 (*harness engineering*) se vuelve concreta acá: el harness que
+hace falta no es el que escribe el código, es el que lo desmiente.**
+
+⚠️ **Conflicto declarado, no resuelto:** la tabla por modelo (Droid+Opus 4.6 **34,6%**, Claude
+Code+Opus 4.6 **33%**, Droid+GLM-5 **32,2%** según `docs.factory.ai`; **Gemini-3.1-Pro 38,7%** como
+"perfil más balanceado", BASIC 81,0%, según el blog) **no se pudo verificar: `docs.factory.ai` no
+resuelve desde este entorno.** El rango 16,9–42,5%, el 97% y el 31/44 **sí** salen del README del
+repo. Sólo **10 de cientos de tareas** son públicas.
+
+---
+
+## 37. La capa de verificación del plano más débil **está archivada**, y la brecha es la cuarta forma
+
+**Nueve pases encontraron brechas de capa. Ésta es distinta: acá la pieza existía y se apagó.**
+
+[openmainframeproject/cobol-check](https://github.com/openmainframeproject/cobol-check) —
+**Apache-2.0, 107★, `archived: true`**, último push 2026-05-28— es el framework de **pruebas
+unitarias de COBOL**: la herramienta con la que se demuestra que el programa migrado hace lo mismo.
+`cobol unit test stars:>=20` → **2**. Los sucesores son repos personales de **0–2★**.
+
+Y alrededor, los ceros con piso explícito:
+
+| Consulta | Resultado |
+|---|---|
+| `behavioral equivalence testing migration stars:>=50` | **0** |
+| `differential testing migration stars:>=100` | **0** |
+| `business rule extraction stars:>=50` | **0** |
+| `cobol documentation generator stars:>=10` | **0** |
+| `mainframe agent mcp stars:>=10` | **0** |
+| `code knowledge graph stars:>=500` | **20** |
+
+**Veinte formas de entender el código y ninguna de probar que la migración preservó el
+comportamiento.** Cruzado con la tendencia 36 da la peor combinación posible: **la categoría que los
+modelos hacen peor (migrar), con el modo de falla más silencioso (97%), sin capa de verificación
+abierta, y con la única herramienta de test unitario archivada.**
+
+**Pero hay con qué construirlo, y es permisivo o institucional:** GnuCOBOL para correr el COBOL en
+CI, **Galasa (EPL-2.0, Open Mainframe Project)** para integración contra z/OS, joern (Apache-2.0)
+para el grafo verificable, graphify (Apache-2.0) para el inventario. **La diferencia entre esta
+brecha y las anteriores es que ésta tiene las piezas y le falta el ensamblado — o sea que es
+servicio facturable, no I+D.** → Receta 22.
+
+**Un solo repo del mundo hace exactamente eso, y no se puede usar:**
+[squid-protocol/gitgalaxy](https://github.com/squid-protocol/gitgalaxy) (67★) construye el
+conocimiento del repo **y** un traductor CICS→Java **que prueba cada programa portado contra el
+original** — bajo **PolyForm Noncommercial 1.0.0**. **La pieza mejor diseñada del plano está
+explícitamente prohibida para uso comercial, y su badge de API dice `NOASSERTION`.**
+
+---
+
+## 38. En el plano de legado las licencias están al revés: **lo que de verdad toca COBOL es GPL, AGPL, EPL o CeCILL-C**
+
+Once pases construyeron esta KB sobre una preferencia: **MIT / Apache-2.0 / BSD**, porque es lo que
+Globant puede entregar. **El plano de legado es el primero donde esa preferencia no se puede
+satisfacer.**
+
+| Pieza | Licencia **del archivo** | Qué es |
+|---|---|---|
+| `OCamlPro/gnucobol` | **GPL-3.0 + LGPL-3.0 + GFDL** | compilador / runtime / docs |
+| `opensourcecobol/opensourcecobol4j` | **GPL-3.0** | **el transpilador COBOL→Java mantenido** |
+| `TypeCobolTeam/TypeCobol` | **CeCILL-C** (ley francesa) | parser e incremental |
+| `uwol/proleap-cobol` | **AGPL-3.0** (dormido 2024) | parser ANTLR de referencia |
+| `eclipse-che4z/che-che4z-lsp-for-cobol` | **EPL-2.0** | Language Server |
+| `zowe/zowe-cli`, `galasa-dev/galasa` | **EPL-2.0** | acceso y test contra z/OS |
+
+**Cero MIT. Cero Apache-2.0.** Lo permisivo del plano está **arriba** (grafos de código: MIT y
+Apache) y **lo copyleft está abajo**, pegado al lenguaje. **Y la causa es histórica, no ideológica:**
+las piezas de COBOL vienen de los años 2000 y de consorcios públicos (CEA/CNRS/INRIA, Eclipse,
+Linux Foundation), no de startups de 2026.
+
+**Dos reglas nuevas que salen de medir esto:**
+
+1. **Séptima variante de trampa: cuando hay tres archivos de licencia, la API declara uno y elige
+   el menos restrictivo.** GnuCOBOL vía OCamlPro tiene en la raíz `COPYING` (**GPL-3.0**, 35 149B),
+   `COPYING.LESSER` (**LGPL-3.0**, 7 652B) y `COPYING.DOC` (**GFDL**, 22 964B); el campo `license`
+   de la API dice **`LGPL-3.0` y nada más** — la del runtime, **no la del compilador**. El pase 9
+   vio a la API ocultar una opción *favorable* (`LICENSE-APACHE`+`LICENSE-MIT`); **acá oculta la
+   desfavorable.** Regla: listar la raíz y leer **todos** los `COPYING*`/`LICENSE*`.
+2. **Trampa inversa, nueva en el mundo: un archivo que anuncia restricciones y después no las
+   escribe.** `scabench-org/hound` (838★) abre su `LICENSE.txt` con *"Apache 2.0 **with additional
+   terms outlined below regarding commercial use**. By using this software, you agree to these
+   terms"* — **y esos términos no están en el archivo** (11 186B = Apache canónica + apéndice;
+   *commercial* aparece sólo en ese encabezado y en el boilerplate de responsabilidad). **No se
+   declara Apache-2.0 ni restringido: se declara irresoluble desde el archivo.** Las cinco variantes
+   anteriores escondían una restricción real; **ésta publica una restricción que no existe, y el
+   efecto práctico es el mismo: nadie puede aprobarlo sin preguntar.**
+
+**Y la familia nueva:** `AxiomCodeAI/axiomcodegraph` (786★) está bajo **Functional Source License
+1.1 (Apache 2.0 Future License)** — prohíbe el *Competing Use* y se vuelve Apache-2.0 **dos años**
+después. **Sexta familia no-OSI que aparece en este vertical** (tras Commons Clause, BUSL, ELv2,
+Elastic, PolyForm).
+
+**Consecuencia de arquitectura, que es la lección de la tendencia 8 aplicada acá:** en un engagement
+de legado, la decisión *"¿el transpilador corre en nuestra infraestructura o en la del cliente?"*
+**no es de despliegue, es de licencia** —`opensourcecobol4j` es GPL-3.0— y hay que tomarla **en la
+primera semana**, no en la última.
+
+---

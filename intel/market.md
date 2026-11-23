@@ -114,6 +114,34 @@ eval-driven development.** **Gasto máximo, práctica mínima.** Ése es el espa
 > investigación paywall. Direcciones consistentes; magnitudes no corroboradas por segunda fuente
 > independiente.
 
+
+### Actualización del pase 12 (2026-11-23) — **el mercado del legado: grande, y con el rango más ancho que midió esta KB**
+
+**Modernización de aplicaciones** (Mordor Intelligence): **USD 22 910 M (2025) → USD 27 460 M
+(2026) → USD 67 910 M (2031)**. **Mainframe y mid-range = 43,64%** del total (2025). El segmento de
+**refactoring lidera con 39,3%**, empujado por conversión COBOL→Java asistida por IA.
+
+⚠️ **Modernización de mainframe específicamente: cuatro consultoras, cuatro números incompatibles
+para el mismo año. Se registra el rango, no un punto:**
+
+| Fuente | 2026 | Horizonte |
+|---|---|---|
+| Straits Research | **USD 9 010 M** | → 18 630 M (2034) |
+| The Business Research Company | **USD 20 850 M** | → 36 180 M (2030) |
+| Persistence (vía OpenPR) | **USD 38 700 M** | → 50 700 M (2033), definición de *servicios*, más amplia |
+| SNS Insider (vía GlobeNewswire) | **USD 6 850 M (2025)** | → 16 950 M (2035) |
+
+**El spread es de 5,6x entre el piso y el techo del mismo año.** La causa es la definición
+(licencias vs. servicios vs. plataformas), y por eso **esta KB no promedia**: para un pliego sirve
+decir **"entre USD 9 000 M y USD 38 700 M según qué se cuente"** y pedir la definición del cliente.
+**Lo que sí es consistente entre las cuatro: crece de dos dígitos y el driver declarado es el mismo
+—deuda técnica acumulada más escasez de gente que sepa COBOL—, no la IA.**
+
+**El contraste que importa para decidir dónde invertir:** este mercado de **USD 27 460 M** tiene,
+como mayor pieza de software abierto para hacer el trabajo, **un sample de 234★**. La categoría
+vecina —entender código— tiene un repo de **152 472★**. **El dinero y el código abierto están en
+planos distintos.**
+
 ## Opportunities by region
 
 ### North America
@@ -349,6 +377,36 @@ evaluable, no como reglas cableadas en el agente.
 > "GitHub Copilot Enterprise 54% de penetración" **sin metodología publicada**). **No se usa.**
 > Lo que sí está medido y es citable: Gartner, 2026-11-18 — **sólo el 10% de las empresas
 > sandboxea workflows agentic en preproducción hoy** (target 70% para 2030).
+
+
+#### Pase 12 (2026-11-23) — el plano de legado: **la demanda más grande y concreta de la región**
+
+**Por qué North America primero en este plano:** es donde están los mainframes que mueven dinero y
+donde ya hay referencias públicas con volumen declarado.
+
+- **IBM:** COBOL sostiene **más del 40% de los sistemas de banca en línea**, **80% de las
+  transacciones con tarjeta presenciales** y **95% de las transacciones de ATM**.
+- **Referencias con cifras públicas:** **Toyota Motor North America** modernizó **más de 40
+  millones de líneas** de COBOL a Java con AWS Transform; **Morgan Stanley** declara **más de 17
+  millones de líneas** con plataforma propia; **Kyndryl** ganó el reemplazo de **cinco sistemas
+  COBOL** de la **División de Vehículos de Carolina del Norte** (sector público estatal).
+- **El evento que movió el precio:** en **febrero de 2026** Anthropic posicionó Claude Code para
+  modernización de COBOL y **la acción de IBM cayó más de 13% en una sola rueda**. ⚠️ Dato de
+  prensa secundaria (PYMNTS/domain-b), no de un *filing*: **la dirección sirve, la causalidad no se
+  afirma.**
+- **Lo que la región compra y nadie vende en abierto:** `cobol java migration stars:>=50` → **0**.
+  El sample más grande del mundo tiene **234★** y es de Microsoft. **El cliente norteamericano tiene
+  presupuesto, referencias y presión del board, y no hay producto: hay servicio.**
+
+**La oportunidad, dicha en la forma en que la compra un banco de NA:** no "migramos su COBOL" sino
+**"le entregamos el expediente de equivalencia"** — la evidencia auditable de que el programa nuevo
+hace lo mismo que el viejo, caso por caso. Es lo que exige el *change management* de un core
+bancario y es exactamente lo que el benchmark dice que los modelos **no** garantizan (migración es
+la peor de las tres categorías; 97% de los fallos se creen éxitos). → **Receta 22.**
+
+⚠️ **Cifras de vendor registradas y NO adoptadas:** "70–85% de automatización en conversión
+COBOL→Java en 2026" y "desarrolladores COBOL: 220 000 en 2026 → 18 000 en 2030". **Ninguna tiene
+fuente primaria localizable; se registran para poder reconocerlas en un pliego, no para citarlas.**
 
 ### EMEA
 
@@ -593,6 +651,38 @@ local-first), ya listados.
 > agentic soberana. La receta 4 se arma con partes permisivas porque **no hay nada que adoptar**.
 > Cuarto pase consecutivo que se registra este cero.
 
+
+#### Pase 12 (2026-11-23) — el plano de legado: **acá la regulación ya nombró al sistema viejo**
+
+**EMEA es la única región donde el inventario de legado tiene artículo y fecha de presentación.**
+
+- **DORA** (Reglamento de Resiliencia Operativa Digital, sector financiero): el **registro de
+  información** de acuerdos con terceros de TIC (**Art. 28(3)**) tuvo su **primer ciclo obligatorio
+  cerrado en marzo–abril de 2026**; el **DNB neerlandés fijó el 20 de marzo de 2026** como fecha de
+  reporte. **Fuente autoritativa** (banco central). Las ventanas **varían por autoridad nacional**.
+- **Y el punto que convierte esto en trabajo técnico:** fuentes de práctica sostienen que **DORA
+  nombra explícitamente los sistemas TIC heredados** y exige **evaluarlos al menos una vez al año y
+  antes de conectarles tecnología nueva** (**Art. 8**). ⚠️ **No se pudo confirmar el texto del
+  artículo contra el Diario Oficial desde este entorno: queda marcado como fuente de vendor y hay
+  que verificarlo antes de ponerlo en una propuesta.** La obligación del registro (Art. 28(3)) sí
+  está confirmada por el DNB.
+- **Comentario de práctica 2026:** el registro es **el artefacto de DORA más escrutado del año**,
+  con reglas de validación más estrictas que el simulacro de 2024, y **los contratos de legado sin
+  renegociar son el punto débil señalado**.
+- **Un artefacto jurídico propio de la región, medido en código:**
+  [TypeCobol](https://github.com/TypeCobolTeam/TypeCobol) está bajo **CeCILL-C**, la licencia libre
+  redactada por **CEA, CNRS e INRIA con ley aplicable francesa**. **Es la primera licencia
+  nacional-europea que registra esta KB**, y la API la reporta como `NOASSERTION`: un escáner
+  automático la deja pasar sin clasificar.
+- **Lo que el plano aporta a un pliego europeo:** el inventario que DORA pide **es exactamente la
+  salida de la capa de comprensión** (graphify/joern → qué programas hay, qué llaman, qué datos
+  tocan, qué está sin dueño). **La herramienta es Apache-2.0 y el requisito es regulatorio: el
+  ensamblado contra el artículo no existe como producto.** → **Receta 23.**
+
+**Gap declarado:** ninguna búsqueda devolvió adopción de IA para legado **por país de EMEA**, ni
+cruce entre el **AI Act** y modernización. Las fuentes de modernización en EMEA fueron **blogs de
+vendor**; la única autoritativa del bloque es el DNB. **Se declara el hueco en vez de rellenarlo.**
+
 ### APAC
 
 > **Actualización del pase 10 (2026-11-23) — el mapa regulatorio, por país y con fechas.**
@@ -812,6 +902,36 @@ final, el marcado tiene que estar **en la arquitectura**, no en el manual.
 > ingeniería. Lo medido y citable de la región es **código** (los repos arriba) y **regulación**
 > (la tabla), no penetración de mercado. **Las cifras de adopción de APAC de pases anteriores no
 > fueron re-verificadas en este pase y deben tratarse como tales.**
+
+
+#### Pase 12 (2026-11-23) — el plano de legado: **la región donde el problema tiene fecha oficial**
+
+**APAC es, de las cuatro, la que tiene el caso de negocio más explícito y respaldado por un
+ministerio.**
+
+- **Japón — el "precipicio digital de 2025" (2025年の崖):** el informe de **METI** advierte que los
+  sistemas financieros envejecidos, **muchos en COBOL**, limitan cada vez más la capacidad de
+  innovar, y el riesgo es **de fuerza laboral**: los ingenieros COBOL se jubilan **más rápido** de
+  lo que los sistemas se modernizan. ⚠️ La cifra que circula —**hasta ¥12 billones (trillion) de
+  pérdidas económicas anuales a partir de 2026**— viene de **un blog secundario que cita a METI**,
+  no del informe: **se registra con la fuente marcada y no se cita como dato de METI.**
+- **El mercado se organizó para esto:** **FPT y SCSK** crearon la *joint venture* **COBOL PARK**,
+  enfocada en mainframe y COBOL del sector financiero, con el mercado estimado por las propias
+  empresas en **~¥500 000 millones**, y FPT declara que aplicará herramientas de IA dentro de la
+  JV. **Fujitsu** lanzó **Fujitsu Application Transform**, servicio de IA generativa que analiza
+  código fuente y **produce documentos de diseño**, ofrecido como SaaS en Japón.
+- **Lo que eso significa para competir ahí:** en Japón **la demanda está canalizada por JVs e
+  integradores locales con décadas de relación**, y el entregable que compran primero **no es el
+  código migrado: es la documentación del sistema que nadie entiende**. Coincide con lo que el
+  benchmark permite prometer (comprender y documentar sí; migrar, con reservas) y con la capa que
+  esta KB acaba de medir como abundante y permisiva.
+- **Y el hueco técnico:** `mainframe agent mcp stars:>=10` → **0**. Nadie expuso un mainframe por
+  MCP en abierto; Zowe (EPL-2.0) es la puerta y **el servidor MCP sobre Zowe no existe**.
+
+**Gap declarado:** **no se encontró ningún dato de India** sobre adopción de IA en modernización de
+legado, ni regulación APAC específica del plano, pese a que India es el mayor polo de servicios de
+mainframe del mundo. **Las búsquedas por región de este pase devolvieron Japón y nada más: eso es
+un hueco de cobertura, no evidencia de ausencia.**
 
 ### LATAM
 
@@ -1103,6 +1223,38 @@ cubren — no es un nice-to-have, es un requisito legal vigente.
 >    estrategia nacional de Brasil de 2022), no privados.
 > 3. **Nada nuevo sobre Chile, Argentina, Colombia ni Perú** en este pase. Lo de Latam-GPT/CENIA
 >    viene del ciclo 4 y **no fue re-verificado hoy.**
+
+
+#### Pase 12 (2026-11-23) — el plano de legado: **el único plano donde LATAM tiene el problema *y* el talento, y cero software abierto**
+
+- **Brasil, el núcleo:** fuentes de práctica citan la **Pesquisa FEBRABAN de Tecnologia Bancária
+  2026 (Deloitte + FEBRABAN)** para afirmar que **la modernización del core se volvió práctica
+  común** en el país en los últimos cinco años, empujada por **Pix, Open Finance y tiempo real**, y
+  que el patrón recomendado es **Strangler Fig**: el legado se mantiene como *ledger* mientras las
+  funciones nuevas van a la nube. **Inversión en tecnología de los bancos brasileños 2026: ~R$ 50,4
+  mil millones.** ⚠️ **Todo esto es de blogs de proveedores de core banking citando la encuesta;
+  no se pudo abrir la encuesta ni fuentes del Banco Central desde este entorno.**
+- **Caixa Econômica Federal y Banco do Brasil** aparecen listados con **core en mainframe COBOL en
+  producción**, sin anuncios oficiales de planes de migración. ⚠️ Fuente: sitios de carrera y
+  formación, **no comunicados institucionales**.
+- **El dato de talento, que es el que arma el caso:** la edad promedio de los programadores COBOL
+  activos en Brasil se reporta **por encima de 55 años**, con poca reposición universitaria.
+  ⚠️ Sin fuente primaria. **Pero la dirección coincide con el hallazgo de METI en Japón, medido por
+  dos caminos independientes: el riesgo no es el código, es quién lo entiende.**
+- **Contradicción registrada y NO resuelta:** una fuente dice que **~70%** de las transacciones
+  financieras del mundo pasan por COBOL; otra dice **90%**. **Ninguna cita el origen. No se usa
+  ninguna de las dos.** (El dato que sí tiene dueño es el de IBM, en la sección de North America.)
+- **El cero que define la oportunidad:** `cobol agente español stars:>=5` → **0**;
+  `legacy modernization portugues stars:>=1` → **0**; `cobol modernizacion stars:>=1` → **1**.
+  **Séptimo pase consecutivo con cero en español**, y esta vez el plano es el que más duele:
+  **el COBOL de la región está comentado y documentado en portugués y español, y el analista que
+  queda también habla en portugués y español.**
+
+**La oportunidad, en la forma en que la compra un banco de LATAM:** **cosecha de conocimiento antes
+de la jubilación** — convertir lo que saben tres personas que se van en grafo consultable y
+documentación verificable, **en el idioma del comentario del código**, antes de intentar cualquier
+migración. Es más barato que un rewrite, no compite con los integradores instalados y **produce el
+insumo que todo rewrite posterior necesita**. → **Receta 24.**
 
 ## Posicionamiento Globant
 

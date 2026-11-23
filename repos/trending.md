@@ -4,6 +4,105 @@ region: Global
 updated: 2026-11-23
 ---
 
+## 2026-11-23 — pase 12 (20:49 UTC): el substrato de comprensión que faltaba, y los compiladores con la licencia al revés
+
+**Séptimo pase del día.** `repos/foundations.md` tiene una **sección 🧠 nueva**: el plano de
+**comprensión de código legado**, que esta KB no tenía (`tree-sitter`, `joern`, `knowledge graph`,
+`COBOL`, `mainframe` = **0 menciones** antes de hoy).
+
+### Lo que estaba ausente pesa 325 000★
+
+| Repo | Licencia | ★ | Creado | Qué es |
+|---|---|---|---|---|
+| [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | **Apache-2.0** | **152 472** | 2026-04-03 | Repo + docs + esquemas SQL + configs + PDFs → grafo de conocimiento consultable, por **AST determinista con tree-sitter**. |
+| [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything) | **MIT** | **93 776** | 2026-03-15 | Código → grafo interactivo, consumible por Claude Code, Codex y Cursor. |
+| [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph) | **MIT** | **78 507** | 2026-01-18 | Grafo de código **local** para agentes. |
+| [vitali87/code-graph-rag](https://github.com/vitali87/code-graph-rag) | MIT | 5 402 | 2025-06-16 | RAG sobre grafo de código, activo hoy. |
+
+**Las cuatro nacieron en 2025-2026 y tres son de 2026.** Es una categoría de un año, ya en seis
+cifras, y **ninguna estaba listada acá**. Van **cuatro pases consecutivos** en que el mayor
+productor de ausencias es el **filtro de categoría**, no la falta de búsqueda.
+
+### El substrato determinista, que es viejo y chico a propósito
+
+[tree-sitter](https://github.com/tree-sitter/tree-sitter) (**27 554★ MIT**, desde 2013) y
+[joernio/joern](https://github.com/joernio/joern) (**3 663★ Apache-2.0**, desde 2019, *code
+property graph*) son **la capa que no alucina**: parsean. Todo lo de arriba los usa.
+**Asimetría social otra vez:** el grafo con LLM arriba tiene 152 472★; el CPG que lo hace
+verificable, 3 663★ — **42x**.
+
+Más la capa de memoria/consulta, **tres piezas Apache-2.0**:
+[mnemon](https://github.com/mnemon-dev/mnemon) (737★, activo hoy),
+[LinkedDataHub](https://github.com/AtomGraph/LinkedDataHub) (640★, desde 2017) y
+[octocode](https://github.com/Muvon/octocode) (530★).
+
+### ⚠️ La capa que de verdad toca COBOL tiene la licencia exactamente al revés de lo que busca Globant
+
+**Ninguna** es MIT ni Apache:
+
+| Repo | Licencia **leída del archivo** | ★ | Estado |
+|---|---|---|---|
+| [OCamlPro/gnucobol](https://github.com/OCamlPro/gnucobol) | **GPL-3.0 + LGPL-3.0 + GFDL** (tres archivos) | 72 | activo hoy |
+| [opensourcecobol/opensourcecobol4j](https://github.com/opensourcecobol/opensourcecobol4j) | **GPL-3.0** (`COPYING`, 35 147B) | 127 | activo 2026-11-17 |
+| [TypeCobolTeam/TypeCobol](https://github.com/TypeCobolTeam/TypeCobol) | **CeCILL-C** (derecho **francés**) | 86 | activo 2026-08-31 |
+| [uwol/proleap-cobol](https://github.com/uwol/proleap-cobol) | **AGPL-3.0** | 46 | **dormido desde 2024-03-24** |
+| [eclipse-che4z/che-che4z-lsp-for-cobol](https://github.com/eclipse-che4z/che-che4z-lsp-for-cobol) | **EPL-2.0** | 119 | activo 2026-11-19 |
+
+**Regla nueva, y es la séptima variante de trampa de esta KB: la API colapsa tres licencias en una,
+y elige la menos restrictiva.** GnuCOBOL (vía OCamlPro) trae en la raíz **`COPYING` = GPL-3.0**
+(35 149B), **`COPYING.LESSER` = LGPL-3.0** (7 652B) y **`COPYING.DOC` = GFDL** (22 964B). El campo
+`license` de la API dice **`LGPL-3.0` y nada más** — o sea **declara la del runtime y esconde la
+del compilador**. El pase 9 encontró que la API colapsa `LICENSE-APACHE`+`LICENSE-MIT` ocultando
+una opción *favorable*; acá oculta la *desfavorable*.
+
+**`TypeCobol` es el otro caso que ningún escáner clasifica:** la API dice `NOASSERTION` y el
+archivo es **CeCILL-C**, la licencia libre redactada por CEA, CNRS e INRIA, **con ley aplicable
+francesa** y obligación de publicar las modificaciones. Es copyleft débil tipo LGPL **y un
+artefacto jurídico específicamente de EMEA** — el primero que registra esta KB.
+
+### La capa de verificación del plano existe, es Apache-2.0 y **está archivada**
+
+[openmainframeproject/cobol-check](https://github.com/openmainframeproject/cobol-check) —
+**Apache-2.0, 107★, `archived: true`**, último push 2026-05-28. Es el framework de **pruebas
+unitarias de COBOL**: la pieza con la que se demuestra que el programa migrado hace lo mismo.
+**La capa que el benchmark señala como la más débil del plano (migrar) es la que tiene la
+herramienta de verificación archivada.** `cobol unit test stars:>=20` devuelve **2**; los
+sucesores son repos personales de **0–2★**.
+
+Benchmarks del plano, los tres verificados:
+[Factory-AI/legacy-bench](https://github.com/Factory-AI/legacy-bench) (21★, Apache-2.0 — ⚠️ el
+slug canónico lleva **mayúsculas**: `Factory-AI`, no `factory-ai`),
+[zorse-project/COBOLEval](https://github.com/zorse-project/COBOLEval) (45★ MIT, **dormido desde
+2024-05-09**) y [QuesmaOrg/CompileBench](https://github.com/QuesmaOrg/CompileBench) (62★ MIT,
+activo 2026-11-16). Corren sobre
+[laude-institute/harbor](https://github.com/laude-institute/harbor) (Apache-2.0), que es
+**falso negativo del índice de búsqueda** —`ls-remote` LIVE, `LICENSE` legible, `search` no lo
+devuelve— el mismo 2,4% que el pase 11 ya midió.
+
+### La brecha, medida con pisos explícitos
+
+| Consulta | Resultado | Lectura |
+|---|---|---|
+| `code knowledge graph stars:>=500` | **20** | el plano de **entender** está poblado |
+| `legacy code comprehension stars:>=100` | **0** | …pero no bajo ese nombre |
+| `mainframe modernization stars:>=100` | **2** | |
+| `legacy modernization agent stars:>=50` | **2** | |
+| `cobol java migration stars:>=50` | **0** | **la consulta literal del mercado: cero** |
+| `business rule extraction stars:>=50` | **0** | |
+| `cobol documentation generator stars:>=10` | **0** | |
+| `behavioral equivalence testing migration stars:>=50` | **0** | |
+| `differential testing migration stars:>=100` | **0** | |
+| `mainframe agent mcp stars:>=10` | **0** | |
+| `cobol agente español stars:>=5` | **0** | **séptimo pase consecutivo con cero en español** |
+| `legacy modernization portugues stars:>=1` | **0** | y el plano donde LATAM tiene el problema |
+
+**Hay 20 formas de entender el código y ninguna de probar que la migración preservó el
+comportamiento.** Es la **cuarta forma** de brecha que mide esta KB, y es la peor combinación
+posible: la categoría que los modelos hacen peor (migrar), con el modo de falla más silencioso
+(97% de los fallos se creen éxitos), **sin capa de verificación abierta** y con la única
+herramienta de test archivada. → Receta 22.
+
+---
 # 📈 Repos trending — Technology
 
 > **Archivo APPEND-ONLY.** Cada ciclo agrega una sección fechada arriba y conserva la historia

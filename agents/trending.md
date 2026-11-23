@@ -4,6 +4,111 @@ region: Global
 updated: 2026-11-23
 ---
 
+## 2026-11-23 — pase 12 (20:49 UTC): el plano de la **comprensión del código legado**
+
+**Séptimo pase del día.** El pase 11 barrió las 251 URLs de la KB y no encontró nada que
+reescribir. Este pase no re-mide eso: mide **el plano que esta KB nunca miró — el código que el
+cliente no escribió este siglo**. Búsqueda previa en el repo: `COBOL`, `mainframe`,
+`modernization`, `knowledge graph`, `tree-sitter`, `joern` → **cero menciones en los 9 archivos**.
+
+**El hallazgo es una asimetría, y es de dos órdenes de magnitud:**
+
+| Lo que se busca | Repo más grande | Estrellas |
+|---|---|---|
+| **Entender** el código legado | `Graphify-Labs/graphify` (Apache-2.0) | **152 472** |
+| **Migrar** el COBOL | `Azure-Samples/Legacy-Modernization-Agents` (MIT) | **234** |
+
+**651x.** Y el mercado va para el lado chico: modernización de aplicaciones **USD 27 460 M en
+2026** (Mordor), con **mainframe y mid-range = 43,64%** de esa cifra.
+
+### Agentes nuevos del plano: 6 filas, y ninguna llega a 250★ — eso *es* el dato
+
+| Agente | Licencia | ★ | Nota |
+|---|---|---|---|
+| [Azure-Samples/Legacy-Modernization-Agents](https://github.com/Azure-Samples/Legacy-Modernization-Agents) | MIT | 234 | COBOL→Java/C# multiagente. **El más grande del plano, y es un sample de vendor.** |
+| [aws-samples/sample-ai-modernization-flow](https://github.com/aws-samples/sample-ai-modernization-flow) | **MIT-0** | 15 | MIT sin atribución: la licencia más permisiva medida en esta KB. |
+| [mitkox/prime-rl-dotnet-legacy-modernization](https://github.com/mitkox/prime-rl-dotnet-legacy-modernization) | Apache-2.0 | 8 | RL sobre .NET legacy. |
+| [rh-ai-quickstart/agent-mesh-for-sw-modernization](https://github.com/rh-ai-quickstart/agent-mesh-for-sw-modernization) | MIT | 2 | Red Hat, activo hoy. |
+| [redhat-ai-americas/agent-mesh-code-understanding](https://github.com/redhat-ai-americas/agent-mesh-code-understanding) | MIT | 1 | |
+| [fabioalvesalmeida/cobol-modernization-agents](https://github.com/fabioalvesalmeida/cobol-modernization-agents) | Apache-2.0 | **0** | **El diseño correcto del plano** —cada regla de negocio citada a sus líneas fuente, revisión humana, equivalencia de comportamiento— con **0★ y un mes de vida**. |
+
+**Tres hyperscalers publicaron cada uno su sample y ninguno creció.** `Legacy-Modernization-Agents`
+devuelve **151 repos** con ese nombre: el mayor tiene 234★, el segundo **21★**, y **6 de los 20
+primeros tienen 0★**. **No es una categoría con competidores: es un sample con 150 copias.**
+
+### El dato que ordena el plano, y es de fuente primaria
+
+**Legacy-Bench** ([Factory-AI/legacy-bench](https://github.com/Factory-AI/legacy-bench),
+Apache-2.0, **21★**) — el benchmark que define el plano tiene 21 estrellas. Leído del README del
+repo, no de prensa:
+
+- Composición: **COBOL 46%**, Java 7 32%, BASIC 6%, C89 5%, Fortran 5%, Assembly 5%.
+- **16,9%–42,5%** de pass rate en 12 combinaciones modelo-agente. **Los mismos modelos superan
+  70% en SWE-bench Verified y Terminal-Bench 2.**
+- **Arreglar bugs ≈ 2x implementar ≈ 2x migrar.** **Migrar es la peor categoría de las tres** — y
+  es exactamente lo que el mercado de USD 27 460 M está comprando.
+- **En el 97% de los fallos, el agente cree que resolvió la tarea.**
+- De las 44 tareas que ningún modelo resuelve, **31 son COBOL**: *"los bugs de COBOL son
+  silenciosos — una salida incorrecta se ve correcta"*.
+
+⚠️ **Conflicto declarado y no resuelto:** `docs.factory.ai` **no resuelve desde este entorno**
+(fuera de la política de red de la sesión), así que la tabla por modelo —Droid+Opus 4.6 34,6%,
+Claude Code+Opus 4.6 33%, Droid+GLM-5 32,2% según los docs; Gemini-3.1-Pro 38,7% según el blog—
+**queda registrada como cifras en conflicto de segunda mano.** El rango 16,9–42,5% y el 97% **sí**
+salen del README del repo. Sólo **10 de cientos de tareas** son públicas: el benchmark es
+parcialmente abierto.
+
+### Cuatro trampas de licencia nuevas, y **dos son de familias que esta KB nunca había visto**
+
+- **`squid-protocol/gitgalaxy` (67★) — PolyForm Noncommercial License 1.0.0. No es open source.**
+  Y duele porque **es el único repo medido que une los dos planos**: convierte cualquier repo en
+  conocimiento (59 lenguajes, sin build ni compilador) **y sobre eso construye un traductor
+  CICS→Java que prueba cada programa portado contra el original**. Es la pieza mejor diseñada del
+  plano y **una consultora no la puede usar**. La API dice `NOASSERTION`: ningún badge avisa.
+- **`AxiomCodeAI/axiomcodegraph` (786★) — Functional Source License 1.1 (Apache 2.0 Future
+  License).** Prohíbe el *Competing Use* y recién a los dos años se convierte en Apache-2.0.
+  **Familia de licencia nueva para esta KB** (sexta variante de trampa). API: `NOASSERTION`.
+- **`scabench-org/hound` (838★) — la trampa inversa, y es nueva en el mundo: el `LICENSE.txt`
+  anuncia restricciones que después no escribe.** Línea 3: *"licensed under the Apache License,
+  Version 2.0, **with additional terms outlined below regarding commercial use**. By using this
+  software, you agree to these terms."* **Esos términos no existen en el archivo.** Las 11 186
+  bytes son Apache-2.0 canónica más el apéndice estándar; la palabra *commercial* aparece **dos
+  veces**: en ese encabezado y en el boilerplate de limitación de responsabilidad (línea 169).
+  **No se declara Apache-2.0 ni restringido: se declara irresoluble desde el archivo y se pregunta
+  al autor.**
+- **`harshkedia177/axon` (821★) — sin archivo de licencia en ninguna ubicación estándar, en
+  `main` ni en `master`.** 821★ y legalmente inutilizable por omisión.
+
+**Más un cadáver con etiqueta de vivo:** `NeuralInverse/neuralinverse` (220★, Apache-2.0,
+`pushed_at` 2026-10-19 — **no archivado**) abre su README con *"Development of Neural Inverse OSS
+has stopped"*, y aclara que **Build y Govern son productos comerciales que no se construyen con
+este código**. **`archived: false` no significa vivo.**
+
+### Dos colisiones de keyword que un pipeline compilaría como hallazgos
+
+- **`platinum-hill/cobolt` (228★)** aparece en `cobol llm stars:>=10`. **No tiene nada que ver con
+  COBOL**: es una app de escritorio de LLM local con MCP. El nombre es un juego con *cobalt*.
+- **`sentrux/sentrux` (3 344★)** aparece en `cobol stars:>=500` y es un sensor de calidad de
+  código con MCP.
+
+**Y el aviso de método más útil del pase: ordenar `cobol` por estrellas devuelve novedades y
+cursos, no herramientas.** Los cinco repos con `cobol` y ≥500★ son: un curso
+([cobol-programming-course](https://github.com/openmainframeproject/cobol-programming-course),
+3 673★, **CC-BY-4.0 — licencia de contenido, no de software**), **un servidor de Minecraft escrito
+en COBOL** ([meyfa/CobolCraft](https://github.com/meyfa/CobolCraft), 706★ MIT), un framework web en
+COBOL ([azac/cobol-on-wheelchair](https://github.com/azac/cobol-on-wheelchair), 1 033★ MIT, sin
+push desde 2024-08-10), un wrapper de Node dormido desde 2025-02-13
+([IonicaBizau/node-cobol](https://github.com/IonicaBizau/node-cobol), 727★) y la colisión
+`sentrux`. **Cero herramientas de modernización en el top-5 por estrellas.**
+
+### Verificación de este pase
+
+**43 repos nuevos, 43 vivos por `git ls-remote`** (control corrido: slug falso → `ec=128`), cada
+licencia **leída del archivo** en `main` **y** `master`, y **cuando el repo trae tres archivos de
+licencia, los tres**. `arxiv.org` y `docs.factory.ai` **no resuelven en este entorno** y lo que
+venía de ahí queda marcado como no verificado.
+
+---
 # 📈 Agentes trending — Technology
 
 > **Archivo APPEND-ONLY.** Cada ciclo agrega una sección fechada arriba y conserva la historia
