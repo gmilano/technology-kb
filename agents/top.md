@@ -26,6 +26,22 @@ updated: 2026-11-23
 > **No se agregaron filas acá: no se encontraron agentes nuevos en el eje de costo, y padear la
 > tabla sería peor que dejarla como está.**
 
+> **Nota del pase 8 (2026-11-23, tercer pase del día):** tampoco se re-midió este archivo, por la
+> misma razón, **pero sí se controlaron los 5 repos más grandes para descartar una muerte o un
+> archivado silencioso: cinco de cinco vivos, MIT, sin archivar y creciendo** (`rea` 475 232,
+> `openclaw` 395 088, `superpowers` 324 811, `hermes-agent` 265 607, `orca` 134 179). El detalle
+> está en [`agents/trending.md`](./trending.md).
+>
+> El pase 8 midió el plano de **contexto** —cómo entra el material del cliente: parsers, OCR,
+> crawlers, pipelines de RAG y evaluación de recuperación— y encontró **30 repos con 1 216 377★
+> combinadas que esta KB nunca había listado**, la ausencia más grande de su historia. **Ninguno
+> es un agente**, y eso es el hallazgo: `document ingestion agent stars:>=1000` devuelve **0**.
+> Todo el plano es pasivo —parsea, chunkea, indexa— y **nada decide qué ingerir ni qué re-parsear**.
+> Es la misma forma de brecha que el pase 7 midió en costo. Las 30 filas viven en
+> [`repos/foundations.md`](../repos/foundations.md), sección 📥. **Cero filas nuevas acá, y siguen
+> siendo 32: no hay agentes en este eje y disfrazar librerías de parsing de agentes sería mentir
+> sobre la forma del ecosistema.**
+
 ## Harnesses y agentes de codificación
 
 | Nombre | Repo | Licencia | Stars | Último push | Descripción |

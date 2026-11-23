@@ -7,11 +7,18 @@ updated: 2026-11-23
 # 🏗️ Repos fundacionales — Technology
 
 > Bases sobre las cuales construir: inferencia, acceso a modelos, protocolo, memoria, vectores,
-> orquestación durable, evaluación/observabilidad, aislamiento/política/identidad y —**nuevo en
-> este pase**— **costo: reducción de tokens, gateway, caché y atribución**. Los agentes se montan
-> arriba. **69 filas, 68 repos distintos** (`litellm` aparece dos veces a propósito: una por
+> orquestación durable, evaluación/observabilidad, aislamiento/política/identidad, costo y
+> —**nuevo en este pase**— **contexto: cómo entra el material del cliente**. Los agentes se montan
+> arriba. **99 filas, 98 repos distintos** (`litellm` aparece dos veces a propósito: una por
 > neutralidad de proveedor, otra por tope de gasto). Licencias leídas del archivo, en la rama
-> correcta — y desde este pase, **también en los subdirectorios**.
+> correcta, **también en los subdirectorios** y —desde este pase— **también las de los pesos del
+> modelo, que son otra licencia y no están en ningún campo de la API**.
+>
+> **Lo que agrega el pase 8:** el plano de **contexto** (sección 📥), con **30 filas nuevas y
+> 1 216 377★ combinadas que esta KB nunca había listado** — la ausencia más grande de su historia.
+> Incluye la trampa de licencia más difícil de detectar medida hasta ahora: `marker` y `surya` son
+> Apache-2.0 **de verdad** en el código y **requieren licencia paga** para los pesos, que son lo
+> que efectivamente corre.
 >
 > **Lo que agrega el pase 7:** el plano de **costo**, con 28 filas nuevas. La tendencia 1 de esta
 > KB afirma desde el pase 2 que la competencia se movió al costo, y durante cinco pases no tuvo
@@ -263,6 +270,133 @@ cachear no.**
 | [Han-1413141/dsh-cost-meter](https://github.com/Han-1413141/dsh-cost-meter) | **MIT** (1083B, rama `master`) | 751 | 2026-11-23 | Costo por sesión y modelo, uso de tokens, presupuestos y **cuotas de plan de coding** para DeepSeek Harness. UI bilingüe EN/中文. Creado 2026-08-13. **Señal regional: ver APAC** |
 | [FinOps-Open-Cost-and-Usage-Spec/FOCUS_Spec](https://github.com/FinOps-Open-Cost-and-Usage-Spec/FOCUS_Spec) | ⚠️ **CC-BY-4.0 — licencia de documento, NO de software** | 332 | 2026-11-23 | El vocabulario estándar de costo (Joint Development Foundation). **No es código: no se "adopta", se implementa.** La licencia vive en `license.md` minúscula y la rama por defecto es `working_draft`, no `main` ni `master` |
 
+## 📥 Contexto: del documento del cliente al agente — **sección nueva (pase 8)**
+
+> **Por qué existe esta sección.** Esta KB pasó siete pases midiendo **con qué** construir un
+> agente, **cómo evaluarlo**, **cómo encerrarlo** y **cuánto cuesta**. Nunca midió **cómo entra
+> el material del cliente**. Y todo engagement empieza igual: una carpeta de PDFs, un Confluence
+> viejo, contratos escaneados, un ERP con 15 años de adjuntos.
+>
+> La medición de este pase: **30 repos, 1 216 377★ combinadas, cero de ellos listados en esta KB
+> antes de hoy.** Es la ausencia más grande registrada en esta KB — el pase 6 encontró 4 agentes
+> y el pase 7 unos 380 000★. De esas 30, **21 son MIT o Apache-2.0 (806 539★)**, así que el
+> problema no era que no hubiera material permisivo: era que nadie había mirado el plano.
+>
+> **Dos señales regionales independientes apuntan acá**, y no al modelo: en APAC, 49% de las
+> empresas declara que su barrera principal es infraestructura de datos insuficiente en tiempo
+> real (Confluent); en EMEA, el estudio de Veeam describe organizaciones desplegando IA rápido
+> y **perdiendo visibilidad sobre el dato que está por debajo**. Cuando el cliente dice que "la
+> IA no funciona", lo que suele estar roto es esta capa, no el agente.
+
+### Capa 1 — Documento → texto estructurado (lo que el agente va a leer)
+
+| Repo | Licencia | Stars | Último push | Por qué importa | ¿Base para AI? |
+|------|----------|-------|-------------|-----------------|----------------|
+| [microsoft/markitdown](https://github.com/microsoft/markitdown) | MIT | 198043 | 2026-11-07 | Convierte Office, PDF, HTML, audio e imágenes a Markdown. **El más grande del plano y el más simple: no trae pesos de modelo**, así que no tiene el problema de licencia de los demás. Es el default para formatos nativos. | Sí — y es el único sin letra chica |
+| [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) | Apache-2.0 | 93073 | 2026-09-16 | OCR multi-idioma maduro, el más usado del mundo chino. Push a 2 meses: activo pero no frenético. | Sí — la referencia de OCR cuando el documento está escaneado |
+| [opendatalab/MinerU](https://github.com/opendatalab/MinerU) | **Apache-2.0 + términos adicionales** | 84208 | 2026-11-22 | Fuerte en papers y tablas complejas. **Leído del archivo (`LICENSE.md`): Apache-2.0 más (1) licencia comercial obligatoria si se superan 100M de MAU **o** USD 20M de ingreso *mensual*, (2) **obligación de atribución visible** si se ofrece un servicio online basado en MinerU, y (3) **terminación automática** si (1) o (2) no se cumplen, sin aviso previo.** Dejó AGPL-3.0 en la 3.1.0. | Sí — los umbrales no molestan a casi nadie, **la atribución visible sí es una obligación de entregable** |
+| [docling-project/docling](https://github.com/docling-project/docling) | MIT | 70923 | 2026-11-23 | De IBM. **El mejor en tablas** según las comparaciones de 2026, corre en CPU (importa para air-gapped y para EMEA soberano) y es **el más lento**. Su README avisa: *"for individual model usage, please refer to the model licenses found in the original packages"* — **el código es MIT, los modelos que invoca no son su licencia.** | Sí — el default para air-gapped y CPU, verificando el pack de modelos aparte |
+| [datalab-to/marker](https://github.com/datalab-to/marker) | **Apache-2.0 (código) / OpenRAIL-M modificada (pesos)** | 41032 | 2026-11-20 | Rápido y el mejor en matemática y figuras, con GPU. **Ver la trampa de abajo: la API de GitHub dice `Apache-2.0` y es verdad, y al mismo tiempo no se puede usar comercialmente sin pagar.** | **Con reserva** — sólo si el cliente está bajo el umbral o paga los pesos |
+| [datalab-to/surya](https://github.com/datalab-to/surya) | **Apache-2.0 (código) / OpenRAIL-M modificada (pesos)** | 21615 | 2026-11-13 | El motor de OCR y layout que usa Marker, del mismo equipo. **Misma estructura de licencia, mismo umbral de USD 5M.** | **Con reserva** — ídem Marker |
+| [allenai/olmocr](https://github.com/allenai/olmocr) | Apache-2.0 | 19842 | **2026-03-25** | De Ai2. **La licencia más limpia del plano: Apache-2.0 sin términos adicionales ni pesos restringidos**, y trae su propio benchmark (olmOCR-bench). **Pero lleva 8 meses sin push.** | **Sí con aviso** — es la salida limpia de licencia y está dormido; fijar versión |
+| [Unstructured-IO/unstructured](https://github.com/Unstructured-IO/unstructured) | Apache-2.0 | 15775 | 2026-11-19 | Preprocesamiento de 20+ tipos de archivo hacia JSON, con conectores. Menos estrellas que el resto y más integrado a pipelines. | Sí — cuando el problema es la variedad de formatos, no la fidelidad |
+| [axa-group/Parsr](https://github.com/axa-group/Parsr) | Apache-2.0 | 6174 | **2026-03-20** | De AXA. Pipeline configurable documento→JSON, pensado para seguros y back-office. **8 meses sin push**: útil como referencia de arquitectura, no como base viva. | **Con reserva** — ritmo bajo |
+
+### ⚠️ Trampa nueva del pase: **la licencia del código no es la licencia que corre**
+
+El pase 7 cambió la regla de esta KB a *"leer la licencia de la raíz no alcanza, hay que mirar los
+subdirectorios"* por el caso `rtk`. Este pase encuentra una **tercera forma**, y es peor porque
+**no hay ningún archivo mal puesto que delate el problema**:
+
+`datalab-to/marker` y `datalab-to/surya` tienen `LICENSE` de raíz **Apache-2.0 real y completo**
+(leído, 200 OK). La API de GitHub reporta `Apache-2.0`. Un escáner de licencias automático —el que
+va a correr el cliente— los aprueba. Y el README dice, en una sola línea:
+
+> *"Our code is licensed under **Apache 2.0** (…). Our model weights use a modified AI Pubs Open
+> Rail-M license (**free for research, personal use, and startups under $5M funding/revenue**).
+> For commercial use of the model weights beyond that, visit our pricing page."*
+
+**Lo que se ejecuta en producción son los pesos.** El código Apache-2.0 sin los pesos no parsea
+nada. Así que el repo es, a la vez, genuinamente Apache-2.0 **y** genuinamente no utilizable
+comercialmente sin pagar. Los dos badges del README lo dicen explícitamente y por separado —
+`Code License: Apache-2.0` y `Model License: OpenRAIL-M`— y **ningún campo de la API refleja el
+segundo**.
+
+**Regla nueva de esta KB, y aplica a todo el plano:** *para cualquier repo que traiga o descargue
+pesos de modelo, la licencia del código no es la licencia que importa. Hay que buscar la licencia
+de los pesos, que vive en el README, en la model card de Hugging Face o en una página de pricing
+— nunca en el campo `license` de la API.* Las tres formas medidas hasta ahora:
+
+| Forma | Caso medido | Cómo se detecta |
+|-------|-------------|-----------------|
+| Licencia en subdirectorio | `rtk` (pase 7): raíz Apache-2.0, `engine/` y `proxy/` **BUSL-1.1** | Listar licencias por subdirectorio |
+| Doble licencia código/pesos | `marker`, `surya` (pase 8): Apache-2.0 + **OpenRAIL-M, umbral USD 5M** | Leer la sección de licencia del README y los badges |
+| Permisiva + términos adicionales | `MinerU` (pase 8): Apache-2.0 + umbrales + **atribución visible** + terminación automática | Leer el `LICENSE.md` completo, no el SPDX |
+| Delegación hacia arriba | `docling` (pase 8): MIT que **remite** a la licencia de cada modelo | Buscar la frase de remisión en el README |
+
+### Capa 2 — Web → texto (cuando la fuente no es un archivo)
+
+| Repo | Licencia | Stars | Último push | Por qué importa | ¿Base para AI? |
+|------|----------|-------|-------------|-----------------|----------------|
+| [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) | **AGPL-3.0** | 207629 | 2026-11-23 | **El repo más grande de todo el plano de contexto** y el estándar de facto para convertir sitios en texto para LLM. **AGPL-3.0: para una consultora que entrega software al cliente, es la licencia que hay que escalar a legales antes de prometerla**, no después. Hay servicio gestionado propio si el cliente prefiere no autohospedar. | **Con reserva** — técnicamente el mejor, legalmente el más caro de explicar |
+| [firecrawl/pdf-inspector](https://github.com/firecrawl/pdf-inspector) | **MIT** | 20098 | 2026-11-21 | **Hallazgo del pase: la misma organización publica esto bajo MIT.** Inspección y extracción de PDF sin el copyleft del repo principal. **La salida limpia dentro de la misma casa.** | Sí — y es el ejemplo de que conviene mirar la org entera, no sólo el repo estrella |
+| [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai) | Apache-2.0 | 87718 | 2026-11-23 | Crawler pensado para alimentar LLMs, con extracción estructurada y chunking. **Apache-2.0 y 87 718★: es la alternativa permisiva real a Firecrawl**, no un sustituto de juguete. | Sí — **el default recomendado de esta capa** por licencia y tracción |
+| [adbar/trafilatura](https://github.com/adbar/trafilatura) | Apache-2.0 | 7164 | 2026-11-22 | Extracción de texto principal, metadatos y comentarios. Académico, muy preciso en boilerplate, sin modelo. Liviano y barato. | Sí — como capa de limpieza antes de tokenizar |
+
+### Capa 3 — Pipeline y grafo de conocimiento
+
+| Repo | Licencia | Stars | Último push | Por qué importa | ¿Base para AI? |
+|------|----------|-------|-------------|-----------------|----------------|
+| [infiniflow/ragflow](https://github.com/infiniflow/ragflow) | Apache-2.0 | 94593 | 2026-11-23 | Motor RAG completo y **desplegable como plataforma**, con parsing profundo propio, UI de citas y gestión de knowledge base. Es "el Odoo de esta capa": se instala y se customiza. Ver `verticals/solutions.md`. | Sí — el punto de partida más rápido para un PoC que el cliente pueda ver |
+| [HKUDS/LightRAG](https://github.com/HKUDS/LightRAG) | MIT | 40834 | 2026-11-23 | RAG con grafo, más liviano y más barato de indexar que GraphRAG. MIT puro. | Sí |
+| [microsoft/graphrag](https://github.com/microsoft/graphrag) | MIT | 36727 | 2026-11-23 | La implementación de referencia de RAG sobre grafo de conocimiento. Indexar es **caro en tokens** — cruzar con el plano de costo del pase 7 antes de proponerlo. | Sí — con el costo de indexación cotizado aparte |
+| [topoteretes/cognee](https://github.com/topoteretes/cognee) | Apache-2.0 | 33509 | 2026-11-23 | Memoria y grafo para agentes: ECL (extract-cognify-load) en lugar de ETL. Complementa `mem0` (ya listado) por el lado del dato estructurado. | Sí |
+| [deepset-ai/haystack](https://github.com/deepset-ai/haystack) | Apache-2.0 | 27084 | 2026-11-23 | El framework de pipelines de búsqueda más viejo y estable del lote, de una empresa **alemana** — argumento concreto en EMEA cuando el procurement pregunta por proveedores europeos. | Sí — y es la pieza con mejor historia de soporte en EMEA |
+| [feyninc/chonkie](https://github.com/feyninc/chonkie) | MIT | 4854 | 2026-11-19 | Librería de chunking dedicada. Chico pero es la pieza que **nadie mide y todos improvisan**, y el chunking define a la vez la calidad de recuperación y el gasto de tokens. **Slug canónico corregido: `feyninc/chonkie`, no `chonkie-inc/chonkie`.** | Sí — pequeño y de alto apalancamiento |
+| [SciPhi-AI/R2R](https://github.com/SciPhi-AI/R2R) | MIT | 8107 | **2025-11-07** | RAG con API REST. **Más de 12 meses sin push: dormido.** Se registra para que no se proponga por su reputación de 2025. | **No** — dormido |
+| [morphik-org/morphik-core](https://github.com/morphik-org/morphik-core) | **BUSL-1.1** | 3721 | 2026-11-22 | RAG multimodal sobre documentos visuales. **Leído del archivo: BUSL-1.1, Change Date 2029-06-18, y el Additional Use Grant sólo permite uso en producción si el ingreso bruto atribuible es menor a USD 2 000 *por mes*.** Es el umbral más bajo medido en esta KB. | **No para entrega** — el techo de USD 2 000/mes excluye cualquier engagement real |
+
+### Capa 4 — Medir si la recuperación sirve (la capa que cierra el lazo)
+
+> Sin esta capa, "mejoramos el RAG" es una opinión. El pase 7 cerró con la tendencia 20 —*el
+> ahorro sin eval de calidad es una hipótesis*— y esta capa es su contraparte del lado del dato.
+
+| Repo | Licencia | Stars | Último push | Por qué importa | ¿Base para AI? |
+|------|----------|-------|-------------|-----------------|----------------|
+| [vibrantlabsai/ragas](https://github.com/vibrantlabsai/ragas) | Apache-2.0 | 16406 | 2026-11-14 | La librería canónica de evaluación de RAG: faithfulness, relevancia de contexto, recall. **Slug canónico corregido: `vibrantlabsai/ragas`. `explodinggradients/ragas` ya no es buscable en el índice de GitHub** (ver nota de método abajo). | Sí — es el numerito que convierte "mejoró" en dato |
+| [embeddings-benchmark/mteb](https://github.com/embeddings-benchmark/mteb) | Apache-2.0 | 3521 | 2026-11-23 | El benchmark de embeddings. **Clave en LATAM: permite medir en español y portugués en vez de heredar el ranking global** — ver `intel/market.md` → LATAM. | Sí — y es la herramienta que evita el error de embedding más caro de la región |
+| [modelscope/evalscope](https://github.com/modelscope/evalscope) | Apache-2.0 | 3724 | 2026-11-23 | Framework de evaluación de ModelScope (Alibaba). **Señal APAC: la rama china de este plano también es propia, no un puerto** — igual que lo medido en el plano de costo del pase 7. | Sí — en engagements APAC |
+
+### Capa 5 — Conectores: mover el dato hasta ahí
+
+| Repo | Licencia | Stars | Último push | Por qué importa | ¿Base para AI? |
+|------|----------|-------|-------------|-----------------|----------------|
+| [airbytehq/airbyte](https://github.com/airbytehq/airbyte) | **Elastic License 2.0** | 22435 | 2026-11-23 | ~600 conectores hacia donde vive el dato del cliente. **Leído del archivo: ELv2 — *"You may not provide the software to third parties as a hosted or managed service"*. Es exactamente el modelo de negocio de una consultora que opera la plataforma para el cliente.** Misma forma que el hallazgo `rtk` del pase 7. | **No para oferta gestionada** — sí para que el cliente lo opere él mismo |
+| [dlt-hub/dlt](https://github.com/dlt-hub/dlt) | Apache-2.0 | 6125 | 2026-11-23 | Librería de carga de datos en Python, declarativa. **La salida limpia de ELv2 en esta capa**: menos conectores llave en mano, licencia sin restricción de servicio gestionado. | Sí — **el default recomendado** cuando Globant opera la plataforma |
+
+### Muertos y copyleft de este plano — medidos, para no proponerlos
+
+| Repo | Licencia | Stars | Último push | Lectura |
+|------|----------|-------|-------------|---------|
+| [pymupdf/PyMuPDF](https://github.com/pymupdf/PyMuPDF) | **AGPL-3.0** | 11183 | 2026-11-23 | **Vivo y es la trampa transitiva del plano**: es la dependencia de PDF más usada y es AGPL-3.0. Aparece *por debajo* de otras librerías, así que hay que buscarlo en el árbol de dependencias, no en el repo que se eligió. Hay licencia comercial de Artifex |
+| [getomni-ai/zerox](https://github.com/getomni-ai/zerox) | MIT | 12245 | **2025-05-20** | **18 meses sin push.** Muy citado en listados de 2025 por su enfoque "OCR con visión". Muerto |
+| [opendatalab/PDF-Extract-Kit](https://github.com/opendatalab/PDF-Extract-Kit) | **AGPL-3.0** | 10081 | **2025-01-03** | **23 meses sin push** y AGPL-3.0. Del mismo grupo que MinerU, que es el proyecto que siguió vivo. Si un listado lo recomienda, el listado es viejo |
+| [adithya-s-k/omniparse](https://github.com/adithya-s-k/omniparse) | **GPL-3.0** | 7934 | **2025-12-12** | GPL-3.0 y ~11 meses sin push. Nombre muy parecido a otras cosas vivas: verificar el slug antes de citarlo |
+
+### Nota de método del pase: **`ls-remote` no verifica el slug canónico**
+
+Tres repos de este plano cambiaron de organización: `mendableai/firecrawl` → `firecrawl/firecrawl`,
+`explodinggradients/ragas` → `vibrantlabsai/ragas`, `chonkie-inc/chonkie` → `feyninc/chonkie`.
+
+**Los tres slugs viejos siguen respondiendo `LIVE` a `git ls-remote`**, porque GitHub mantiene los
+redirects de los renombres para no romper clones. Pero los tres **devuelven 422 "no existe o no
+tenés permiso" en el índice de búsqueda**, que es el que refleja el nombre actual.
+
+**Consecuencia para esta KB:** la verificación por `ls-remote` prueba que una URL *funciona*, no
+que sea la *canónica*. Un slug viejo escrito en una propuesta funciona hoy y envejece mal. **Para
+canonicalidad hay que cruzar con `search/repositories`** — y por eso los redirects no se registran
+como "muertes" ni como "hallazgos nuevos", sino como correcciones de slug.
+
 ## Brechas medidas, no silenciadas
 
 Consultas corridas sobre `search/repositories` el **2026-11-23**.
@@ -279,6 +413,13 @@ Una brecha informada es información; el silencio parece cobertura.
 | `llm cost budget stars:>=150` | **2** | `Han-1413141/dsh-cost-meter` (751★) y `ravikiranvm/aws-finops-mcp-server` (184★, **sin push desde 2025-06-11**). **Un falso cero por consulta larga:** el plano de costo existe y es enorme, pero no se autodescribe con esas palabras. Las consultas cortas lo devolvieron completo |
 | `token counting stars:>=300` | **4** | De los cuatro, `simonw/ttok` (411★) es el único que cuenta tokens como propósito; `code2prompt` (7769★) y `prompt-tower` (395★, **AGPL-3.0**) son empaquetadores de contexto y `claude-counter` (2512★) **no tiene push desde 2026-03-21**. **Contar tokens es una función, no un producto** |
 | Tope de gasto duro como repo propio | **ninguno con tracción** | La prensa técnica cita tres proyectos de tope duro de presupuesto: `ytp101/kilovolt` (**2★**, `NOASSERTION`), `llm0ai/llm0` (**7★**, MIT) y un "Tollgate" cuyo slug **no existe** en GitHub. **El tope de gasto duro no es un producto open source: es una feature que vive dentro de litellm, bifrost y new-api.** Cuarta confirmación de la tendencia 12 |
+| `document ingestion agent stars:>=1000` | **0** | **Nuevo (pase 8).** El plano de contexto es **todo infraestructura pasiva: parsea, chunkea, indexa. Ningún agente decide qué ingerir, qué re-parsear cuando el parser mejora, ni qué documento quedó mal extraído.** Es la misma forma de brecha que el pase 7 encontró en costo (nada decide "esta tarea no vale lo que cuesta") y **es el lugar natural de un agente propio** |
+| `extraccion documentos IA stars:>=20` | **0** | **Nuevo (pase 8).** Quinto pase consecutivo en que una consulta en español sobre este vertical devuelve cero. **El plano de contexto tampoco habla español**, y es el plano donde el idioma del documento es justamente el problema |
+| `parser documentos español stars:>=10` | **0** | **Nuevo (pase 8).** Ídem con piso 10★ |
+| `OCR español stars:>=50` | **0** | **Nuevo (pase 8).** Cero herramientas de OCR que se autodescriban en español con ≥50★, en una región donde el documento a digitalizar está en español o portugués |
+| `pdf extraction stars:>=5000` | **4, uno vivo y permisivo** | **Nuevo (pase 8).** `zerox` (MIT, **muerto 18 meses**), `PDF-Extract-Kit` (**AGPL-3.0, muerto 23 meses**), `Parsr` (Apache-2.0, 8 meses sin push) y `firecrawl/pdf-inspector` (MIT, vivo). **La categoría buscada por su nombre obvio está casi toda muerta o copyleft; el trabajo vivo y permisivo vive bajo otras palabras** (`docling`, `markitdown`, `marker`) |
+| `RAG evaluation retrieval quality stars:>=500` | **0 — falso cero** | **Nuevo (pase 8).** La consulta corta `ragas` devuelve `vibrantlabsai/ragas` con 16 406★ y Apache-2.0. **Segunda confirmación de la lección de método del pase 7: las consultas largas y descriptivas producen ceros falsos.** Se registra el falso cero junto con su corrección para que la lección quede en el archivo, no en la memoria del pase |
+| Licencia de pesos en algún campo de la API | **ninguno** | **Nuevo (pase 8).** `marker` y `surya` reportan `Apache-2.0` en `license.spdx_id` y sus pesos son OpenRAIL-M con umbral de USD 5M. **No existe campo de API que exponga la licencia de los pesos**, así que ningún escáner automático de licencias —el que va a correr el cliente— la va a ver |
 | Columnas de IA en el estándar FOCUS | **abiertas, no liberadas** | Identidad de modelo y consumo de tokens (#2018), tokens cacheados vs no cacheados (#2099) y tiers de procesamiento (#2437) siguen siendo **issues abiertos**; el PR de AI Model Billing (#2605) sigue abierto. **El vocabulario estándar para facturar tokens todavía no existe en una versión liberada** — se registra como brecha del *estándar*, no de los repos |
 
 ---

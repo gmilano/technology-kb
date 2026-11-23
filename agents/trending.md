@@ -11,6 +11,62 @@ updated: 2026-11-23
 > Este archivo sigue **agentes y skills**. Para infraestructura ver `repos/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 8 *(tercer pase del día; pase 6 a las 14:58 UTC, pase 7 a las 15:56 UTC)*
+
+### Hallazgo del pase: **el plano de contexto no tiene agente, y es medible**
+
+El pase 8 midió **cómo entra el material del cliente** al agente: parsers de documento, OCR,
+crawlers, pipelines de RAG y evaluación de recuperación. **30 repos, 1 216 377★ combinadas, cero
+listados en esta KB antes de hoy** — la ausencia más grande de su historia. Viven en
+[`repos/foundations.md`](../repos/foundations.md), sección 📥, porque **son infraestructura, no
+agentes**. Y eso es exactamente el hallazgo:
+
+| Búsqueda | Resultado | Lectura |
+|----------|-----------|---------|
+| `document ingestion agent stars:>=1000` | **0** | **Todo el plano es pasivo.** Parsea, chunkea, indexa, mide. **Nada decide qué ingerir, qué re-parsear cuando el parser mejora, ni qué documento quedó mal extraído y hay que reprocesar** |
+| Agente que elija parser según el documento | **ninguno con tracción** | Las comparaciones de 2026 coinciden en que **ningún parser gana en todo** (docling en tablas, marker en matemática y figuras, MinerU en papers). Elegir por documento es una decisión que hoy toma una persona a mano |
+| Agente que detecte degradación de recuperación | **ninguno con tracción** | `ragas` y `mteb` dan la métrica; **nadie la vigila en el tiempo y actúa** |
+
+**Las tres son la misma brecha y es la misma forma que el pase 7 encontró en costo** (nada decide
+"esta tarea no vale lo que cuesta"). Dos planos consecutivos, medidos de forma independiente,
+devuelven la misma respuesta: **la infraestructura abierta es rica y pasiva; el agente que decide
+sobre ella no existe.** Ahí es donde una consultora construye IP y no commodity. La receta 13 de
+[`compose/patterns.md`](../compose/patterns.md) la implementa con piezas permisivas.
+
+### Cero filas nuevas en `agents/top.md`, dicho explícitamente
+
+**No se agregaron agentes este pase, porque no se encontró ninguno en este eje.** Las 32 filas
+siguen siendo 32. Padear la tabla con librerías de parsing disfrazadas de agentes sería mentir
+sobre la forma del ecosistema, que es justamente el hallazgo.
+
+### Sin re-medición completa — con control de daños
+
+Las 32 filas se midieron a las **14:58 UTC de hoy** (pase 6). Volver a medirlas en el mismo día
+produce ruido, no serie, igual que decidió el pase 7. **Pero sí se hizo un control de los 5 repos
+más grandes** para descartar una muerte o un archivado silencioso:
+
+| Repo | Stars (pase 6) | Stars (ahora) | Licencia | Archivado |
+|------|----------------|---------------|----------|-----------|
+| `morluto/rea` | 471850 | **475232** | MIT | no |
+| `openclaw/openclaw` | 394941 | **395088** | MIT | no |
+| `obra/superpowers` | 323012 | **324811** | MIT | no |
+| `NousResearch/hermes-agent` | 265593 | **265607** | MIT | no |
+| `stablyai/orca` | 134037 | **134179** | MIT | no |
+
+**Cinco de cinco vivos, MIT, sin archivar y creciendo.** Próxima re-verificación completa: el pase
+que siga a technology en la rotación.
+
+### Dónde quedó cada cosa de este pase
+
+- **Las 30 filas nuevas** → [`repos/foundations.md`](../repos/foundations.md), sección 📥 contexto.
+- **La trampa de licencia de pesos** (`marker`/`surya`: Apache-2.0 en código, OpenRAIL-M con umbral
+  de USD 5M en pesos) → `repos/foundations.md` y [`repos/trending.md`](../repos/trending.md).
+- **El dato de embeddings de LATAM** (un modelo 3.º global y 49.º en portugués de Brasil) →
+  [`intel/market.md`](../intel/market.md) → LATAM.
+- **Las recetas 12 y 13** → [`compose/patterns.md`](../compose/patterns.md).
+
+---
+
 ## 2026-11-23 — pase 7 *(segundo pase del día; el pase 6 cerró a las 14:58 UTC)*
 
 **Qué se midió:** el eje de **costo** aplicado a agentes y skills. El pase 6 cerró hace una hora

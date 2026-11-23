@@ -12,6 +12,99 @@ updated: 2026-11-23
 > agentes y skills ver `agents/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 8 *(tercer pase del día; el pase 6 cerró 14:58 UTC y el pase 7 15:56 UTC)*
+
+**Línea base nueva: el plano de contexto — cómo entra el material del cliente.**
+**30 repos, 1 216 377★ combinadas, cero listados en esta KB antes de hoy.** Es la ausencia más
+grande registrada: el pase 6 encontró 4 agentes grandes, el pase 7 unos 380 000★ en costo.
+
+### Los seis que la KB no tenía y pesan más de 70 000★ cada uno
+
+| Repo | Licencia | Stars | Último push | Qué es |
+|------|----------|-------|-------------|--------|
+| [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) | **AGPL-3.0** | 207629 | 2026-11-23 | Sitio → texto para LLM. El más grande del plano **y copyleft de red** |
+| [microsoft/markitdown](https://github.com/microsoft/markitdown) | MIT | 198043 | 2026-11-07 | Cualquier formato → Markdown. **Sin pesos de modelo: el único sin letra chica** |
+| [infiniflow/ragflow](https://github.com/infiniflow/ragflow) | Apache-2.0 | 94593 | 2026-11-23 | Motor RAG desplegable como plataforma |
+| [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) | Apache-2.0 | 93073 | 2026-09-16 | OCR multi-idioma maduro |
+| [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai) | Apache-2.0 | 87718 | 2026-11-23 | **La alternativa permisiva real a Firecrawl** |
+| [opendatalab/MinerU](https://github.com/opendatalab/MinerU) | Apache-2.0 **+ términos** | 84208 | 2026-11-22 | Papers y tablas. Umbrales + atribución visible obligatoria |
+| [docling-project/docling](https://github.com/docling-project/docling) | MIT | 70923 | 2026-11-23 | De IBM. Mejor en tablas, corre en CPU, el más lento |
+
+### Por qué el filtro de categoría los escondía siete pases
+
+Esta KB buscó siempre por el eje del **agente**: harnesses, frameworks, sandboxes, gateways. El
+plano de contexto **no se autodescribe con la palabra "agente"**: se describe como *document
+parsing*, *OCR*, *PDF to markdown*, *RAG engine*, *web scraping*. Ninguna de esas palabras estaba
+en las consultas de los pases 1–7.
+
+La prueba de que es un problema de vocabulario y no de inexistencia: `document ingestion agent
+stars:>=1000` devuelve **0**, y `firecrawl` devuelve un repo de **207 629★**. El mismo plano,
+invisible con una consulta y completo con la otra. **Es la misma lección de método del pase 7 con
+el plano de costo, en otro plano: la consulta larga y descriptiva miente.**
+
+### La trampa de licencia más difícil de detectar medida hasta ahora
+
+`datalab-to/marker` (41 032★) y `datalab-to/surya` (21 615★):
+
+- `LICENSE` de raíz: **Apache-2.0 real y completo**, leído, 200 OK.
+- `license.spdx_id` de la API de GitHub: **`Apache-2.0`**.
+- README, una línea: *"Our model weights use a modified AI Pubs Open Rail-M license (**free for
+  research, personal use, and startups under $5M funding/revenue**)."*
+
+**Lo que corre en producción son los pesos.** No hay archivo mal puesto, no hay subdirectorio
+escondido, no hay badge engañoso — los badges lo dicen separado y bien. Simplemente **ningún campo
+de la API expone la licencia de los pesos**, así que el escáner automático del cliente aprueba el
+repo y el problema aparece en diligencia, tarde.
+
+Regla nueva de la KB, documentada en `repos/foundations.md`: **para todo repo que traiga pesos, la
+licencia del código no es la licencia que importa.**
+
+### Cuatro licencias leídas del archivo este pase
+
+| Repo | Lo que dice el archivo | Consecuencia para Globant |
+|------|------------------------|---------------------------|
+| `opendatalab/MinerU` | Apache-2.0 + licencia comercial >100M MAU **o** >USD 20M ingreso **mensual** + **atribución visible** si hay servicio online + **terminación automática** | Umbrales irrelevantes para casi todo cliente; **la atribución visible es una obligación de entregable** que hay que escribir en el SOW |
+| `morphik-org/morphik-core` | **BUSL-1.1**, Change Date 2029-06-18, Additional Use Grant sólo si el ingreso bruto atribuible es **< USD 2 000/mes** | **Excluido para entrega.** Umbral más bajo medido en esta KB. Segundo BUSL tras `rtk` (pase 7) |
+| `airbytehq/airbyte` | **Elastic License 2.0**: *"You may not provide the software to third parties as a hosted or managed service"* | **Excluido si Globant opera la plataforma.** Sirve si el cliente la opera. Salida limpia: `dlt-hub/dlt` (Apache-2.0) |
+| `firecrawl/firecrawl` | **AGPL-3.0** | A legales **antes** de prometerlo. Salida limpia medida: `crawl4ai` (Apache-2.0, 87 718★) y, en la misma org, `firecrawl/pdf-inspector` (**MIT**, 20 098★) |
+
+### La rama APAC de este plano también es propia
+
+`modelscope/evalscope` (3 724★, Apache-2.0, push de hoy) y `PaddleOCR` (93 073★, Apache-2.0) son
+de ModelScope/Alibaba y PaddlePaddle/Baidu. **Tercera confirmación del patrón: igual que en el
+plano de costo (pase 7) y en open-weights (pase 4), la rama china no es un puerto de lo
+estadounidense — es stack propio.** En un engagement APAC conviene cotizarlo así.
+
+### Seis muertos y dormidos, medidos
+
+| Repo | Licencia | Stars | Último push | Lectura |
+|------|----------|-------|-------------|---------|
+| `opendatalab/PDF-Extract-Kit` | AGPL-3.0 | 10081 | **2025-01-03** | **23 meses.** Del mismo grupo que MinerU, que es el que siguió vivo |
+| `getomni-ai/zerox` | MIT | 12245 | **2025-05-20** | **18 meses.** Muy citado en listados de 2025 |
+| `SciPhi-AI/R2R` | MIT | 8107 | **2025-11-07** | **12 meses.** Reputación de 2025, sin mantenimiento |
+| `adithya-s-k/omniparse` | GPL-3.0 | 7934 | **2025-12-12** | ~11 meses y GPL-3.0 |
+| `allenai/olmocr` | Apache-2.0 | 19842 | **2026-03-25** | **8 meses, y es la licencia más limpia del plano.** Dormido ≠ malo: fijar versión y seguir |
+| `axa-group/Parsr` | Apache-2.0 | 6174 | **2026-03-20** | 8 meses. Referencia de arquitectura, no base viva |
+
+### Tres slugs canónicos corregidos — y una corrección de método
+
+`mendableai/firecrawl` → **`firecrawl/firecrawl`** · `explodinggradients/ragas` →
+**`vibrantlabsai/ragas`** · `chonkie-inc/chonkie` → **`feyninc/chonkie`**.
+
+**Los tres slugs viejos responden `LIVE` a `git ls-remote`** (GitHub mantiene los redirects de
+renombre) y **los tres dan 422 en el índice de búsqueda**. Por lo tanto: **`ls-remote` prueba que
+una URL funciona, no que sea la canónica.** Para canonicalidad hay que cruzar con
+`search/repositories`. Es una corrección al método de verificación que esta KB venía usando desde
+el pase 4, y vale para todos los pases futuros.
+
+### Trampa transitiva: `pymupdf/PyMuPDF` (11 183★, **AGPL-3.0**, vivo)
+
+Es la dependencia de PDF más usada del ecosistema y es AGPL-3.0. **Aparece por debajo de otras
+librerías**, no en el repo que se eligió. Hay que buscarlo en el árbol de dependencias. Una
+auditoría que mire sólo las licencias de los repos elegidos **no lo va a ver**.
+
+---
+
 ## 2026-11-23 — pase 7 *(segundo pase del día; el pase 6 cerró a las 14:58 UTC)*
 
 **Qué se midió:** el **plano de costo**, por primera vez en siete pases. Barrida por consultas

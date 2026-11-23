@@ -352,3 +352,120 @@ que cuenta tokens como **bytes/4** y que **cortar 90% de la salida no corta 90% 
 al lado no se lleva al cliente. Y hay un caso donde el ahorro es **cero por construcción**: si el
 proveedor factura por request y no por token (GitHub Copilot), respuestas más cortas no bajan
 nada. La pregunta previa a cualquier dieta de tokens es **cómo factura el proveedor**.
+
+## 21. El plano que nunca se midió no era el agente: era cómo entra el documento del cliente
+
+*Nueva en el pase 8.* Esta KB pasó siete pases midiendo **con qué** construir un agente, **cómo
+evaluarlo**, **cómo encerrarlo** y **cuánto cuesta**. Nunca midió **cómo entra el material del
+cliente**. Medido ahora: **30 repos, 1 216 377★ combinadas, cero listados antes de hoy** — la
+ausencia más grande registrada en esta KB. Para dimensionarla: el pase 6 encontró 4 agentes
+grandes, el pase 7 unos 380 000★.
+
+**De los 30, 21 son MIT o Apache-2.0 (806 539★).** O sea que el problema no era escasez de
+material permisivo: **era el vocabulario de búsqueda.** El plano no se autodescribe con la palabra
+"agente" — se describe como *document parsing*, *OCR*, *PDF to markdown*, *RAG engine*, *web
+scraping*. Ninguna de esas palabras estuvo en las consultas de los pases 1 a 7.
+
+La prueba de que es vocabulario y no inexistencia: `document ingestion agent stars:>=1000`
+devuelve **0**, y la consulta `firecrawl` devuelve un repo de **207 629★**. **Mismo plano,
+invisible con una consulta y completo con la otra.** Es la misma lección de método que dejó el
+plano de costo en el pase 7, repetida en otro plano: **la consulta larga y descriptiva miente, y
+produce ceros que parecen cobertura.**
+
+Hay un corolario incómodo para los listados: `pdf extraction stars:>=5000` devuelve **4 repos, y
+tres están muertos o son copyleft** (`zerox` MIT muerto 18 meses, `PDF-Extract-Kit` AGPL-3.0
+muerto 23 meses, `Parsr` 8 meses sin push). **Buscar una categoría por su nombre obvio devuelve su
+generación anterior.** El trabajo vivo y permisivo está bajo otros nombres: `docling`,
+`markitdown`, `marker`.
+
+## 22. La licencia del código no es la licencia que corre
+
+*Nueva en el pase 8.* El pase 7 cambió la regla de esta KB a *"leer la licencia de la raíz no
+alcanza, hay que mirar los subdirectorios"* por el caso `rtk`. Este pase encuentra una forma
+**peor**, porque **no hay ningún archivo mal puesto que delate el problema**.
+
+`datalab-to/marker` (41 032★) y `datalab-to/surya` (21 615★):
+
+- `LICENSE` de raíz: **Apache-2.0 real y completo.**
+- `license.spdx_id` de la API de GitHub: **`Apache-2.0`.**
+- README, una línea: los **pesos del modelo** usan *AI Pubs OpenRAIL-M modificada*, **gratis sólo
+  para investigación, uso personal y startups bajo USD 5M de financiamiento o ingreso.**
+
+**Lo que corre en producción son los pesos.** El código Apache-2.0 sin los pesos no parsea nada.
+El repo es, simultáneamente, **genuinamente Apache-2.0 y genuinamente no utilizable
+comercialmente sin pagar** — y las dos cosas son ciertas a la vez.
+
+Lo grave es el mecanismo: **ningún campo de la API expone la licencia de los pesos.** El escáner
+automático de licencias que corre el cliente aprueba el repo. El problema aparece en diligencia,
+tarde, y con el sistema ya construido encima.
+
+**Cuatro formas del mismo patrón, todas medidas en esta KB:**
+
+| Forma | Caso | Dónde se esconde |
+|-------|------|------------------|
+| Subdirectorio | `rtk` (pase 7) | `engine/` y `proxy/` son BUSL-1.1 con raíz Apache-2.0 |
+| **Doble licencia código/pesos** | **`marker`, `surya` (pase 8)** | **El README y los badges; en ningún campo de API** |
+| Permisiva + términos adicionales | `MinerU` (pase 8) | El `LICENSE.md` completo: umbrales, **atribución visible obligatoria**, terminación automática |
+| Delegación hacia arriba | `docling` (pase 8) | Una frase que remite a la licencia de cada modelo |
+
+**Regla nueva de esta KB:** *para todo repo que traiga o descargue pesos, buscar la licencia de
+los pesos — en el README, en la model card de Hugging Face o en una página de pricing. Nunca en el
+campo `license`.*
+
+Y una corrección de método que vale para todos los pases futuros: **`git ls-remote` no verifica el
+slug canónico.** Tres repos de este plano cambiaron de organización (`mendableai/firecrawl` →
+`firecrawl/firecrawl`, `explodinggradients/ragas` → `vibrantlabsai/ragas`, `chonkie-inc/chonkie` →
+`feyninc/chonkie`); **los tres slugs viejos responden `LIVE`** porque GitHub mantiene los
+redirects, y **los tres dan 422 en el índice de búsqueda**. `ls-remote` prueba que una URL
+funciona, no que sea la actual. Un slug viejo en una propuesta funciona hoy y envejece mal.
+
+## 23. Dos planos consecutivos, la misma brecha: la infraestructura es pasiva
+
+*Nueva en el pase 8.* El pase 7 cerró registrando que no existe **ningún agente que optimice su
+propio costo**: todo lo medido comprime, cachea o enruta, y **nada decide "esta tarea no vale lo
+que cuesta"**. El pase 8 midió un plano completamente distinto y encontró **exactamente la misma
+forma de brecha**:
+
+| Búsqueda | Resultado |
+|----------|-----------|
+| `document ingestion agent stars:>=1000` | **0** |
+| Agente que elija parser según el documento | ninguno con tracción |
+| Agente que vigile la degradación de la recuperación en el tiempo | ninguno con tracción |
+
+Todo el plano de contexto **parsea, chunkea, indexa y mide**. Nada decide **qué** ingerir, **qué**
+re-parsear cuando sale un parser mejor, ni **qué documento quedó mal extraído**. Y la decisión es
+real, no teórica: las comparaciones de 2026 coinciden en que **ningún parser gana en todo**
+—`docling` en tablas, `marker` en matemática y figuras, `MinerU` en papers— así que **hoy alguien
+elige a mano, documento por documento, o elige uno solo y come el error en el resto.**
+
+**Dos planos medidos de forma independiente devuelven la misma respuesta: la infraestructura
+abierta es rica, permisiva y pasiva; el agente que decide sobre ella no existe.** Para una
+consultora eso es la definición de dónde poner IP propia: no hay nada abierto que adoptar, así que
+lo que se construya es diferencial y no commodity. Las recetas 12 y 13 lo implementan.
+
+## 24. El ranking global de embeddings no transfiere al idioma del cliente
+
+*Nueva en el pase 8.* El benchmark **MTEB-BR** (portugués de Brasil) evalúa **93 modelos, 73 de
+pesos abiertos**, y reporta que **correlaciona sólo moderadamente con el leaderboard multilingüe
+de MTEB en HuggingFace**: un modelo **3.º en el ranking global queda 49.º en portugués de Brasil**.
+En portugués europeo, MTEB-PT encuentra que encoders multilingües orientados a búsqueda
+(`qwen3-embedding-0.6b`, variantes fuertes de **E5**, `gte-multilingual-base`) **superan a los
+modelos especializados en portugués** orientados a similitud semántica. En español,
+`bilingual-embedding-large` y `jina-embeddings-v3` encabezan la tarea de recuperación.
+
+⚠️ **Procedencia explícita:** estos resultados vienen de búsqueda web sobre papers de 2026, **no
+de lectura de la fuente primaria**: `arxiv.org` está fuera de la política de red de esta sesión y
+**el 3.º-vs-49.º no se pudo verificar contra el abstract**. Se registra con la limitación a la
+vista.
+
+**Por qué es una tendencia y no un detalle:** elegir embeddings por el ranking global es el
+default de cualquier equipo, y **falla de la peor manera**: no rompe nada, no tira error,
+simplemente recupera el fragmento equivocado y el agente responde con seguridad sobre el documento
+que no era. **Es un error invisible sin medición.**
+
+Cruzado con la tendencia 18 —*el español y el portugués cuestan entre 30% y 60% más por la misma
+tarea*— da el único caso cómodo de esta KB: **recuperar mejor implica mandar menos fragmentos, y
+sobre una base de tokens más cara, cada fragmento ahorrado vale más en LATAM que en cualquier otra
+región. Calidad y costo apuntan para el mismo lado.** La herramienta existe y es permisiva
+(`embeddings-benchmark/mteb`, Apache-2.0); lo que falta es correrla sobre el corpus del cliente
+**antes** de elegir el modelo.

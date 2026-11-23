@@ -176,6 +176,51 @@ la utilización real del cliente está cerca del 5%, el problema es GPU ociosa y
 `opencost` + rightsizing. Si está en 15–30%, el problema es el token y la respuesta es la dieta
 de la Receta 9. **Medir primero cuál de los dos es; no asumirlo.**
 
+
+#### Pase 8 — el plano de contexto: dónde se rompe antes del agente
+
+**El mercado de IDP (intelligent document processing) está liderado por esta región y el dato es
+el más citable del plano:** North America concentró el **46,01% del mercado en 2025** (Fortune
+Business Insights).
+
+**El tamaño, con la cautela de siempre — la dispersión entre publicadores es de ~3,7x:**
+
+| Publicador | 2025 | 2026 | Largo plazo | CAGR |
+|-----------|------|------|-------------|------|
+| GMI | USD 2,88B | USD 3,62B | USD 24,99B (2035) | — |
+| IMARC | USD 3,3B | — | — | — |
+| The Business Research Company | — | USD 4B | — | 33,4% |
+| Fortune Business Insights | **USD 10,57B** | — | — | — |
+| Technavio | — | — | — | 35,9% (2025–30) |
+| Expert Market Research | — | — | **~USD 119B (2035)** | 34,7% (2026–35) |
+
+**Conflicto registrado y NO resuelto:** la base 2025 va de USD 2,88B a USD 10,57B y la proyección
+2035 de USD 25B a USD 119B. **No cotizar con una sola de estas tablas.** La diferencia es de
+definición —algunos miden sólo software, otros incluyen servicios— y uno de los reportes ubica el
+software de IDP en USD 16,67B para 2025, por encima de todos los demás. Lo defendible es el
+**orden de magnitud y la dirección**, no el número.
+
+**Adopción:** el índice de Ramp mide la adopción **paga** de IA en empresas de EE.UU. pasando de
+**5,2% (enero 2023) a 43,8% (septiembre 2025)**, liderada por tecnología, finanzas y manufactura.
+
+**El dato que conecta con el plano de contexto:** una encuesta de Dentons a responsables legales
+de North America encuentra que las organizaciones **aplican su guía de gobernanza de IA de forma
+selectiva, y muy pocas tienen un sistema de gestión de IA integrado y auditable**. Cruzado con la
+tendencia 9 de esta KB —*el cuello de botella es la gobernanza, no el modelo*— la lectura
+operativa es: **la gobernanza se cae primero en la capa de datos, no en la del modelo.** Cuando el
+cliente no puede decir de qué documento salió una respuesta, ni con qué parser, ni en qué versión,
+no tiene gobernanza: tiene una demo.
+
+**Regulación:** sigue sin haber ley federal unificada; el AI Action Plan de julio de 2025 es la
+referencia federal y una orden ejecutiva de diciembre de 2025 apunta contra las leyes estatales,
+movida que parte de la prensa lee como invasión de competencias. **El vector regulatorio sigue
+siendo estatal.**
+
+**La oferta que se desprende, y es específica de esta región:** *procedencia y trazabilidad
+documental auditable*. No "hacemos RAG": **de qué documento, qué parser, qué versión, qué
+fragmento y con qué score de recuperación** — con `ragas` dando el número. Es lo que convierte un
+PoC en algo que pasa una auditoría, y es exactamente lo que la encuesta de Dentons dice que falta.
+
 ### EMEA
 
 **Estado.** La región donde la regulación es el producto. Dos fechas importan y **las fuentes se
@@ -277,6 +322,43 @@ Dublín para el mismo campus, **la decisión de región de inferencia pesa más 
 optimización de software** que se pueda hacer encima. Se recomienda tratarla como la primera
 decisión de arquitectura, no como un detalle de despliegue.
 
+
+#### Pase 8 — el plano de contexto: el dato que se perdió de vista
+
+**El hallazgo regional de este pase no es regulatorio, es operativo.** El estudio de Veeam sobre
+organizaciones de EMEA describe empresas **desplegando IA rápido y perdiendo visibilidad sobre el
+dato que está por debajo**. Es la contraparte exacta del plano que mide este pase: se compró el
+agente y no se sabe qué está leyendo.
+
+**La brecha entre ambición y madurez está medida:** IDC reporta que **99% de los CEOs de EMEA**
+ven la IA como una oportunidad de reinventar su modelo de negocio, y que **alrededor de dos
+tercios de las organizaciones siguen en madurez de IA temprana.** En servicios financieros, Global
+Relay mide **27%** de firmas de EMEA usando IA para cumplimiento o vigilancia, y **37%** citando
+seguridad y privacidad como barrera considerable.
+
+**Conflicto de fechas registrado y NO resuelto** (se suma al de CADA ya anotado en esta KB): sobre
+la aplicación de las reglas de alto riesgo del EU AI Act, un análisis sostiene que podría
+**correrse de agosto de 2026 a fines de 2027 o más**, mientras otro afirma que la aplicación
+**sigue agendada para agosto de 2026**. **Las fuentes se contradicen; no comprometer una fecha en
+una propuesta** — comprometer el proceso de cumplimiento, que es lo que no cambia con la fecha.
+
+**Dos piezas técnicas con argumento de procurement europeo, medidas este pase:**
+
+- **`docling` (MIT, IBM, 70 923★) corre en CPU.** Para un despliegue soberano o air-gapped, no
+  necesitar GPU no es una optimización: **es lo que hace viable el despliegue on-premise** en un
+  datacenter que no tiene flota de aceleradores. Y es la licencia más limpia del lote (MIT), con
+  la salvedad de que remite la licencia de los modelos a los paquetes originales.
+- **`deepset-ai/haystack` (Apache-2.0, 27 084★) es de una empresa alemana.** Cuando procurement
+  pregunta por proveedores europeos, es el único framework maduro del plano con esa respuesta.
+
+**Se mantiene la corrección del pase 7:** el "la infraestructura soberana cuesta 15–30% más" de
+los pases 4 y 5 **no tiene fuente primaria**. El sobrecosto real está en energía, tier soberano y
+lead time. Nada de lo medido este pase lo cambia.
+
+**La oferta que se desprende:** *inventario y linaje del dato que alimenta a la IA*. El estudio de
+Veeam dice que el cliente ya perdió esa visibilidad; recuperarla es un engagement con entregable
+concreto, y es anterior —y vendible por separado— a cualquier agente.
+
 ### APAC
 
 **Estado.** La región que tiene el código. Dos de los tres agentes nuevos más fuertes del
@@ -363,6 +445,40 @@ modelo de pesos abiertos con `vLLM`/`SGLang` detrás de un gateway permisivo —
 (MIT) o `maximhq/bifrost` (Apache-2.0), **no `new-api`, que es AGPL-3.0**— y resolver el
 cumplimiento por jurisdicción, que con Corea vigente, Vietnam vigente y Singapur/Hong Kong
 voluntarios **no admite una sola configuración**. Ver `compose/patterns.md` → Receta 6.
+
+
+#### Pase 8 — el plano de contexto: la barrera declarada es exactamente ésta
+
+**El dato más directo de todo este pase, y es de esta región:** un informe de Confluent mide que
+**49% de las empresas de APAC declara que su barrera principal es infraestructura de datos
+insuficiente en tiempo real.** No el modelo, no el talento, no la regulación: **el dato.** Es la
+única región donde la barrera declarada por las empresas coincide literalmente con el plano que
+esta KB agregó en el pase 8.
+
+**Y convive con el liderazgo en adopción:** Forrester reporta a las empresas de APAC a la cabeza
+en uso de IA generativa (**63%**), con Singapur, Australia, Nueva Zelanda y Corea del Sur por
+delante de la mayoría de los países de North America y Europa. AlphaSense advierte que la región
+**se lee mejor como cinco historias de adopción distintas que como una**, con Japón cauteloso.
+**La combinación —adopción alta, infraestructura de datos declarada insuficiente— es precisamente
+el perfil de cliente del plano de contexto.**
+
+**Regulación, con la taxonomía de Latham & Watkins (septiembre 2026):** marcos vinculantes
+basados en riesgo (**Corea del Sur, Vietnam**), reglas dirigidas (**China**) y un tercer grupo de
+enfoques voluntarios. Corea del Sur: **Basic Act vigente desde enero de 2026**, descrita como la
+primera ley de IA integral y vinculante de la región. Singapur: principios FEAT en guías
+sectoriales, no ley vinculante. Japón: cumplimiento voluntario. **Vietnam: ley vigente desde
+2026-03-01** (dato del pase 7), y la BSA advirtió públicamente que su enfoque **eleva costos y
+desalienta inversión** — dato nuevo de este pase.
+
+**Tercera confirmación de que la rama china del stack es propia, no un puerto:** en el plano de
+contexto, las dos piezas de peso son **`PaddleOCR`** (93 073★, Apache-2.0, PaddlePaddle/Baidu) y
+**`modelscope/evalscope`** (3 724★, Apache-2.0, Alibaba). Se suma a lo medido en el plano de costo
+(pase 7) y en open-weights (pase 4). **En un engagement de APAC conviene cotizar sobre ese stack,
+no proponer el equivalente estadounidense y descubrirlo después.**
+
+**La oferta que se desprende:** *la capa de datos antes que el agente*, dicho con el número de
+Confluent en la primera lámina. Es la región donde no hay que argumentar que el problema existe:
+la mitad del mercado ya lo declaró.
 
 ### LATAM
 
@@ -483,6 +599,72 @@ lo recortan sin cambiar de modelo ni de proveedor.** Eso se mide antes y despué
 herramienta, en la factura del proveedor. Y se combina con lo que esta KB ya tenía: **menos de 1
 en 5 tiene gobernanza formal**, así que el mismo gateway que mide el ahorro es el que produce la
 evidencia de gobernanza. Dos entregables, una instalación.
+
+
+#### Pase 8 — el dato más consecuente de la región: **el ranking global de embeddings no sirve acá**
+
+El pase 7 midió que **un request en español o portugués consume ~30–60% más tokens** que el mismo
+en inglés, y que eso convierte la dieta de tokens en el caso de negocio de la región. Este pase
+encuentra **la otra mitad del mismo problema, y es peor porque es silenciosa**.
+
+**El hallazgo:** el benchmark **MTEB-BR**, de portugués de Brasil, evalúa **93 modelos (73 de
+pesos abiertos)** y reporta que **correlaciona sólo moderadamente con el leaderboard multilingüe
+público de MTEB en HuggingFace** — al punto de que **un modelo que figura 3.º en el leaderboard
+global queda 49.º en portugués de Brasil.**
+
+**Por qué importa más que un detalle técnico:** elegir el modelo de embeddings mirando el ranking
+global es el default de cualquier equipo. **En esta región ese default está activamente mal**, y
+falla de la peor manera posible: no rompe nada, no tira error, simplemente **recupera el fragmento
+equivocado**, y el agente responde con seguridad sobre el documento que no era. Es invisible sin
+medición.
+
+**Lo que las evaluaciones de 2026 sí encontraron, por idioma:**
+
+| Idioma | Qué midió el estudio | Modelos que quedaron arriba |
+|--------|---------------------|-----------------------------|
+| Portugués (MTEB-PT) | 17 modelos abiertos y cerrados sobre una tajada de 14 datasets de MMTEB | `qwen3-embedding-0.6b`, las variantes fuertes de **E5**, `gte-multilingual-base` — **por encima de los modelos especializados en portugués orientados a STS** |
+| Portugués de Brasil (MTEB-BR) | 93 modelos, 73 de pesos abiertos | Rankings **propios**, no derivables del leaderboard global |
+| Español (MTEB Multilingual v2, estudio de robustez) | Tarea de recuperación en español | `bilingual-embedding-large` y `jina-embeddings-v3`; `Qwen3-Embedding-4B` como alternativa competitiva |
+
+⚠️ **Nota de procedencia, explícita:** estos tres resultados provienen de **búsqueda web sobre
+papers de 2026**, no de lectura directa de la fuente primaria. `arxiv.org` **no es alcanzable
+desde el entorno de esta sesión** (está fuera de la política de red), así que **no se pudo
+verificar el 3.º-vs-49.º contra el abstract**. Se registra como dato de segunda mano con su
+limitación a la vista, no como medición propia. **Antes de usarlo en una propuesta, abrir los
+papers** (MTEB-BR y MTEB-PT, ambos de 2026).
+
+**La conclusión operativa, que sí es propia y no depende del número exacto:** en LATAM hay que
+**medir la recuperación en el idioma del cliente antes de elegir el modelo de embeddings**, con
+`embeddings-benchmark/mteb` (Apache-2.0) sobre el corpus real. Y el beneficio es doble, porque se
+cruza con el pase 7: **recuperar mejor significa mandar menos fragmentos, y en una base de tokens
+que ya es 30–60% más cara, cada fragmento ahorrado vale más acá que en cualquier otra región.**
+Calidad y costo apuntan en la misma dirección — es el raro caso donde no hay que elegir.
+
+**Adopción, con una tensión registrada y no resuelta:**
+
+- El BID (mayo 2026) mide que **85% de las startups que no se dedican principalmente a IA ya usan
+  herramientas de IA generativa**, y estima que la adopción podría elevar la productividad de la
+  región en **1,9–2,3% anual**.
+- BCG reporta que **85% de las empresas tecnológicas de Brasil ya corren agentes de IA en
+  producción.**
+
+⚠️ **Tensión explícita con la tendencia 13 de esta KB** (*"producción" es una palabra sin
+definición compartida, y el rango es 8x*): un 85% de agentes en producción en Brasil **es más alto
+que cualquier cifra de producción medida en North America o EMEA en esta misma KB**. O Brasil está
+genuinamente adelante en este segmento, o "producción" significa algo más laxo en esa encuesta.
+**No se resuelve acá**, y conviene no citar el 85% sin la definición al lado.
+
+**Regulación:** el marco sigue fragmentado y **ningún país de la región tiene un régimen de IA
+maduro y armonizado entre sectores**. Perú publicó el **reglamento de la Ley 31814 el 2025-09-09**.
+**México sigue siendo el hueco grande: más de 60 iniciativas legislativas sobre IA desde 2020 y
+ninguna aprobada.** Chile sigue siendo el polo articulador vía Latam-GPT — con la salvedad ya
+medida en esta KB de que **no tiene repositorio con tracción**.
+
+**Quinto pase consecutivo con cero resultados en español**, y ahora en el plano donde más duele:
+`extraccion documentos IA stars:>=20` → **0**, `parser documentos español stars:>=10` → **0**,
+`OCR español stars:>=50` → **0**. **El plano cuyo problema central es el idioma del documento no
+tiene una sola herramienta que se describa en español.** Es, otra vez, el lugar donde lo que se
+construya es diferencial y no commodity.
 
 ## Posicionamiento Globant
 

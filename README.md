@@ -31,10 +31,77 @@ technology-kb/
 5. **Cuando la pregunta es "¿cuánto cuesta?"**: `compose/patterns.md` → Receta 9 (dieta de
    tokens), Receta 10 (unit economics, North America) y Receta 11 (LATAM) +
    `repos/foundations.md` → costo
-6. **Mantenerse al día**: el curador automático actualiza este KB por rotación horaria.
+6. **Cuando el agente "responde cualquier cosa"**: `compose/patterns.md` → Receta 12 (ingesta
+   auditable) + `repos/foundations.md` → 📥 contexto. **En la mayoría de los casos no está roto el
+   agente: está roto lo que lee.**
+7. **Engagement en español o portugués**: `compose/patterns.md` → Receta 14 + `intel/market.md` →
+   LATAM. **No elegir el modelo de embeddings por el ranking global.**
+8. **Mantenerse al día**: el curador automático actualiza este KB por rotación horaria.
    `agents/trending.md` y `repos/trending.md` son **append-only**: la sección más reciente arriba
 
-## Estado de verificación (2026-11-23 — pase 7)
+## Estado de verificación (2026-11-23 — pase 8)
+
+**Tercer pase del mismo día** (pase 6: 14:58 UTC, pase 7: 15:56 UTC). No re-mide lo que aquéllos
+acaban de medir: **mide el plano que esta KB nunca había mirado — cómo entra el material del
+cliente.**
+
+**Qué agrega este pase.** Siete pases midieron **con qué** construir un agente, **cómo evaluarlo**,
+**cómo encerrarlo** y **cuánto cuesta**. Ninguno midió **cómo entra el documento del cliente**. Y
+todo engagement empieza igual: una carpeta de PDFs, un Confluence viejo, contratos escaneados.
+
+- **30 filas nuevas** en `repos/foundations.md` (sección **📥 contexto**, cinco capas), que pasa a
+  **99 filas / 98 repos distintos**. **Las 30 suman 1 216 377★ y ninguna estaba listada en esta KB
+  antes de hoy: es la ausencia más grande de su historia** (el pase 6 encontró 4 agentes, el 7
+  unos 380 000★). Entre ellas, seis de más de 70 000★: `firecrawl` (207 629★, **AGPL-3.0**),
+  `markitdown` (198 043★, MIT), `ragflow` (94 593★, Apache-2.0), `PaddleOCR` (93 073★),
+  `crawl4ai` (87 718★, Apache-2.0), `MinerU` (84 208★) y `docling` (70 923★, MIT).
+  **21 de las 30 son MIT o Apache-2.0 (806 539★)**: no faltaba material permisivo, faltaba mirar.
+- **⚠️ La trampa de licencia más difícil de detectar medida hasta ahora, y vuelve a cambiar la
+  regla de esta KB.** `datalab-to/marker` (41 032★) y `datalab-to/surya` (21 615★) tienen `LICENSE`
+  de raíz **Apache-2.0 real** y la API reporta `Apache-2.0`. Pero **los pesos del modelo** usan
+  *AI Pubs OpenRAIL-M modificada*: gratis sólo bajo **USD 5M** de ingreso o financiamiento. **Lo
+  que corre en producción son los pesos**, así que el repo es a la vez genuinamente Apache-2.0 y
+  genuinamente no utilizable comercialmente sin pagar. **No hay ningún archivo mal puesto que lo
+  delate y ningún campo de API lo expone** — el escáner automático del cliente lo aprueba.
+  **Regla nueva: para todo repo que traiga pesos, la licencia del código no es la licencia que
+  importa.**
+- **Tres licencias más leídas del archivo:** `MinerU` (Apache-2.0 + umbrales + **atribución
+  visible obligatoria** + terminación automática), `morphik-core` (**BUSL-1.1 con techo de USD
+  2 000/mes** — el umbral más bajo medido acá, excluido para entrega) y `airbytehq/airbyte`
+  (**ELv2**: prohibido ofrecerlo como servicio gestionado a terceros; salida limpia: `dlt`).
+- **Corrección de método que vale para todos los pases futuros:** **`git ls-remote` no verifica el
+  slug canónico.** `mendableai/firecrawl`, `explodinggradients/ragas` y `chonkie-inc/chonkie`
+  **responden LIVE** (GitHub mantiene los redirects de renombre) y **dan 422 en el índice de
+  búsqueda**. Los canónicos son `firecrawl/firecrawl`, `vibrantlabsai/ragas` y `feyninc/chonkie`.
+- **La brecha, medida dos veces en dos planos distintos:** `document ingestion agent stars:>=1000`
+  devuelve **0**. Todo el plano de contexto es **pasivo** —parsea, chunkea, indexa, mide— y **nada
+  decide qué ingerir ni qué re-parsear**. Es la misma forma que el pase 7 encontró en costo. **Dos
+  planos independientes, la misma respuesta: la infraestructura abierta es rica y pasiva; el
+  agente que decide sobre ella no existe.** → Receta 13, que lo construye con piezas permisivas.
+- **El dato regional más consecuente del pase, y es de LATAM:** el benchmark **MTEB-BR** reporta
+  que el ranking de embeddings en portugués de Brasil **correlaciona sólo moderadamente** con el
+  leaderboard multilingüe global — un modelo **3.º global queda 49.º**. Cruzado con el hallazgo
+  del pase 7 (español y portugués cuestan **30–60% más tokens**), da el caso raro donde **calidad
+  y costo apuntan para el mismo lado**. ⚠️ **Dato de segunda mano**: `arxiv.org` está fuera de la
+  política de red de esta sesión y **no se pudo verificar contra el paper**. → Receta 14.
+- **Tres recetas nuevas** (12, 13 y 14), total **14**. La 12 es la receta base del plano y va
+  **antes** de cualquier receta de agente. La 13 construye lo que no existe. La 14 dura 1–2
+  semanas y es el mejor ratio esfuerzo/impacto del plano.
+- **Cuatro tendencias nuevas** (21–24) y **RAGFlow** agregado a `verticals/solutions.md`
+  (**17 filas**) como la plataforma desplegable del plano — el "Odoo" de esta capa.
+- **Dos señales regionales independientes apuntan a este plano y no al modelo:** APAC declara
+  **49%** de empresas con infraestructura de datos insuficiente como barrera principal
+  (Confluent); EMEA aparece desplegando IA rápido y **perdiendo visibilidad del dato de abajo**
+  (Veeam).
+- **41 URLs verificadas en este pase, 41 vivas** por `ls-remote` (31 del plano nuevo + 10 piezas
+  citadas en las recetas), licencias leídas del archivo **y, cuando el repo trae pesos, también la
+  licencia de los pesos**. **Las 144 del pase 7 no se re-verificaron**; sí se controlaron los 5
+  agentes más grandes de `agents/top.md`: **cinco de cinco vivos, MIT, sin archivar y creciendo.**
+- **Cero filas nuevas en `agents/top.md`, y dicho explícitamente:** no se encontró ningún agente
+  en este eje. Siguen siendo **32**. Disfrazar librerías de parsing de agentes sería mentir sobre
+  la forma del ecosistema, que es justamente el hallazgo.
+
+## Historial de verificación (2026-11-23 — pase 7)
 
 **Segundo pase del mismo día.** El pase 6 cerró a las 14:58 UTC; este no re-mide lo que aquél
 acababa de medir, **mide la categoría que faltaba: el costo.**

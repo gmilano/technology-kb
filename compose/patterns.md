@@ -7,7 +7,15 @@ updated: 2026-11-23
 # 🧩 Patrones de composición — Technology
 
 > Recetas concretas: repos nombrados, licencias verificadas, cómo se conectan y qué NO prometer.
-> Todas las piezas citadas se midieron el 2026-11-21 (ver `agents/top.md` y `repos/foundations.md`).
+> Todas las piezas citadas se midieron el **2026-11-23** (ver `agents/top.md` y
+> `repos/foundations.md`). **14 recetas.**
+>
+> **Pase 8 — las recetas 12, 13 y 14**, sobre el plano de **contexto** (cómo entra el material del
+> cliente), que es el que esta KB nunca había medido. La **12** es la receta base del plano y
+> conviene correrla **antes** de cualquier receta de agente: en la mayoría de los casos no está
+> roto el agente, está roto lo que lee. La **13** construye lo que **no existe** —el agente que
+> decide qué re-parsear— y es el lugar natural de IP propia. La **14** es de LATAM, dura 1–2
+> semanas y evita el error más caro y menos visible de la región.
 
 ## Patrón base del vertical
 
@@ -467,6 +475,166 @@ hoy.
 **Entregable medible:** el sobreprecio ES/PT cuantificado sobre datos del cliente, el ahorro de
 compresión medido sobre esa base, una suite de evals en el idioma del cliente que antes no
 existía, y el tope de gasto por equipo activo y produciendo evidencia de gobernanza.
+
+## Receta 12 — Ingesta auditable: del documento del cliente al agente *(nueva, pase 8)*
+
+**Para quién.** El cliente que ya tiene un agente que "a veces responde cualquier cosa" y no sabe
+por qué. En la enorme mayoría de los casos **no está roto el agente: está roto lo que lee.** Es la
+receta base del plano de contexto y la que hay que correr **antes** de cualquier receta de agente.
+Es también la respuesta directa a lo que las empresas de APAC declaran como su barrera principal
+(**49%: infraestructura de datos insuficiente**) y a lo que el estudio de Veeam describe en EMEA
+(desplegar rápido **perdiendo visibilidad del dato de abajo**).
+
+**Las piezas, todas verificadas el 2026-11-23, licencias leídas del archivo — y, cuando el repo
+trae pesos, también la licencia de los pesos.**
+
+| Orden | Pieza | Licencia | Qué hace | Por qué ésta |
+|-------|-------|----------|----------|--------------|
+| 1 | [microsoft/markitdown](https://github.com/microsoft/markitdown) | **MIT** | Office, HTML, PDF nativo → Markdown | **No trae pesos: es el único del plano sin letra chica de licencia.** Default para todo lo que no sea escaneo |
+| 2 | [docling-project/docling](https://github.com/docling-project/docling) | **MIT** | PDF complejo, **tablas**, layout | El mejor en tablas según las comparaciones de 2026 y **corre en CPU** — lo que lo hace viable air-gapped y en despliegue soberano. Es el más lento: usarlo donde la tabla importa, no en todo |
+| 3 | [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) o [allenai/olmocr](https://github.com/allenai/olmocr) | Apache-2.0 / **Apache-2.0** | Documento **escaneado** | PaddleOCR por madurez multi-idioma; olmOCR es **la licencia más limpia del plano** (Apache-2.0 sin pesos restringidos) pero está **8 meses sin push**: fijar versión |
+| 4 | [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai) | **Apache-2.0** | Fuente web → texto | **No usar `firecrawl` (AGPL-3.0) sin pasar por legales**, aunque sea el más grande del plano. Si hace falta sólo PDF, [`firecrawl/pdf-inspector`](https://github.com/firecrawl/pdf-inspector) es **MIT** |
+| 5 | [feyninc/chonkie](https://github.com/feyninc/chonkie) | **MIT** | Chunking | La pieza que todos improvisan. **El chunking define a la vez la calidad de recuperación y el gasto de tokens** — las dos cosas que el cliente mide |
+| 6 | [qdrant/qdrant](https://github.com/qdrant/qdrant) | Apache-2.0 | Vectores | Ya listado en esta KB. Permisivo y self-hostable |
+| 7 | [vibrantlabsai/ragas](https://github.com/vibrantlabsai/ragas) | **Apache-2.0** | **El número** | Faithfulness, relevancia de contexto, recall. **Sin esto "mejoramos el RAG" es una opinión** |
+| 8 | [temporalio/temporal](https://github.com/temporalio/temporal) | MIT | Durabilidad | Reprocesar 400 000 documentos falla a la mitad. Sin workflow durable, se reempieza |
+| 9 | [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) | Apache-2.0 | Consola de revisión humana | Donde un experto marca "esta extracción está mal" — que es el dato de entrenamiento de la receta 13 |
+
+**Cómo se arma, y el orden importa:**
+
+1. **Primero el inventario, no el parser.** Qué tipos de documento hay, en qué volumen, en qué
+   idioma y cuáles importan. Es aburrido y es el paso que decide todo lo demás: **ningún parser
+   gana en todos los tipos**, así que sin el inventario se elige a ciegas.
+2. **Ruteo por tipo de documento, explícito y escrito.** PDF nativo → `markitdown`. PDF con tablas
+   → `docling`. Escaneado → `PaddleOCR`/`olmOCR`. Web → `crawl4ai`. **La tabla de ruteo es un
+   entregable**, no una decisión implícita en el código.
+3. **Procedencia desde el primer documento.** Cada chunk guarda: `doc_id`, **parser y versión del
+   parser**, página, offset, timestamp de extracción y hash del original. **Es el campo que
+   convierte "la IA dijo" en "salió de la página 14 del contrato X, extraída con docling 2.x".**
+   Agregarlo después obliga a reprocesar todo.
+4. **Línea base con `ragas` antes de optimizar nada.** 50–100 preguntas reales del cliente con
+   respuesta conocida. **Mismo principio que las recetas 5 y 9: sin línea base hay afirmaciones,
+   no mejoras.**
+5. **Recién ahí el agente.** Conectado a esto, no a una carpeta de PDFs.
+
+**⚠️ La compuerta de licencia, que en este plano se chequea distinto.** Antes de elegir parser:
+
+| Repo | Qué dice la API | Qué dice el archivo / README | Decisión |
+|------|-----------------|------------------------------|----------|
+| `marker` / `surya` | `Apache-2.0` | Código Apache-2.0, **pesos OpenRAIL-M: gratis sólo bajo USD 5M de ingreso/financiamiento** | **Sólo si el cliente está bajo el umbral o paga.** Lo que corre son los pesos |
+| `MinerU` | `NOASSERTION` | Apache-2.0 + umbrales (100M MAU / USD 20M mensuales) + **atribución visible** + terminación automática | Viable. **La atribución visible va escrita en el SOW** |
+| `firecrawl` | `AGPL-3.0` | AGPL-3.0 | A legales **antes** de prometerlo |
+| `morphik-core` | `NOASSERTION` | **BUSL-1.1, techo de USD 2 000/mes** | **Excluido** |
+| `airbyte` | `NOASSERTION` | **ELv2: prohibido como servicio gestionado a terceros** | Sólo si **el cliente** lo opera. Si lo opera Globant: `dlt` |
+| `PyMuPDF` | `AGPL-3.0` | AGPL-3.0 | **Buscarlo en el árbol de dependencias, no en el repo elegido.** Es transitivo |
+
+**Esfuerzo:** 3–5 semanas según volumen y variedad documental.
+
+**Entregable medible:** (a) el inventario documental, (b) la tabla de ruteo parser↔tipo, (c) el
+esquema de procedencia poblado, (d) el score `ragas` de línea base y el de después, y (e) **la
+compuerta de licencia documentada repo por repo, incluida la licencia de los pesos** — que es la
+hoja que el cliente va a necesitar en diligencia y que ningún escáner automático le va a dar.
+
+## Receta 13 — El agente que decide qué re-parsear *(nueva, pase 8 — IP propia, no commodity)*
+
+**Para quién.** El cliente que ya corrió la receta 12 y tiene cientos de miles de documentos
+indexados. Es la receta que **construye lo que no existe**: la tendencia 23 de esta KB mide que
+**todo el plano de contexto es pasivo** —parsea, chunkea, indexa, mide— y que **nada decide qué
+re-parsear**. `document ingestion agent stars:>=1000` devuelve **0**.
+
+**El problema real, y es caro:** los parsers mejoran cada pocos meses; el inventario documental no
+es homogéneo; y una extracción mala **no se nota** — produce un chunk plausible que recupera mal y
+hace que el agente responda con seguridad sobre el documento equivocado. Reprocesar todo con cada
+versión nueva es inviable por costo. **Reprocesar lo que conviene es una decisión, y la decisión
+es el producto.**
+
+**Las piezas — todas permisivas, todas ya medidas en esta KB:**
+
+| Pieza | Licencia | Rol en el lazo |
+|-------|----------|----------------|
+| [vibrantlabsai/ragas](https://github.com/vibrantlabsai/ragas) | Apache-2.0 | **La señal**: score de recuperación por documento, no global |
+| [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) | MIT | **La decisión**: nodos de política — re-parsear, escalar a humano, dejar como está |
+| [temporalio/temporal](https://github.com/temporalio/temporal) | MIT | **La durabilidad**: el lazo corre semanas y debe sobrevivir a caídas |
+| `docling` + `markitdown` + `PaddleOCR` | MIT / MIT / Apache-2.0 | **El pool de parsers** entre los que se elige |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | MIT + carve-out | **El tope de gasto**: el lazo tiene que tener presupuesto duro o se come la factura |
+| [Helicone/helicone](https://github.com/Helicone/helicone) o Grafana | Apache-2.0 / AGPL-3.0 | **La consola**: costo del reproceso vs. mejora de score |
+| [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) | Apache-2.0 | **El humano**: aprueba el reproceso masivo antes de que se ejecute |
+
+**El lazo, concreto:**
+
+1. **Puntuar por documento, no por sistema.** `ragas` sobre las preguntas que tocan cada documento.
+   Un score global promedia y esconde; el score por documento **señala el documento específico**.
+2. **Clasificar la causa antes de actuar.** Score bajo puede ser extracción mala, chunking malo o
+   el documento simplemente no tiene la respuesta. **Sólo el primer caso se arregla
+   re-parseando**, y confundirlos es gastar en reprocesos que no mejoran nada.
+3. **Re-parsear en sombra, nunca en vivo.** Pasar el candidato por **otro** parser del pool,
+   indexar aparte y **volver a puntuar con la misma suite.**
+4. **Promover sólo si el score sube.** Si no sube, se descarta y **se registra que no sirvió** —
+   que es lo que impide reintentarlo cada mes.
+5. **Aprender la tabla de ruteo.** Con el tiempo el lazo acumula "para facturas escaneadas de este
+   cliente, `PaddleOCR` gana a `docling` en el 80% de los casos". **Esa tabla, por cliente, es el
+   activo**: no está en ningún repo y no se puede descargar.
+6. **Tope de gasto duro desde el día uno** (`litellm`), y **aprobación humana** (`appsmith`) antes
+   de cualquier reproceso masivo. Un lazo autónomo con presupuesto abierto es un incidente.
+
+**⚠️ Lo que hace honesta a esta receta:** el lazo **gasta tokens para ahorrar error**, y eso se
+mide o no se promete. El entregable incluye **el costo del reproceso al lado de la mejora de
+score**. Si la mejora no paga el reproceso, **la receta dice que no se haga** — y esa respuesta
+también es un resultado. Es el mismo estándar que la tendencia 20 le exige al plano de costo.
+
+**Esfuerzo:** 6–8 semanas sobre una receta 12 ya funcionando. **No es un primer proyecto.**
+
+**Entregable medible:** (a) score `ragas` por documento, (b) la tabla de ruteo aprendida por clase
+documental, (c) costo de reproceso vs. delta de score por lote, (d) el registro de los candidatos
+que **no** mejoraron y (e) el lazo corriendo con tope de gasto y aprobación humana.
+
+## Receta 14 — LATAM: medir la recuperación en el idioma antes de elegir el modelo *(nueva, pase 8)*
+
+**Para quién.** Cualquier engagement de la región con documentos en español o portugués. **Es
+corta, es barata y evita el error más caro y menos visible del plano.**
+
+**El problema.** Elegir el modelo de embeddings por el leaderboard multilingüe global es el
+default de todo equipo. **En esta región ese default está activamente mal:** el benchmark MTEB-BR
+reporta que su ranking **correlaciona sólo moderadamente** con el leaderboard global de MTEB, al
+punto de que un modelo **3.º global queda 49.º en portugués de Brasil**. Y falla en silencio: no
+rompe nada, recupera el fragmento equivocado.
+
+⚠️ **Procedencia:** ese dato viene de búsqueda web sobre papers de 2026, **no verificado contra la
+fuente primaria** (`arxiv.org` está fuera de la política de red de esta sesión). **Abrir los
+papers MTEB-BR y MTEB-PT antes de citarlo en una propuesta.** Lo que **no** depende de ese número
+es la conclusión operativa: **medir en el idioma del cliente, sobre su corpus.**
+
+**Las piezas:**
+
+| Pieza | Licencia | Rol |
+|-------|----------|-----|
+| [embeddings-benchmark/mteb](https://github.com/embeddings-benchmark/mteb) | Apache-2.0 | Correr la evaluación **en español y portugués** sobre el corpus real del cliente |
+| [vibrantlabsai/ragas](https://github.com/vibrantlabsai/ragas) | Apache-2.0 | Validar end-to-end, no sólo el embedding aislado |
+| [feyninc/chonkie](https://github.com/feyninc/chonkie) | MIT | Barrer estrategias de chunking, que interactúan con el modelo elegido |
+| Receta 9 (dieta de tokens) | — | **El ahorro se multiplica acá**: ver abajo |
+
+**Los candidatos que las evaluaciones de 2026 dejaron arriba** (punto de partida, no veredicto —
+hay que correrlos sobre el corpus del cliente):
+
+| Idioma | Candidatos a probar primero |
+|--------|-----------------------------|
+| Portugués | `qwen3-embedding-0.6b`, variantes fuertes de **E5**, `gte-multilingual-base` — **por encima de los especializados en portugués orientados a STS** |
+| Español | `bilingual-embedding-large`, `jina-embeddings-v3`; `Qwen3-Embedding-4B` como alternativa |
+
+**Por qué el retorno es mayor en LATAM que en cualquier otra región, y es aritmética simple:** el
+pase 7 midió que **un request en español o portugués consume ~30–60% más tokens** que el mismo en
+inglés, por el tokenizador. Recuperar mejor significa **mandar menos fragmentos** al modelo. **El
+mismo fragmento ahorrado vale 30–60% más acá.** Calidad y costo apuntan para el mismo lado — es el
+raro caso donde no hay que elegir entre los dos, y conviene presentarlo así: **no es "mejoramos la
+calidad", es "mejoramos la calidad y por eso baja la factura".**
+
+**Esfuerzo:** 1–2 semanas. **Es el mejor ratio esfuerzo/impacto de todo el plano**, y se puede
+vender como diagnóstico corto antes de un engagement grande.
+
+**Entregable medible:** (a) scorecard de recuperación **por idioma** sobre el corpus del cliente,
+(b) el modelo elegido **con el número que lo justifica** en vez del ranking global, (c) la
+estrategia de chunking que lo acompaña y (d) **la reducción de tokens por consulta** que resulta
+de recuperar mejor, medida con el tokenizador real.
 
 ## Lo que NO conviene prometer
 
