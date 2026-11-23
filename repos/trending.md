@@ -12,6 +12,76 @@ updated: 2026-11-23
 > agentes y skills ver `agents/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 10 *(quinto pase del día; pase 6 14:58 UTC, pase 7 15:56, pase 8 16:57, pase 9 17:58)*
+
+**Qué se midió:** el plano de **ejecución** —dónde corre el agente y de parte de quién actúa—.
+**23 repos de infraestructura, 170 000★ combinadas aprox., y casi ninguno estaba listado.**
+Todo verificado hoy: existencia por `git ls-remote`, estrellas / `pushed_at` / `archived` /
+`created_at` por `search/repositories`, y **licencia leída del archivo en `main` y en `master`**.
+
+### Jaulas: dónde corre el código que el agente escribió
+
+| Repo | Licencia (del archivo) | Stars | Push | Creado | Nota |
+|------|------------------------|-------|------|--------|------|
+| [gvisor/gvisor](https://github.com/gvisor/gvisor) | Apache-2.0 (`master`, 14 110B) | 20093 | 2026-11-23 | 2018-04-26 | **Slug canónico corregido**: `gvisor/gvisor`, no `google/gvisor` |
+| [opensandbox-group/OpenSandbox](https://github.com/opensandbox-group/OpenSandbox) | Apache-2.0 (11 324B) | **17834** | 2026-11-23 | 2025-12-17 | El sandbox agentic más grande que faltaba |
+| [TencentCloud/CubeSandbox](https://github.com/TencentCloud/CubeSandbox) | Apache-2.0 (`master`, **25 798B compuesto**) | 13414 | 2026-11-23 | 2026-04-10 | API: `NOASSERTION`. Bundle con BSD-2-Clause embebido |
+| [deeplethe/sandstorm](https://github.com/deeplethe/sandstorm) | Apache-2.0 (11 334B) | 6107 | 2026-11-20 | **2026-05-11** | Sobre gVisor; 6 meses de vida |
+| [kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox) | Apache-2.0 (11 357B) | 4693 | 2026-11-23 | 2025-08-12 | **SIG de Kubernetes**; delega en `RuntimeClass` (gVisor/Kata) |
+| [earendil-works/gondolin](https://github.com/earendil-works/gondolin) | Apache-2.0 (10 847B) | 2470 | 2026-11-13 | 2026-02-03 | microVM + control plane TS. **Experimental, lo dicen ellos** |
+| [BitMiracle-AI/Dormice](https://github.com/BitMiracle-AI/Dormice) | Apache-2.0 (11 357B) | 1975 | 2026-11-12 | **2026-07-08** | 4 meses de vida |
+| [e2b-dev/runtime](https://github.com/e2b-dev/runtime) | Apache-2.0 (11 347B) | 1870 | 2026-11-23 | 2023-08-10 | **Lo que se autohospeda.** `e2b-dev/E2B` (14 980★) es el SDK |
+| [superhq-ai/shuru](https://github.com/superhq-ai/shuru) | Apache-2.0 (10 762B) | 902 | 2026-11-15 | 2026-02-17 | microVM **local-first** macOS/Linux |
+| [wasmerio/wasmer](https://github.com/wasmerio/wasmer) | MIT (1 097B) | 21260 | 2026-11-21 | 2018-10-11 | Runtime WASM **reposicionado en 2026** como sandbox de agentes |
+| [mattpocock/sandcastle](https://github.com/mattpocock/sandcastle) | MIT (1 068B) | 9247 | 2026-11-18 | 2026-03-17 | Conveniencia sobre la jaula → también en `agents/top.md` |
+
+### Egreso: qué puede alcanzar desde adentro
+
+| Repo | Licencia | Stars | Push | Nota |
+|------|----------|-------|------|------|
+| [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) | Apache-2.0 (11 345B) | 1020 | 2026-11-23 | **El único con ≥200★ que existe** |
+| [monasticacademy/httptap](https://github.com/monasticacademy/httptap) | MIT (1 102B) | 4183 | **2026-06-15** | *"¿a dónde llamó el agente?"* sin root. **Dormido 5 meses** |
+
+### Autorización e identidad: de parte de quién actúa
+
+| Repo | Licencia | Stars | Push | Creado | Nota |
+|------|----------|-------|------|--------|------|
+| [casdoor/casdoor](https://github.com/casdoor/casdoor) | Apache-2.0 (`master`, 11 357B) | **14931** | 2026-11-23 | 2020-10-22 | IAM redefinido **"agent-first"**; **24x `thunderid` (621★)** |
+| [openfga/openfga](https://github.com/openfga/openfga) | Apache-2.0 (10 176B) | 6184 | 2026-11-23 | 2022-06-08 | ReBAC/Zanzibar, CNCF. **Es el motor que ToolHive ya usa por tool call** |
+| [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) | Apache-2.0 (11 357B) | 4876 | 2026-11-23 | 2025-05-08 | Gateway + registry + proxy MCP/A2A/REST. **2x ToolHive** |
+| [cerbos/cerbos](https://github.com/cerbos/cerbos) | Apache-2.0 (11 357B, **sin `ee/`**) | 4668 | 2026-11-23 | 2021-03-21 | **Open-core limpio**: lo pago es un servicio aparte, no un carve-out en el árbol |
+| [MetapriseAI/OrgKernel](https://github.com/MetapriseAI/OrgKernel) | Apache-2.0 (10 759B) | 2671 | **2026-07-06** | 2026-03-25 | Identidad Ed25519 + audit trail. **Dormido 4,5 meses** |
+| [spiffe/spire](https://github.com/spiffe/spire) | Apache-2.0 (11 358B) | **2633** | 2026-11-23 | 2017-08-11 | CNCF **graduado**, base de todos los borradores IETF. **Menos estrellas que varios harnesses de juguete** |
+
+### Escaneo y registro del artefacto — **capa que no existía en el pase 6**
+
+| Repo | Licencia | Stars | Push | Creado | Nota |
+|------|----------|-------|------|--------|------|
+| [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) | Apache-2.0 (10 782B) | **27409** | 2026-11-22 | 2026-03-21 | **El más grande de todo el plano, por casi 2x** |
+| [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit) | **MIT** (1 074B) | 6598 | 2026-11-23 | 2026-03-02 | Política + identidad + sandboxing en un paquete |
+| [iflytek/skillhub](https://github.com/iflytek/skillhub) | Apache-2.0 (11 346B) | 5478 | 2026-11-23 | 2026-03-11 | Registry de skills self-hosted. **Origen chino** |
+| [snyk/agent-scan](https://github.com/snyk/agent-scan) | Apache-2.0 (11 347B) | 3276 | 2026-11-23 | 2025-04-07 | Vendor AppSec establecido |
+
+### ⚠️ Lo que NO entra, y por qué
+
+| Repo | Stars | Motivo (verificado hoy) |
+|------|-------|-------------------------|
+| [mksglu/context-mode](https://github.com/mksglu/context-mode) | **34419** | **Elastic License 2.0** (3 840B). No open source: prohíbe servicio gestionado y circunvalar la license key. API: `NOASSERTION` |
+| [anthropics/skills](https://github.com/anthropics/skills) | **199381** | **Sin archivo de licencia** — `LICENSE`/`.md`/`.txt`/`COPYING`/`NOTICE` → 404 los cinco; API `null` |
+| [netbirdio/netbird](https://github.com/netbirdio/netbird) | 31231 | BSD-3-Clause **excepto `management/`, `signal/`, `relay/`, `combined/` = AGPL-3.0**, y `management/` es el control plane |
+| [sandbox-quantum/switch](https://github.com/sandbox-quantum/switch) | 4696 | **No es un sandbox**: AI teammates para Slack/Teams, de SandboxAQ. Apache-2.0 real |
+| [abshkbh/arrakis](https://github.com/abshkbh/arrakis) | 897 | **AGPL-3.0 + 17 meses sin push** (2025-06-02) |
+| [mcp-router/mcp-router](https://github.com/mcp-router/mcp-router) | 2126 | **ARCHIVADO**; fin de soporte y de updates de seguridad declarado 2026-09-18 |
+| [abhi1693/openclaw-mission-control](https://github.com/abhi1693/openclaw-mission-control) | 4098 | **ARCHIVADO** 2026-08-06 |
+| [superhq-ai/superhq](https://github.com/superhq-ai/superhq) | 295 | AGPL-3.0 (34 453B). Se registra porque `shuru`, del mismo autor, **sí** es Apache-2.0: **misma org, dos licencias** |
+| [HelpCode-ai/anythingmcp](https://github.com/HelpCode-ai/anythingmcp) | 830 | AGPL-3.0 (34 523B) |
+
+**Método, conteo del pase:** 4 de 4 `NOASSERTION` de la API tenían archivo de licencia real y
+legible (compuesto, ELv2, carve-out AGPL, Apache con apéndice). **Sobre-declaraciones: 0.** Mismo
+sesgo que registró el ciclo de travel. **La licencia se lee del archivo, siempre.**
+
+---
+
 ## 2026-11-23 — pase 9 *(cuarto pase del día; pase 6 14:58 UTC, pase 7 15:56 UTC, pase 8 16:57 UTC)*
 
 **Línea base nueva: el plano de entrega — del diff del agente al release verificado.

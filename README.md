@@ -47,6 +47,56 @@ technology-kb/
 11. **Mantenerse al día**: el curador automático actualiza este KB por rotación horaria.
     `agents/trending.md` y `repos/trending.md` son **append-only**: la sección más reciente arriba
 
+## Estado de verificación (2026-11-23 — pase 10)
+
+**Quinto pase del mismo día** (pase 6: 14:58 UTC, pase 7: 15:56, pase 8: 16:57, pase 9: 17:58).
+No re-mide lo que aquéllos ya midieron: **mide el plano de ejecución —dónde corre el agente y de
+parte de quién actúa—**, que el pase 6 abrió con 4 capas y 12 repos y nadie volvió a contar.
+
+**Qué agrega este pase.**
+
+- **23 repos nuevos** en `repos/foundations.md` (sección **🔒**, ahora con **capa 1b de egreso y
+  capa 5 de escaneo del artefacto, que no existían**), y **6 filas nuevas** en `agents/top.md`,
+  que pasa a **47 filas reales, cero de ejemplo**.
+- **El hallazgo, y es contable.** `agent sandbox stars:>=500` devuelve **75**;
+  `agent permission policy stars:>=500` devuelve **0**; `agent egress firewall stars:>=200`
+  devuelve **1**. **Sobran jaulas, aparecieron escáneres, y falta exactamente lo del medio:
+  quién decide, en el momento de la llamada, si este agente —actuando de parte de este usuario—
+  puede hacer esta cosa.** Es una **tercera** forma de brecha: distinta de la del pase 7/8
+  ("nada decide") y de la del pase 9 ("sí hay agentes"). Queda como **tendencia 30**.
+- **Tres repos grandes que esta KB nunca había listado:** `NVIDIA/SkillSpector` (**27 409★**, el
+  más grande de todo el plano, por casi 2x), `opensandbox-group/OpenSandbox` (**17 834★**) y
+  `omnigent-ai/omnigent` (**11 507★**, meta-harness). **Cuarto pase consecutivo en que el repo
+  grande que falta no aparece buscando "agente", sino buscando la capa.**
+- **La asimetría que vale decir en voz alta:** `spiffe/spire` —CNCF **graduado**, base de todos
+  los borradores IETF de identidad de agentes— tiene **2 633★**. **La capa que la regulación va a
+  exigir es la que menos tracción social tiene.**
+- **Cinco trampas de licencia nuevas, y una es grande:** `mksglu/context-mode` (**34 419★**) es
+  **Elastic License 2.0**, no open source; `anthropics/skills` (**199 381★**, +4 847 en la semana
+  del digest de GitHub Trending) **no tiene archivo de licencia en ninguna ubicación estándar**;
+  `netbirdio/netbird` es BSD-3-Clause **excepto su control plane, que es AGPL-3.0**;
+  `TencentCloud/CubeSandbox` tiene un `LICENSE` **compuesto de 25 798B** (quinta variante de
+  trampa que registra esta KB); y `sandbox-quantum/switch` **no es un sandbox** pese a la org.
+  Más dos cadáveres: `mcp-router` y `openclaw-mission-control`, **archivados los dos**.
+- **El contador de la API volvió a declarar de menos: 4 de 4.** Los cuatro `NOASSERTION` del pase
+  tenían archivo de licencia real y legible. **Sobre-declaraciones: cero.**
+- **Una fuente secundaria corregida:** un listado de CRMs de 2026 afirma que `twentyhq/twenty` es
+  BSL-1.1. El archivo dice **AGPL-3.0**. El valor que esta KB ya publicaba es el correcto.
+- **Dos recetas nuevas** (18: autorización por llamada, que **cierra el hueco que la receta 7
+  declaró**; 19: la jaula sobre el Kubernetes que el cliente ya opera) y **cinco plataformas
+  nuevas** en `verticals/solutions.md`, que pasa a **27 filas**.
+- **Las cuatro regiones actualizadas con fechas y conflictos declarados**, no resueltos a la
+  fuerza: Colorado (dos versiones de la ley, fuentes en conflicto), el *Cloud and AI Development
+  Act* de EMEA (propuesta del 3-jun-2026, niveles SEAL citables en pliego), el mapa APAC país por
+  país (Corea en vigor enero 2026 con multas pausadas; China exigible desde 2026-01-01) y Brasil
+  (**el PL 2338 NO es ley**; la ANPD es agencia plena desde febrero de 2026).
+- **Tendencia 31 nueva, con cautela de fuente declarada:** Menlo Ventures (3-nov-2026) mide
+  **USD 177 000 M** de gasto de despliegue y **69% capturado por tres proveedores** (contra 50%
+  el año anterior). **Un solo reporte, de parte interesada** — la dirección sirve, la magnitud no
+  se cita como dato de mercado cerrado.
+- **35 URLs nuevas verificadas con `git ls-remote`: 35 vivas, cero muertas.** Cada licencia leída
+  del **archivo**, en `main` y en `master`, nunca del campo de la API.
+
 ## Estado de verificación (2026-11-23 — pase 9)
 
 **Cuarto pase del mismo día** (pase 6: 14:58 UTC, pase 7: 15:56 UTC, pase 8: 16:57 UTC). No

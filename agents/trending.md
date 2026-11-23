@@ -11,6 +11,68 @@ updated: 2026-11-23
 > Este archivo sigue **agentes y skills**. Para infraestructura ver `repos/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 10 *(quinto pase del día; pase 6 a las 14:58 UTC, pase 7 a las 15:56, pase 8 a las 16:57, pase 9 a las 17:58)*
+
+### Hallazgo del pase: **el plano de ejecución está torcido, y se puede contar**
+
+El pase 6 abrió la sección 🔒 de `repos/foundations.md` con 4 capas y 12 repos, y cerró con la
+frase correcta: *"identidad no es autorización"*. **Este pase midió el tamaño de esa brecha.**
+
+| Consulta (`search/repositories`, 2026-11-23) | Total | Lectura |
+|----------------------------------------------|-------|---------|
+| `agent sandbox in:name,description stars:>=500` | **75** | Cuatro repos sobre 4 500★, **todos Apache-2.0**, **dos creados en 2026** |
+| `sandbox microvm in:name,description stars:>=300` | **3** | El aislamiento a nivel hipervisor sigue siendo nicho |
+| `agent permission policy in:name,description stars:>=500` | **0** | **Cero** |
+| `agent egress firewall in:name,description stars:>=200` | **1** | `pipelab-org/pipelock`, 1 020★ |
+| `agent audit log in:name,description stars:>=500` | **5** | Uno relevante y **sin push hace 4,5 meses** (`OrgKernel`) |
+| `mcp security in:name,description stars:>=2000` | **6** | **2 de 6 archivados** |
+
+**La forma de la brecha:** sobran *jaulas* (dónde corre el código), y en 2026 apareció una capa
+que no existía en el pase 6 —el *escáner del artefacto*, y es la más grande de todo el plano:
+**`NVIDIA/SkillSpector`, 27 409★, Apache-2.0**—. **Falta exactamente lo del medio: quién decide,
+en el momento de la llamada, si este agente, actuando de parte de este usuario, puede hacer esta
+cosa.** Para eso hay primitivos genéricos buenos (OPA 12 508★, OpenFGA 6 184★, Cedar 1 892★,
+SPIRE 2 633★) y **cero producto agentic**.
+
+**Esto no repite la tendencia 23 ("la infraestructura es pasiva, nada decide") ni la corrige como
+hizo el pase 9: la refina.** Acá *sí* hay cosas que deciden —el escáner decide **una vez, antes**
+de instalar; la jaula **no decide nada, contiene**— y lo que no existe es la decisión **durante**.
+Es una tercera forma, y queda registrada como tendencia 30 en `intel/trends.md`.
+
+### Las 6 filas nuevas de `agents/top.md` (las que deciden o actúan)
+
+| Nombre | Repo | Licencia (del archivo) | Stars | Creado | Push |
+|--------|------|------------------------|-------|--------|------|
+| SkillSpector | [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) | Apache-2.0 (10 782B) | **27409** | 2026-03-21 | 2026-11-22 |
+| omnigent | [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) | Apache-2.0 (10 173B) | **11507** | 2026-06-11 | 2026-11-23 |
+| sandcastle | [mattpocock/sandcastle](https://github.com/mattpocock/sandcastle) | MIT (1 068B) | **9247** | 2026-03-17 | 2026-11-18 |
+| agent-governance-toolkit | [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit) | **MIT** (1 074B) | **6598** | 2026-03-02 | 2026-11-23 |
+| agent-scan | [snyk/agent-scan](https://github.com/snyk/agent-scan) | Apache-2.0 (11 347B) | **3276** | 2025-04-07 | 2026-11-23 |
+| pipelock | [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) | Apache-2.0 (11 345B) | **1020** | 2026-02-08 | 2026-11-23 |
+
+**Las 23 piezas de infraestructura del pase —jaulas, gateways, motores de autorización,
+identidad— están en [`repos/foundations.md`](../repos/foundations.md) §🔒 y en
+[`repos/trending.md`](../repos/trending.md), no acá.** Llamarlas agentes sería repetir el error
+que este archivo documenta desde el pase 6.
+
+### Lo que confirma el afuera
+
+Los digests semanales de GitHub Trending de este mes titulan, en tres semanas seguidas:
+*"Agents Grow Memory, Workspaces, and **Safety Boundaries**"* (07-nov),
+*"Agents Move into Workspaces, Browsers, and **Security Checks**"* (11-nov) y
+*"Popular repos are turning agents into **handoff-ready workflows**"* (18-nov).
+**El límite de ejecución es el tema de la ventana, no una hipótesis de esta KB.** Y el repo que
+el digest del 11–18 destaca con **+4 847 estrellas en la semana**, `anthropics/skills`
+(199 381★), **no tiene archivo de licencia** — ver trampas.
+
+### Cero muertes entre las filas existentes
+
+Las 41 filas publicadas siguen vivas. `Aider-AI/aider` sigue sin push desde **2026-05-22** (6
+meses) y `anthropics/claude-code-security-review` desde **2026-02-11** (9 meses): **se mantienen
+listadas con la fecha a la vista**, que es lo que corresponde, no se borran.
+
+---
+
 ## 2026-11-23 — pase 9 *(cuarto pase del día; pase 6 a las 14:58 UTC, pase 7 a las 15:56 UTC, pase 8 a las 16:57 UTC)*
 
 ### Hallazgo del pase: **el plano de entrega SÍ tiene agentes, y eso corrige la conclusión de los dos pases anteriores**

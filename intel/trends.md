@@ -201,6 +201,15 @@ rigor donde el resto vende una estadística.** La barrera declarada #1 lo confir
 ángulo: casi **60% señala la integración con legacy**, y el audit trail exigido por compras y
 legales pasó de recomendación a **requisito de procurement**.
 
+> **Actualización del pase 10 (2026-11-23): el rango se mantiene y ahora tiene un extremo bajo
+> con n grande.** Una encuesta de más de **120 000 respondentes empresariales** citada en
+> noviembre de 2026 reporta **8.6% con agentes en producción** y **14% con agentes en piloto**.
+> En la misma ventana, el reporte de Menlo Ventures del 3-nov-2026 titula que **los agentes son
+> el 80% del uso de IA**. **No se contradicen: miden cosas distintas** —uno cuenta empresas con
+> un agente desplegado, el otro cuenta qué fracción del uso de IA es agentic—. **Pero se citan
+> como si midieran lo mismo, y ahí es donde un integrador puede entrar definiendo el término.**
+> El extremo bajo del rango 8x ya no es una encuesta chica: tiene n de seis cifras.
+
 ## 14. Los dos protocolos quedaron bajo el mismo techo
 
 *Nueva en el pase 6.* **A2A llegó a v1.0 bajo gobernanza de la Linux Foundation el 2026-04-09 y
@@ -609,3 +618,57 @@ descartar, y esa es exactamente la disciplina que esta KB le pide al resto del e
 La contracara del mismo pase: **el único agente de generación de tests, `qodo-ai/qodo-cover`,
 quedó AGPL-3.0 y sin push desde 2026-04-05.** La organización soltó lo permisivo y se quedó con lo
 copyleft dormido.
+
+## 30. La brecha tiene una tercera forma: el escáner decide **antes**, la jaula **no decide**, nadie decide **durante**
+
+*Nueva en el pase 10.* Los pases 7 y 8 midieron costo y contexto y cerraron igual: *la
+infraestructura es pasiva, nada decide* (tendencia 23). El pase 9 midió entrega y **la corrigió**:
+ahí sí hay agentes (`opensre` 14 719★, `HolmesGPT` 3 965★). El pase 10 midió **ejecución** y
+encontró una tercera forma, que no es ninguna de las dos:
+
+| Consulta (`search/repositories`, 2026-11-23) | Total |
+|----------------------------------------------|-------|
+| `agent sandbox in:name,description stars:>=500` | **75** |
+| `agent permission policy in:name,description stars:>=500` | **0** |
+| `agent egress firewall in:name,description stars:>=200` | **1** |
+
+**Hay tres momentos de decisión y sólo dos están cubiertos.** El *escáner del artefacto* decide
+**una vez, antes** de instalar —y es la capa más grande de todo el plano: `NVIDIA/SkillSpector`,
+**27 409★**, Apache-2.0, creado en marzo de 2026, más grande que el segundo por casi 2x—. La
+*jaula* **no decide: contiene** —y está llena: cuatro repos sobre 4 500★, todos Apache-2.0, dos
+nacidos en 2026—. Lo que no existe es la decisión **durante**: quién autoriza, en el momento de la
+llamada, que *este* agente, actuando de parte de *este* usuario, haga *esta* cosa. Para eso hay
+primitivos genéricos maduros (OPA 12 508★, OpenFGA 6 184★, Cedar 1 892★, SPIRE 2 633★) y **cero
+producto agentic**: el único repo que junta política, identidad y sandboxing es
+`microsoft/agent-governance-toolkit` (6 598★, **MIT**), y es un *toolkit*, no un servicio.
+
+**Por qué importa para Globant, concretamente.** La capa que falta es la que el cliente regulado
+pide por escrito —y es la que no se puede comprar, en abierto ni en cerrado, sin lock-in: del lado
+propietario **Microsoft Entra Agent ID está GA desde abril de 2026**. Ensamblarla con partes
+permisivas (ToolHive + OpenFGA + SPIRE + pipelock, las cuatro Apache-2.0) **es trabajo de
+arquitectura, no de integración de producto, y es facturable como tal.** Es la misma jugada que la
+receta soberana de EMEA: no existe el repo, existen las partes.
+
+**La asimetría cruda, para decirla una vez:** `spiffe/spire` —CNCF **graduado**, base de todos los
+borradores IETF de identidad de agentes— tiene **2 633★**. Varios harnesses de este mismo vertical
+tienen cien veces más. **La capa que la regulación va a exigir es la que menos tracción social
+tiene**, y eso no se arregla esperando.
+
+## 31. El gasto se concentró en tres proveedores, y pasó de la mitad a dos tercios en un año
+
+*Nueva en el pase 10.* El reporte de IA empresarial de **Menlo Ventures del 3 de noviembre de
+2026** mide el gasto de despliegue en **USD 177 000 M a septiembre de 2026**, contra **USD 33 000 M
+el año anterior**, y —el dato que importa— **Anthropic, OpenAI y Google capturan el 69% de ese
+gasto (USD 122 700 M), contra 50% el año pasado.**
+
+**La concentración subió 19 puntos en doce meses.** Eso cambia el argumento de arquitectura de
+esta KB: la razón para poner un gateway permisivo delante de los modelos (`litellm` MIT con su
+carve-out, `maximhq/bifrost` Apache-2.0) **dejó de ser el ahorro y pasó a ser la opcionalidad**.
+Un cliente que hoy escribe el SDK de un proveedor directo en 200 lugares del código está firmando
+una dependencia en el mercado más concentrado de los dos últimos años.
+
+> ⚠️ **Cautela de fuente, declarada:** el 69% y los USD 177 000 M vienen de **un solo reporte de
+> un fondo de venture**, que es parte interesada. La dirección (concentración creciente) coincide
+> con lo que se observa en los defaults de los harnesses del vertical; **las magnitudes no están
+> corroboradas por una segunda fuente independiente y no se deben citar a un cliente como dato
+> de mercado cerrado.**

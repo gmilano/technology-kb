@@ -792,6 +792,107 @@ de costo —no sólo de entrega— parte del mismo entregable.
 
 ---
 
+## Receta 18 — Autorización **por llamada**: cerrar el hueco que la receta 7 declaró *(nueva, pase 10)*
+
+**Por qué existe.** El punto 7 de la receta 7 dice: *"la identidad se declara como hueco, no se
+simula"*. Eso era correcto en el pase 6 con 12 repos medidos. **El pase 10 midió el plano completo
+y las piezas existen** — lo que no existe es el producto que las junta. Esta receta es el
+ensamblado, y **es explícitamente trabajo de arquitectura, no de integración**: por eso se cotiza
+distinto.
+
+**El hueco, dicho con la medición:** `agent permission policy stars:>=500` devuelve **0**.
+Hay tres momentos de decisión y el mercado cubre dos — el escáner decide **antes** de instalar, la
+jaula **contiene** durante. **Nadie decide, en el momento de la llamada, si este agente actuando
+de parte de este usuario puede hacer esta cosa.** Eso es lo que arma esta receta.
+
+| Capa | Pieza | Licencia (leída del archivo) | Stars | Qué resuelve exactamente |
+|------|-------|------------------------------|-------|--------------------------|
+| Identidad del workload | [spiffe/spire](https://github.com/spiffe/spire) | Apache-2.0 (11 358B) | 2633 | Emite un **SVID** por agente: identidad verificable **sin secreto estático**. CNCF graduado. Es el *quién es el proceso* |
+| Identidad del usuario y delegación | [casdoor/casdoor](https://github.com/casdoor/casdoor) | Apache-2.0 (11 357B) | 14931 | OIDC/OAuth 2.0 + SSO + MFA, con posicionamiento **agent-first**. Es el *de parte de quién actúa*. **Madurez de IAM real (2020), no de proyecto 2026** |
+| Decisión por llamada | [openfga/openfga](https://github.com/openfga/openfga) | Apache-2.0 (10 176B) | 6184 | **El chequeo que falta.** ReBAC estilo Zanzibar: *¿esta identidad puede sobre este objeto?*. **No se elige por lista: es el motor que ToolHive ya consulta** |
+| Punto de intercepción | [stacklok/toolhive](https://github.com/stacklok/toolhive) | Apache-2.0 | 2353 | Donde se mete el chequeo: cada MCP server aislado y **política aplicada por request** |
+| Catálogo del plano MCP | [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) | Apache-2.0 (11 357B) | 4876 | Registry + proxy delante de MCP/A2A/REST. **Se despliega junto a ToolHive, no en vez de** |
+| Egreso | [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) | Apache-2.0 (11 345B) | 1020 | **El único firewall de egreso de agentes que existe con ≥200★.** Sin esto, el sandbox aísla el filesystem y deja la red abierta |
+| Compuerta de instalación | [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) + [snyk/agent-scan](https://github.com/snyk/agent-scan) | Apache-2.0 | 27409 / 3276 | Ninguna skill ni MCP server entra sin escanear. **Los dos, igual que los dos escáneres MCP de la receta 7** |
+| Catálogo de skills | [iflytek/skillhub](https://github.com/iflytek/skillhub) | Apache-2.0 (11 346B) | 5478 | Qué skill, qué versión, en qué agente. Es el inventario que el auditor pide |
+| Andamiaje de política | [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit) | **MIT** (1 074B) | 6598 | El único repo medido que junta política + identidad zero-trust + sandboxing. **Se usa como andamio, no como servicio** |
+| Política declarativa | [open-policy-agent/opa](https://github.com/open-policy-agent/opa) + [cerbos/cerbos](https://github.com/cerbos/cerbos) | Apache-2.0 | 12508 / 4668 | Reglas versionadas fuera del prompt. Cerbos es **open-core limpio**: lo pago es servicio aparte, **sin carve-out en el árbol** |
+
+**Cómo se arma, en orden, y de nuevo el orden importa:**
+
+1. **SPIRE primero, y vacío.** Emitir SVIDs antes de tener una sola política. Un agente que ya
+   usa API keys estáticas no se migra a identidad verificable: se reescribe el borde.
+2. **Casdoor con token exchange (RFC 8693), no con un service account compartido.** El patrón que
+   funciona es **SPIFFE para autenticar el workload + intercambio de token para el contexto del
+   usuario**. **SPIFFE autentica, no autoriza** — confundirlo es el error de diseño más común de
+   esta capa.
+3. **OpenFGA detrás de ToolHive, con el modelo de permisos del cliente, no uno genérico.** Acá
+   está el valor facturable: traducir "quién puede qué" del negocio a un modelo ReBAC es
+   consultoría, y es lo que ningún producto trae puesto.
+4. **pipelock en el mismo sprint que la jaula, no después.** Filesystem y red se aíslan juntos.
+5. **SkillSpector + agent-scan en CI como portero de instalación**, y `skillhub` como inventario.
+   La cadena de suministro **se corrió del paquete npm a la skill**, y esta es la capa nueva.
+6. **El audit trail se diseña a mano y se dice que es a mano.** La revisión MCP vigente resuelve
+   autenticación y **no define formato de audit trail**: el esquema de eventos es entregable
+   propio, no configuración.
+
+**Lo que hay que decirle al cliente, y conviene decirlo en la primera reunión:**
+
+- **OAuth 2.1 sigue siendo Internet-Draft** (borrador -16, septiembre de 2026), con hito de
+  working group en **diciembre de 2026**. La autorización empresarial gestionada de MCP se lista
+  como estable; **el transporte de autorización todavía se mueve.** Se construye con versionado de
+  la capa de auth, no asumiendo que el estándar ya cerró.
+- **La alternativa cerrada está GA y es lock-in:** Microsoft **Entra Agent ID**, GA abril de 2026.
+  La asimetría no se tapa: se usa como argumento de arquitectura.
+- ⚠️ **Dato de una sola fuente secundaria, sin corroborar:** un análisis de MCP servers open source
+  reporta **53% con API keys estáticas y sólo 8.5% con OAuth**. La dirección coincide con lo
+  observable; **la magnitud no se cita a un cliente como dato firme.**
+
+**Esfuerzo:** 8-10 semanas sobre un stack que ya tiene la receta 7 montada; 14-16 desde cero
+(porque los puntos 1 y 2 tocan el borde de la aplicación, no una capa lateral).
+
+**Entregable medible:** (a) cada agente con identidad verificable y **cero credenciales de larga
+vida**, (b) un modelo de autorización ReBAC versionado en repo, (c) **un log por tool call con
+identidad del agente, identidad del usuario delegante, decisión y motivo** — que es exactamente lo
+que pide el procurement regulado, (d) egreso denegado por defecto con allowlist justificada, y
+(e) ninguna skill en el entorno sin escaneo y entrada en el catálogo. **Los cinco son auditables
+por un tercero y ninguno existe como producto comprable hoy.**
+
+**Dónde aplica por región:** **North America** (el audit trail por llamada ya está en los pliegos
+y la gobernanza es la barrera declarada #1), **EMEA** (AI Act en aplicación general desde agosto
+de 2026) y **LATAM** (las empresas proactivas adoptan los principios del AI Act como estándar de
+facto anticipando la ley local, así que **el trabajo se reutiliza entre las dos regiones**).
+
+## Receta 19 — La jaula sobre el Kubernetes que el cliente ya opera *(nueva, pase 10 — EMEA y APAC)*
+
+**Para quién.** El cliente que ya tiene Kubernetes y cuyo contrato o regulación dice que **nada
+sale del perímetro** — EMEA soberano, o APAC con localización de datos exigida por ley.
+
+**La pieza que cambia esto respecto del pase 6:** `kubernetes-sigs/agent-sandbox` **(4 693★,
+Apache-2.0, SIG de Kubernetes, push de hoy)**. No implementa aislamiento propio: define el objeto
+de sandbox y **delega en el `RuntimeClass`**. Eso significa que el aislamiento fuerte lo da gVisor
+o Kata **dentro del cluster que el cliente ya audita**, sin plano de cómputo nuevo y sin SaaS.
+
+| Capa | Pieza | Licencia | Nota |
+|------|-------|----------|------|
+| Objeto de sandbox | [kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox) | Apache-2.0 (11 357B) | **Gobernanza de SIG de Kubernetes** — el argumento que gana una revisión de arquitectura |
+| Aislamiento real | [gvisor/gvisor](https://github.com/gvisor/gvisor) **o** Kata, vía `RuntimeClass` | Apache-2.0 (14 110B) | **Slug canónico: `gvisor/gvisor`**, no `google/gvisor` |
+| Runtime autohospedado alternativo | [e2b-dev/runtime](https://github.com/e2b-dev/runtime) | Apache-2.0 (11 347B) | **El repo que se autohospeda (1 870★)**, no el SDK de 14 980★ |
+| Opción APAC con origen regional | [TencentCloud/CubeSandbox](https://github.com/TencentCloud/CubeSandbox) | Apache-2.0 (**bundle 25 798B**) | ⚠️ Licencia **compuesta** con BSD-2-Clause embebido: las obligaciones de aviso incluyen lo vendorizado |
+| Egreso | [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) | Apache-2.0 | Default deny. En un despliegue soberano es la mitad del requisito |
+| Diagnóstico | [monasticacademy/httptap](https://github.com/monasticacademy/httptap) | MIT | *"¿a dónde llamó el agente?"* sin root. ⚠️ **Sin push desde 2026-06-15**: herramienta, no dependencia |
+
+**Orden:** `RuntimeClass` y política de red **antes** del primer agente → `agent-sandbox` como
+objeto → `pipelock` default-deny con allowlist justificada por servicio → recién entonces el
+harness. **Esfuerzo:** 4-6 semanas si el cluster ya tiene gVisor o Kata disponible; 8-10 si hay
+que introducir el runtime de contenedor (y esa introducción es un proyecto de plataforma, no un
+ítem de esta receta).
+
+**Lo que NO se promete acá:** que el aislamiento del contenedor equivale al del hipervisor. gVisor
+pone un kernel en espacio de usuario; Firecracker/Kata dan kernel propio. **Si el cliente pregunta
+"¿y si el agente escapa del contenedor?", la respuesta honesta depende del `RuntimeClass` elegido
+y se escribe en el documento de arquitectura, no se contesta en la reunión.**
+
 ## Lo que NO conviene prometer
 
 1. **Merge automático.** Ninguna receta acá mergea sin humano. Gartner proyecta >40% de

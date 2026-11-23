@@ -100,6 +100,34 @@ primaria, acá dice que no la tiene.
 
 ### North America
 
+> **Actualización del pase 10 (2026-11-23) — el plano de ejecución, y dos cifras nuevas.**
+> **Adopción:** la encuesta BTOS del **Census Bureau de octubre de 2026** mide **24.6%** de firmas
+> usando IA (contra 19.8% de mayo), y **37% en firmas de 250+ empleados** (Census, mayo 2026). La
+> penetración sube ~5 puntos en cinco meses y **el salto por tamaño de empresa se mantiene**.
+> **Producción:** una encuesta de **+120 000 respondentes** reporta **8.6% con agentes en
+> producción** y 14% en piloto — el extremo bajo del rango 8x de la tendencia 13, ahora con n de
+> seis cifras.
+> **Regulación — sigue sin ley federal, y un estado cambió de ley:** las fuentes se contradicen
+> sobre Colorado. Una sostiene que **SB 26-189, firmada el 2026-05-14, derogó y reemplazó la
+> Colorado AI Act antes de que entrara en vigencia**, y que la nueva aplica desde **2027-01-01**;
+> otra sostiene que la original entró en vigencia el **2026-06-30**. **No se resuelve acá: se
+> registra el conflicto**, porque una propuesta que cite la fecha equivocada pierde credibilidad
+> en la primera revisión legal del cliente. Lo que no está en disputa: **ni EE.UU., ni Canadá, ni
+> México tienen ley integral de IA en vigencia**, el nivel federal estadounidense se mueve por
+> orden ejecutiva, y **California, Colorado y Texas fijan los plazos cercanos**. Canadá no tiene
+> estatuto específico pero **PIPEDA y la Ley 25 de Quebec ya aplican** a cualquier sistema que
+> toque dato personal; su estrategia *AI for All* (2026-06-04) incluye watermarking y un programa
+> de certificación.
+> **Oportunidad de este pase, concreta:** NA es la región donde el audit trail por llamada se pide
+> en el pliego de compras y **no hay producto abierto que lo dé**. Ensamblar la capa faltante
+> (ToolHive + OpenFGA + SPIRE + pipelock, las cuatro Apache-2.0) y entregarla con la definición de
+> "producción" escrita y medida es la oferta que contesta la barrera declarada #1 —gobernanza— sin
+> depender de **Entra Agent ID**, que es propietario y está GA desde abril de 2026. Ver receta 18.
+> **Cautela de costo, y es un caso real citado:** una empresa grande **agotó su presupuesto anual
+> de IA de 2026 en abril**. El consumo por tokens rompe el control financiero antes que la
+> arquitectura — razón por la que la receta 18 lleva el gateway de la tendencia 31 adentro.
+
+
 **Estado.** Es el mercado más grande y el de regulación más fragmentada. La adopción declarada
 es alta pero la penetración real es menor de lo que sugiere el ruido: una fuente mide el uso de
 IA en empresas de EE.UU. en **19.8%** (mayo 2026), subiendo a **37% en empresas de 250+
@@ -263,6 +291,31 @@ datos del cliente, antes de tocar nada) y una compuerta de entrega auditable com
 Receta 15 y Receta 17.
 
 ### EMEA
+
+> **Actualización del pase 10 (2026-11-23).**
+> **Regulación:** la aplicación general del AI Act arrancó en **agosto de 2026** y la AI Office ya
+> ejerce enforcement sobre modelos GPAI. El paquete de simplificación **"AI Omnibus" se acordó
+> entre Consejo y Parlamento en mayo de 2026**. ⚠️ Una fuente secundaria afirma que el
+> cumplimiento de alto riesgo se corrió a **diciembre de 2027**; **la página de la Comisión no lo
+> confirma y queda registrado como no resuelto.**
+> **Soberanía — hay instrumento nuevo:** la Comisión propuso el **Cloud and AI Development Act el
+> 3 de junio de 2026**, con un marco de **cuatro niveles de garantía de soberanía** y la meta de
+> **al menos triplicar la capacidad de datacenter europea en 5–7 años**; es **propuesta**, con
+> adopción apuntada a 2027. En **abril de 2026** la Comisión adjudicó contratos marco de cloud
+> soberano **exigiendo mínimo SEAL-2**, y varios proveedores alcanzaron **SEAL-3**. **Ese nivel
+> SEAL es, desde ahora, un requisito citable en un pliego europeo.**
+> **Players:** Mistral tomó **EUR 722 M de deuda** para un datacenter soberano cerca de París con
+> **13 800 GPUs Nvidia**; también figuran Aleph Alpha, LightOn y Domyn, más la Industrial AI Cloud
+> de Deutsche Telekom y las AI Factories de EuroHPC. **Contrapeso que conviene decir en la
+> reunión:** proveedores estadounidenses capturan **~83% del mercado europeo de software cloud**,
+> y la soberanía europea hoy es **operacional** (el dato queda en datacenters de la UE), **no de
+> silicio**.
+> **Oportunidad de este pase:** EMEA es la región donde el plano de ejecución es el **entregable**
+> y no el detalle de implementación. Las 11 jaulas verificadas hoy son **todas Apache-2.0 o MIT y
+> todas autohospedables** — `kubernetes-sigs/agent-sandbox` es la de mejor gobernanza (SIG de
+> Kubernetes) y `e2b-dev/runtime` es **el repo que realmente se autohospeda** (1 870★), no el SDK
+> de 14 980★. **La distinción importa cuando el contrato dice que nada sale del perímetro.**
+
 
 **Estado.** La región donde la regulación es el producto. Dos fechas importan y **las fuentes se
 contradicen sobre una de ellas**:
@@ -444,6 +497,32 @@ locales — **todo Apache-2.0 o MIT**. Las dos plataformas de feature flags más
 
 ### APAC
 
+> **Actualización del pase 10 (2026-11-23) — el mapa regulatorio, por país y con fechas.**
+> **Corea** es la jurisdicción más avanzada: su **ley integral de IA entró en vigencia en enero de
+> 2026** —primera después de la UE— pero **las multas están pausadas al menos un año**, con
+> enforcement administrativo pleno esperado a **principios de 2027**. En **febrero de 2026 Corea
+> decidió NO introducir excepción de text-and-data-mining** en su ley de copyright, lo que afecta
+> directamente a cualquier pipeline de entrenamiento con dato local.
+> **Japón** mantiene el enfoque de promoción: la **AI Promotion Act** (aprobada 2025-05-28, en
+> vigor 2025-06-04) es **ley marco sin penalidades**, y el **segundo AI Basic Plan fue aprobado por
+> el Gabinete el 2026-07-14** — documento de estrategia, no norma exigible.
+> **China** regula por reglas sectoriales, no por ley ómnibus: la **Ley de Ciberseguridad
+> enmendada es exigible desde el 2026-01-01** y agrega **revisión de seguridad de IA y
+> localización de datos**; hay **+550 servicios de IA generativa registrados a mediados de 2026**.
+> El borrador de ley integral de IA de 2024 sigue siendo borrador.
+> **India** es la más en movimiento: **AI Governance Guidelines** a fines de 2025, **enmienda a las
+> IT Rules en febrero de 2026** para contenido sintético, **sin ley integral**, y en **julio de
+> 2026 el gobierno señaló que podría ir a legislación dedicada**. El **RBI propuso en junio de
+> 2026** que los bancos establezcan marcos formales de gobernanza de IA/ML.
+> **Oportunidad de este pase:** APAC es donde la *localización de datos* y el *aislamiento* dejan
+> de ser preferencia y pasan a ser requisito legal — y hoy existe la pieza correcta y con origen
+> regional: **`TencentCloud/CubeSandbox` (13 414★)** e **`iflytek/skillhub` (5 478★)**, las dos
+> Apache-2.0. ⚠️ **Advertencia que va junto:** el `LICENSE` de CubeSandbox es un **bundle de
+> 25 798B** con componentes BSD-2-Clause embebidos — usable, pero las obligaciones de aviso no se
+> cumplen copiando un Apache genérico. La ley de ciberseguridad china enmendada aplica **al
+> despliegue**, no al repo.
+
+
 **Estado.** La región que tiene el código. Dos de los tres agentes nuevos más fuertes del
 ciclo salieron de laboratorios chinos: **`deepseek-ai/dsh-superagent-prototype`** (MIT, 24108★,
 creado 2026-10-31) y **`zai-org/ZCode`** (Apache-2.0, 8814★), más **`wangzan101/Mika`**
@@ -598,6 +677,34 @@ qué registro— es declarativa y versionable con `conftest` y `kyverno` (ambos 
 política como código es la única forma de que tres regímenes no se conviertan en tres pipelines.**
 
 ### LATAM
+
+> **Actualización del pase 10 (2026-11-23) — el estado legislativo, corregido por país.**
+> **Brasil:** el **PL 2338/2023 pasó el Senado y NO es ley.** El voto en plenario de la Cámara de
+> Diputados apuntado a fines de mayo de 2026 **se postergó**, y a comienzos de junio de 2026 no
+> había informe de comisión ni votación. **Mientras tanto la LGPD y la ANPD son la base operativa
+> real**, y una ley de **febrero de 2026 le dio a la ANPD estatus pleno de agencia reguladora**
+> (autoridad técnica, administrativa y financiera). El texto del PL exige **evaluación de impacto
+> algorítmico** para sistemas de alto riesgo y prohíbe los de riesgo "excesivo". Antecedente ya
+> vigente y poco citado: el tribunal electoral emitió **catorce resoluciones** con restricciones
+> de uso de IA para las elecciones de 2026.
+> **Perú tiene la primera ley de IA promulgada de la región** (reglamento de la Ley 31814,
+> septiembre de 2025). **Chile** tiene proyecto basado en riesgo en desarrollo. **Colombia y
+> Argentina** operan con protección de datos general; Argentina sólo tiene lineamientos no
+> vinculantes.
+> **México:** las fuentes se contradicen —una dice que la Ley Federal para Regular la IA sigue en
+> discusión en el Senado con aprobación esperada en 2026, otra dice que no hay legislación
+> específica—. **Lo que sí está verificado: las reformas de 2026 son las primeras obligaciones
+> vinculantes de IA en México** aun sin ley horizontal, su ley de datos incorpora **derecho de
+> oposición al tratamiento automatizado que cause daño**, y el discurso oficial es de **soberanía
+> tecnológica** (reducir dependencia de modelos extranjeros).
+> **Patrón regional, y es la oportunidad:** las empresas proactivas **están adoptando los
+> principios del AI Act europeo como estándar de facto**, anticipando la ley local. Significa que
+> **el trabajo de cumplimiento hecho para un cliente EMEA se reutiliza en LATAM**, y que la capa
+> faltante del pase 10 —identidad y autorización por llamada, con audit trail— es el entregable
+> que sirve en las dos regiones. Brasil y México invierten además en **modelos soberanos con dato
+> e idioma local**, lo que hace que el gateway permisivo de la tendencia 31 valga doble acá: deja
+> enrutar a un modelo local sin reescribir la aplicación.
+
 
 **Estado — el dato más honesto de la región, y es del BID, no de un proveedor.**
 **En julio de 2026 el Banco Interamericano de Desarrollo reportó que ~80% de las empresas de

@@ -124,6 +124,108 @@ updated: 2026-11-23
 > Usable como herramienta separada en CI; **no se incorpora a un producto distribuible** sin
 > análisis legal. Alternativa permisiva para el mismo lugar del pipeline: Trivy (Apache-2.0).
 
+### 🔬 Pase 10 (2026-11-23) — **la sección se midió, y está torcida**
+
+> El pase 6 abrió esta sección con 4 capas y 12 repos, y cerró declarando la brecha correcta:
+> *"identidad no es autorización"*. **El pase 10 midió el tamaño de esa brecha con consultas
+> contables, y el resultado es una asimetría que no se veía con 12 repos:**
+>
+> | Consulta (GitHub `search/repositories`, 2026-11-23) | Total | Lectura |
+> |---|---|---|
+> | `agent sandbox in:name,description stars:>=500` | **75** | La jaula está **llena**. Cuatro repos sobre 4 500★, **todos Apache-2.0**, y **dos creados en 2026** |
+> | `sandbox microvm in:name,description stars:>=300` | **3** | El aislamiento a nivel hipervisor sigue siendo nicho |
+> | `agent permission policy in:name,description stars:>=500` | **0** | **Cero.** No existe el repo que decida, por llamada, si *este* agente puede hacer *esta* cosa |
+> | `agent egress firewall in:name,description stars:>=200` | **1** | `pipelab-org/pipelock`, 1 020★ — **único** |
+> | `mcp security in:name,description stars:>=2000` | **6** | Dos de los seis están **archivados** |
+>
+> **La forma de la brecha, dicha de una vez:** sobran *jaulas* (dónde corre) y aparecieron
+> *escáneres* (qué se instala, y el más grande del plano entero es de NVIDIA con 27 409★).
+> **Falta exactamente lo del medio: quién decide, en el momento de la llamada, si este agente
+> —actuando de parte de este usuario— puede hacer esta cosa.** Para eso hay primitivos genéricos
+> buenos (OPA 12 508★, OpenFGA 6 184★, Cedar 1 892★, SPIRE 2 633★) y **ningún producto agentic**.
+> El escáner decide **una vez, antes**; la jaula **no decide nada**; y entre medio no hay nadie.
+
+#### Capa 1 (ampliada) — Aislamiento de ejecución
+
+| Repo | Licencia (leída del archivo) | Stars | Último push | Creado | Por qué importa |
+|------|------------------------------|-------|-------------|--------|-----------------|
+| [gvisor/gvisor](https://github.com/gvisor/gvisor) | **Apache-2.0** (`master/LICENSE`, 14 110B) | 20093 | 2026-11-23 | 2018-04-26 | El kernel en espacio de usuario que casi todo lo demás usa por debajo. **Corrección de slug: el canónico es `gvisor/gvisor`, no `google/gvisor`** — el viejo sigue resolviendo por redirect y por eso nunca falla un `ls-remote`, pero `search/repositories` sólo devuelve el nuevo. Consistente con su donación a la CNCF. |
+| [opensandbox-group/OpenSandbox](https://github.com/opensandbox-group/OpenSandbox) | **Apache-2.0** (11 324B) | 17834 | 2026-11-23 | 2025-12-17 | **El sandbox agentic más grande que esta KB nunca había listado.** Runtime de sandbox para agentes, extensible. Push de hoy. |
+| [TencentCloud/CubeSandbox](https://github.com/TencentCloud/CubeSandbox) | **Apache-2.0** (`master/LICENSE`, **25 798B compuesto**) | 13414 | 2026-11-23 | 2026-04-10 | Sandbox liviano y concurrente, de Tencent Cloud. **Su archivo de licencia es un *bundle*:** Apache-2.0 del proyecto **más** dos bloques `Open Source Software Licensed under…` (Apache-2.0 y **BSD-2-Clause**) de componentes vendorizados. Por eso la API dice `NOASSERTION`. **Es usable, pero las obligaciones de aviso incluyen los componentes embebidos** — no alcanza con copiar un Apache genérico. |
+| [deeplethe/sandstorm](https://github.com/deeplethe/sandstorm) | **Apache-2.0** (11 334B) | 6107 | 2026-11-20 | 2026-05-11 | Sandbox sobre gVisor. Nacido en 2026 y ya en cuatro cifras altas. |
+| [kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox) | **Apache-2.0** (11 357B) | 4693 | 2026-11-23 | 2025-08-12 | **La pieza con mejor gobernanza del segmento: es un SIG de Kubernetes.** No implementa aislamiento propio: define el objeto y **delega en el `RuntimeClass`** (gVisor o Kata). Es la respuesta correcta cuando el cliente ya opera Kubernetes y no quiere un plano de cómputo nuevo. |
+| [earendil-works/gondolin](https://github.com/earendil-works/gondolin) | **Apache-2.0** (10 847B) | 2470 | 2026-11-13 | 2026-02-03 | microVM Linux con control plane en TypeScript. Declarado **experimental por sus propios autores** — se registra como temprano. |
+| [BitMiracle-AI/Dormice](https://github.com/BitMiracle-AI/Dormice) | **Apache-2.0** (11 357B) | 1975 | 2026-11-12 | 2026-07-08 | Sandbox de agentes, creado hace 4 meses. |
+| [e2b-dev/runtime](https://github.com/e2b-dev/runtime) | **Apache-2.0** (11 347B) | 1870 | 2026-11-23 | 2023-08-10 | **Distinción que esta KB tenía mal implícita:** lo que se autohospeda es *este* repo (1 870★), no `e2b-dev/E2B` (14 980★), que es el **SDK**. Si el cliente exige correr el sandbox adentro, el repo a auditar es éste y su tracción es 8x menor. `e2b-dev/infra` redirige acá. |
+| [superhq-ai/shuru](https://github.com/superhq-ai/shuru) | **Apache-2.0** (10 762B) | 902 | 2026-11-15 | 2026-02-17 | microVM **local-first** para macOS y Linux. El caso "la notebook del consultor", no el cluster. |
+| [wasmerio/wasmer](https://github.com/wasmerio/wasmer) | **MIT** (1 097B) | 21260 | 2026-11-21 | 2018-10-11 | Runtime WebAssembly de 2018 **reposicionado en 2026 como sandbox de agentes** (su propia descripción ya lo dice). Aislamiento por WASM: arranque de milisegundos, superficie de syscalls mínima, **a cambio de no poder correr cualquier binario**. La opción correcta para herramientas, no para "corré este repo del cliente". |
+| [mattpocock/sandcastle](https://github.com/mattpocock/sandcastle) | **MIT** (1 068B) | 9247 | 2026-11-18 | 2026-03-17 | Orquesta agentes de codificación sandboxeados desde TypeScript (`sandcastle.run()`). Capa de *conveniencia* sobre la jaula, no jaula. |
+
+#### Capa 1b (nueva) — Egreso: qué puede *alcanzar* el agente desde adentro de la jaula
+
+| Repo | Licencia | Stars | Último push | Por qué importa |
+|------|----------|-------|-------------|-----------------|
+| [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) | **Apache-2.0** (11 345B) | 1020 | 2026-11-23 | **El único repo de firewall de egreso de agentes con ≥200★ que existe.** Escanea las llamadas mediadas y controla el egreso MCP. Un sandbox sin control de egreso aísla el filesystem y **deja la red abierta**: es la mitad del problema, y la mitad que exfiltra. |
+| [monasticacademy/httptap](https://github.com/monasticacademy/httptap) | **MIT** (1 102B, texto MIT sin título) | 4183 | **2026-06-15** | Intercepta y muestra el HTTP/HTTPS que hace un proceso, sin root. La forma barata de contestar *"¿a dónde llamó el agente?"*. ⚠️ **Sin push hace 5 meses** — se lista como herramienta de diagnóstico, no como dependencia de producto. |
+
+#### Capa 2 (ampliada) — Plano de herramientas (MCP)
+
+| Repo | Licencia | Stars | Último push | Por qué importa |
+|------|----------|-------|-------------|-----------------|
+| [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) | **Apache-2.0** (11 357B) | 4876 | 2026-11-23 | Gateway + **registry** + proxy delante de MCP, A2A y REST/gRPC. **Duplica la tracción de ToolHive (2 353★) y tiene respaldo de IBM.** Donde ToolHive aísla cada server, éste centraliza el catálogo: se complementan, no compiten. |
+
+#### Capa 3 (ampliada) — Política y autorización
+
+| Repo | Licencia | Stars | Último push | Por qué importa |
+|------|----------|-------|-------------|-----------------|
+| [openfga/openfga](https://github.com/openfga/openfga) | **Apache-2.0** (10 176B) | 6184 | 2026-11-23 | Autorización **relacional** (ReBAC, estilo Zanzibar), CNCF. **Es el motor que ToolHive ya usa para chequear cada tool call**, así que entra en esta KB por una ruta medida y no por lista. Responde "¿este usuario puede ver este objeto?", que es la pregunta que OPA contesta peor. |
+| [cerbos/cerbos](https://github.com/cerbos/cerbos) | **Apache-2.0** (11 357B, **sin directorio `ee/`** — verificado, 404) | 4668 | 2026-11-23 | Autorización desacoplada por servicio. **Open-core limpio:** el repo es Apache-2.0 entero y lo pago es Cerbos Hub, un servicio aparte. A diferencia de LiteLLM o Langfuse, **no hay carve-out adentro del árbol** — y esa es la razón por la que se lista. |
+
+#### Capa 4 (ampliada) — Identidad del agente
+
+| Repo | Licencia | Stars | Último push | Por qué importa |
+|------|----------|-------|-------------|-----------------|
+| [casdoor/casdoor](https://github.com/casdoor/casdoor) | **Apache-2.0** (`master`, 11 357B) | 14931 | 2026-11-23 | IAM que **se redefinió como "agent-first"**: su propia descripción dice IAM + gateway MCP/agente. Con 14 931★ es **24x `thunder-id/thunderid` (621★)**, la pieza que el pase 6 listaba como única de esta capa. Nacido en 2020 como IAM clásico (Casbin), lo que significa **madurez de IAM real**, no un proyecto de 2026 que descubrió OAuth. |
+| [spiffe/spire](https://github.com/spiffe/spire) | **Apache-2.0** (11 358B) | 2633 | 2026-11-23 | Implementación de referencia de SPIFFE, **CNCF graduado**, y el primitivo que todos los borradores IETF de identidad de agentes dan por supuesto. **Dato incómodo y deliberadamente registrado: 2 633★** — el estándar de identidad de workload tiene *menos* estrellas que varios harnesses de juguete de este mismo vertical. La capa que la regulación va a exigir es la que menos tracción social tiene. |
+| [MetapriseAI/OrgKernel](https://github.com/MetapriseAI/OrgKernel) | **Apache-2.0** (10 759B) | 2671 | **2026-07-06** | Identidad criptográfica de agente (Ed25519) + audit trail. Ataca exactamente la brecha declarada en el pase 6 (*"MCP no define formato de audit trail"*). ⚠️ **Sin push hace 4,5 meses** — se registra como evidencia de que alguien intentó, no como pieza desplegable. |
+
+#### Capa 5 (NUEVA en el pase 10) — Qué se instala: escaneo y registro del artefacto
+
+> Esta capa **no existía en el pase 6** y hoy contiene el repo más grande de todo el plano.
+> El vector cambió: ya no es sólo "el agente ejecuta código peligroso", es **"el agente instala
+> una skill o un MCP server que alguien escribió"**. La cadena de suministro se corrió del
+> paquete npm a la *skill*.
+
+| Repo | Licencia | Stars | Último push | Creado | Por qué importa |
+|------|----------|-------|-------------|--------|-----------------|
+| [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) | **Apache-2.0** (10 782B) | **27409** | 2026-11-22 | 2026-03-21 | **El repo más grande de este plano entero, por casi 2x sobre el segundo.** Escáner de *skills* de agentes: vulnerabilidades, patrones maliciosos. De NVIDIA, igual que `garak` — la misma org tiene hoy el escáner del modelo **y** el escáner de la skill. |
+| [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit) | **MIT** (1 074B) | 6598 | 2026-11-23 | 2026-03-02 | **El único repo medido que junta las tres cosas de esta sección en un paquete: política, identidad zero-trust y sandboxing de ejecución.** Y es **MIT**, no Apache — inusual en Microsoft para algo de gobernanza. Es el contrapeso abierto más cercano a Entra Agent ID (propietario, GA abril 2026), aunque es *toolkit*, no servicio. |
+| [iflytek/skillhub](https://github.com/iflytek/skillhub) | **Apache-2.0** (11 346B) | 5478 | 2026-11-23 | 2026-03-11 | Registry de skills **self-hosted para empresa**: publicar, versionar, auditar. El lado "catálogo interno" de la misma capa. Origen chino (iFlytek) — relevante para la tendencia de que la novedad ya no sale sólo de EE.UU. |
+| [snyk/agent-scan](https://github.com/snyk/agent-scan) | **Apache-2.0** (11 347B) | 3276 | 2026-11-23 | 2025-04-07 | Escáner de agentes, MCP servers y skills, de un vendor de AppSec establecido. Complementa a SkillSpector del mismo modo que mcp-scan complementa a mcp-scanner: **conviene correr los dos**. |
+
+#### ⚠️ Trampas nuevas del pase 10 — las cuatro de licencia, más dos cadáveres
+
+| Repo | Lo que parece | Lo que es realmente (verificado hoy) |
+|------|---------------|--------------------------------------|
+| [mksglu/context-mode](https://github.com/mksglu/context-mode) | **34 419★**, el repo más grande que devuelve `agent sandbox`, descrito como *"free, local plugin"* | **Elastic License 2.0** (`LICENSE`, 3 840B). **No es open source.** Prohíbe ofrecerlo como servicio gestionado a terceros y prohíbe mover, cambiar, deshabilitar o **circunvalar la license key**. La API lo reporta `NOASSERTION`, así que ningún badge avisa. **Para Globant: no es base de oferta gestionada.** |
+| [netbirdio/netbird](https://github.com/netbirdio/netbird) | 31 231★, red zero-trust que conecta "personas, máquinas y agentes AI", citada como BSD | **BSD-3-Clause *excepto* `management/`, `signal/`, `relay/` y `combined/`, que son AGPL-3.0.** Lo dice la **primera línea** del `LICENSE` (1 788B). Y `management/` **es el control plane** — es decir, la parte copyleft es justo la que hay que desplegar. Mismo modo de falla que LiteLLM y Langfuse, pero al revés: acá el carve-out es la pieza central, no un extra. |
+| [sandbox-quantum/switch](https://github.com/sandbox-quantum/switch) | 4 696★, aparece primero en `agent sandbox orchestrator`, la org se llama *sandbox*-quantum | **No es un sandbox.** Es un producto de "AI teammates" para Slack/Teams/Discord, de **SandboxAQ** (SB Technology Inc.). Licencia real: **Apache-2.0** (12 714B, apéndice completado, © 2026 SandboxAQ) — la API dice `NOASSERTION`. **Trampa de nombre de org, no de licencia.** |
+| [anthropics/skills](https://github.com/anthropics/skills) | **199 381★**, nombrado en el digest de GitHub Trending del 11–18 de noviembre 2026 (**+4 847** en la semana) | **No tiene archivo de licencia.** `LICENSE`, `LICENSE.md`, `LICENSE.txt`, `COPYING` y `NOTICE` dan **404 los cinco**; el campo de la API es `null`. Vivo por `ls-remote`. **Sin licencia explícita no hay permiso de uso, modificación ni redistribución** — por más que esté en trending y sea de un proveedor conocido. Se usa como referencia de lectura, **no se copia a un entregable de cliente**. |
+| [abshkbh/arrakis](https://github.com/abshkbh/arrakis) | 897★, sandbox self-hosted "totalmente customizable", sale en todo listado de microVM | **AGPL-3.0** (34 523B) **y sin push desde 2025-06-02 — 17 meses.** Copyleft fuerte y abandonado: las dos razones, no una. |
+| [mcp-router/mcp-router](https://github.com/mcp-router/mcp-router) | 2 126★, router de MCP, aparece en `mcp security` | **ARCHIVADO.** El propio repo declara fin de desarrollo, soporte y updates de seguridad el **2026-09-18**, y su `LICENSE.md` (4 081B) aplica términos distintos según el archivo. **Dos de los seis resultados de `mcp security stars:>=2000` están archivados** — incluido [abhi1693/openclaw-mission-control](https://github.com/abhi1693/openclaw-mission-control) (4 098★, MIT, archivado 2026-08-06). |
+
+> **Corrección de una fuente secundaria (no de esta KB).** Un listado de CRMs open source de 2026
+> afirma que `twentyhq/twenty` es **BSL-1.1**. Se leyó el archivo hoy: 39 965B, primera línea
+> *"This project is mostly licensed under the GNU Affero General Public License v3.0"*. **El valor
+> AGPL-3.0 que esta KB ya publicaba es el correcto y la fuente secundaria está equivocada.**
+> Se deja registrado porque el error circula.
+>
+> **Conteo de método del pase 10 — la API volvió a sub-declarar, 4 de 4.** `CubeSandbox`,
+> `context-mode`, `netbird` y `switch` dieron `NOASSERTION` en `search/repositories` y **los
+> cuatro tienen archivo de licencia real y legible** (uno compuesto, uno ELv2, uno con carve-out
+> AGPL, uno Apache con apéndice). **Sobre-declaraciones: cero.** Es el mismo sesgo que registró
+> el ciclo de travel, y confirma la regla de esta KB: **la licencia se lee del archivo, siempre.**
+
 ## Memoria y recuperación
 
 | Repo | Licencia | Stars | Último push | Por qué importa | ¿Base para AI? |

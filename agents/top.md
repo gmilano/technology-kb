@@ -7,9 +7,9 @@ updated: 2026-11-23
 # 🎯 Agentes AI — Technology
 
 > Agentes y harnesses open source para ingeniería de software. Foco: MIT / Apache 2.0 / BSD.
-> **Toda fila re-verificada el 2026-11-23** (pase 6): existencia por `git ls-remote`, estrellas /
+> **Toda fila re-verificada el 2026-11-23** (pases 6 y 10): existencia por `git ls-remote`, estrellas /
 > `pushed_at` / `archived` por `search/repositories`, y **licencia leída del archivo de licencia**,
-> no del badge ni del campo de la API. **40 filas reales, cero filas de ejemplo** (32 del pase 6 + **8 agregadas en el pase 9**).
+> no del badge ni del campo de la API. **47 filas reales, cero filas de ejemplo** (32 del pase 6 + 8 del pase 9 + **6 del pase 10**; una fila lista dos repos).
 >
 > **Las 28 filas del pase anterior siguen vivas: cero muertes en 48h.** Lo que cambió este pase
 > son **4 agregados**, y uno de ellos es grande: `NousResearch/hermes-agent` con **265 593★** nunca
@@ -68,6 +68,25 @@ updated: 2026-11-23
 > siendo 32: no hay agentes en este eje y disfrazar librerías de parsing de agentes sería mentir
 > sobre la forma del ecosistema.**
 
+> **Nota del pase 10 (2026-11-23, quinto pase del día): 6 filas nuevas, 47 reales, cero de
+> ejemplo.** El pase 10 midió el plano de **ejecución** —dónde corre el agente y **de parte de
+> quién actúa**—, que el pase 6 había abierto en `repos/foundations.md` con 12 repos y 4 capas.
+> Medido con consultas contables, el plano **está torcido**: `agent sandbox stars:>=500` devuelve
+> **75**, y `agent permission policy stars:>=500` devuelve **0**. Sobran jaulas, aparecieron
+> escáneres —el más grande de todo el plano es **`NVIDIA/SkillSpector`, 27 409★**, y nunca había
+> estado acá— y **falta exactamente lo del medio: quién decide, en el momento de la llamada, si
+> este agente puede hacer esta cosa.**
+>
+> Las 6 filas que entran a *este* archivo son las que **deciden o actúan** (escáneres, firewall de
+> egreso, toolkit de política, meta-harness); las **23 piezas de infraestructura** del pase
+> —jaulas, gateways, motores de autorización, identidad— viven en
+> [`repos/foundations.md`](../repos/foundations.md), sección 🔒, porque son infraestructura y
+> llamarlas agentes sería repetir el error que este archivo documenta desde el pase 6.
+>
+> **Y entra `omnigent-ai/omnigent` (11 507★, Apache-2.0), que es un meta-harness —orquesta Claude
+> Code, Codex y otros— y nunca había sido listado.** Vuelve a pasar lo del pase 6 y el 9: el repo
+> grande que falta no aparece buscando "agente", aparece buscando la *capa*.
+
 ## Harnesses y agentes de codificación
 
 | Nombre | Repo | Licencia | Stars | Último push | Descripción |
@@ -113,8 +132,26 @@ updated: 2026-11-23
 | claude-code-security-review | [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) | MIT | 7063 | **2026-02-11** | GitHub Action de revisión de seguridad. **Dormido 9+ meses**: útil como patrón de Action, no como herramienta mantenida. |
 | **HolmesGPT** | [HolmesGPT/holmesgpt](https://github.com/HolmesGPT/holmesgpt) | Apache-2.0 (`master`, 10 209B) | **3965** | 2026-11-23 | **NUEVO. Agente de SRE y es proyecto Sandbox de la CNCF** — respaldo de fundación, no de vendor. Investiga alertas y responde "¿por qué se rompió esto?" contra la observabilidad existente. **Es el otro extremo del plano de entrega**: `opensre` cuida el pipeline, HolmesGPT cuida lo que ya está corriendo. |
 | **twinny** | [twinnydotdev/twinny](https://github.com/twinnydotdev/twinny) | MIT | **3708** | 2026-11-21 | **NUEVO.** Asistente de codificación para VS Code —agente, autocompletado, chat, ediciones y reviews— con **modelos locales u hospedados**: *"Your models, your infrastructure"*. Chico, pero **es de los pocos del set que se instala en un entorno sin salida a internet**, que es el requisito de EMEA soberano y de cliente regulado. |
+| **SkillSpector** | [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) | Apache-2.0 (10 782B) | **27409** | 2026-11-22 | **NUEVO y el más grande del plano de ejecución por casi 2x.** Escáner de **skills de agentes**: vulnerabilidades, patrones maliciosos, problemas de seguridad. De NVIDIA, la misma org que `garak`: hoy tienen el escáner del modelo **y** el escáner de la skill. Creado 2026-03-21. **Entra en este archivo y no en foundations porque decide: aprueba o rechaza un artefacto antes de que el agente lo instale.** |
+| **omnigent** | [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) | Apache-2.0 (10 173B) | **11507** | 2026-11-23 | **NUEVO.** Framework de agentes y **meta-harness**: orquesta Claude Code, Codex y otros harnesses bajo una interfaz. Creado 2026-06-11 y ya en cinco cifras. **Nunca había sido listado en esta KB** — es la categoría de `stablyai/orca` pero por harness en vez de por worktree. |
+| **sandcastle** | [mattpocock/sandcastle](https://github.com/mattpocock/sandcastle) | MIT (1 068B) | **9247** | 2026-11-18 | **NUEVO.** Orquesta agentes de codificación **sandboxeados** desde TypeScript: `sandcastle.run()`. Creado 2026-03-17. Es la capa de conveniencia sobre la jaula —no la jaula— y por eso es lo que un equipo de delivery escribe primero. |
+| **agent-governance-toolkit** | [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit) | **MIT** (1 074B) | **6598** | 2026-11-23 | **NUEVO, y el único repo medido que junta política + identidad zero-trust + sandboxing de ejecución en un paquete.** De Microsoft y **MIT, no Apache** — inusual para algo de gobernanza. Es el contrapeso abierto más cercano a **Entra Agent ID** (propietario, GA abril 2026). Es *toolkit*, no servicio: se integra, no se despliega y listo. |
+| **agent-scan** | [snyk/agent-scan](https://github.com/snyk/agent-scan) | Apache-2.0 (11 347B) | **3276** | 2026-11-23 | **NUEVO.** Escáner de agentes, MCP servers y skills, de un vendor de AppSec establecido. Relación con SkillSpector igual que la de `mcp-scan` con `mcp-scanner`: **cubren distinto y conviene correr los dos**. |
+| **pipelock** | [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) | Apache-2.0 (11 345B) | **1020** | 2026-11-23 | **NUEVO, y es el único que existe.** Firewall de egreso para agentes: escanea las llamadas mediadas y controla qué puede alcanzar el agente desde adentro de la jaula. `agent egress firewall stars:>=200` devuelve **1** — este. **Un sandbox sin control de egreso aísla el filesystem y deja la red abierta**, que es la mitad que exfiltra. |
 
 ## ⚠️ Verificar antes de usar — trampas medidas
+
+### Nuevas en el pase 10 (2026-11-23) — el plano de ejecución
+
+| Repo | Lo que parece | Lo que es realmente |
+|------|---------------|---------------------|
+| [mksglu/context-mode](https://github.com/mksglu/context-mode) | **34 419★**, el repo más grande que devuelve `agent sandbox`, se describe como *"free, local plugin"* | **Elastic License 2.0** (`LICENSE`, 3 840B) — **no es open source**. Prohíbe el servicio gestionado a terceros y prohíbe **circunvalar la license key**. La API dice `NOASSERTION`: ningún badge avisa. No es base de oferta gestionada. |
+| [anthropics/skills](https://github.com/anthropics/skills) | **199 381★** y **+4 847 en la semana** del digest de GitHub Trending 11–18 nov 2026 | **No tiene archivo de licencia:** `LICENSE`, `LICENSE.md`, `LICENSE.txt`, `COPYING` y `NOTICE` dan **404 los cinco**, y el campo de la API es `null`. **Sin licencia explícita no hay permiso de uso ni de redistribución.** Referencia de lectura; **no se copia a un entregable de cliente.** |
+| [netbirdio/netbird](https://github.com/netbirdio/netbird) | 31 231★, red zero-trust que conecta "personas, máquinas y **agentes AI**", citada como BSD | **BSD-3-Clause excepto `management/`, `signal/`, `relay/` y `combined/`, que son AGPL-3.0** — lo dice la primera línea del archivo. **`management/` es el control plane**: la parte copyleft es justo la que hay que desplegar. |
+| [TencentCloud/CubeSandbox](https://github.com/TencentCloud/CubeSandbox) | 13 414★, sandbox de Tencent Cloud; la API dice `NOASSERTION` | **Apache-2.0 real, pero su `LICENSE` es un *bundle* de 25 798B**: el Apache del proyecto **más** dos bloques de software vendorizado (Apache-2.0 y **BSD-2-Clause**). Usable; **las obligaciones de aviso incluyen los componentes embebidos**. Quinta variante de trampa de licencia que registra esta KB: la **compuesta**. |
+| [sandbox-quantum/switch](https://github.com/sandbox-quantum/switch) | 4 696★, primer resultado de `agent sandbox orchestrator`, la org se llama *sandbox*-quantum | **No es un sandbox**: es un producto de "AI teammates" para Slack/Teams/Discord, de **SandboxAQ**. Apache-2.0 verificado. **Trampa de nombre de org.** |
+| [abshkbh/arrakis](https://github.com/abshkbh/arrakis) | 897★, sandbox self-hosted "totalmente customizable", en todo listado de microVM | **AGPL-3.0 (34 523B) y sin push desde 2025-06-02 — 17 meses.** Las dos razones, no una. |
+| [mcp-router/mcp-router](https://github.com/mcp-router/mcp-router) y [abhi1693/openclaw-mission-control](https://github.com/abhi1693/openclaw-mission-control) | 2 126★ y 4 098★, aparecen en `mcp security` y en `agent gateway` | **Los dos ARCHIVADOS.** mcp-router declara fin de desarrollo, soporte **y updates de seguridad** el 2026-09-18; mission-control está archivado desde 2026-08-06. **2 de los 6 resultados de `mcp security stars:>=2000` están archivados.** |
 
 ### Nuevas en el pase 9 (2026-11-23) — el plano de entrega
 

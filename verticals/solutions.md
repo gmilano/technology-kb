@@ -14,6 +14,13 @@ updated: 2026-11-23
 > estuvo publicada como dato 142 días y se compila como entidad literal. **17 filas reales en el pase 8, cero
 > filas de ejemplo.**
 >
+> **Pase 10:** cinco plataformas del **plano de ejecución** —Casdoor, OpenFGA, SPIRE,
+> MCP Context Forge y SkillHub, **las cinco Apache-2.0**— porque la capa que este pase encontró
+> faltante (autorizar e identificar al agente **en el momento de la llamada**) no se resuelve con
+> una librería: se resuelve con sistemas que un equipo opera. **Y dos trampas nuevas donde más
+> duele:** `netbird` (31 231★) es BSD-3-Clause **excepto su control plane, que es AGPL-3.0**, y
+> `mksglu/context-mode` (34 419★) es **Elastic License 2.0**, no open source. **27 filas reales,
+> cero filas de ejemplo.**
 > **Pase 9:** cinco plataformas del **plano de entrega** —Woodpecker CI, Dependency-Track,
 > Apache DevLake, Keploy y Chainloop, **las cinco Apache-2.0**— porque la compuerta que agrega
 > este pase necesita sistemas que un equipo opera, no librerías que se importan. Y **dos trampas
@@ -56,6 +63,11 @@ updated: 2026-11-23
 | **Helicone** | [Helicone/helicone](https://github.com/Helicone/helicone) | **Apache-2.0** (201 líneas, sin modificar) | 6293 | TypeScript, Postgres, ClickHouse | Plataforma de observabilidad y **costo por request** de LLM, self-hostable. **Agregada en el pase 7 y es la alternativa permisiva al hueco que deja Arize Phoenix** (Elastic License 2.0, ver trampas abajo): Apache-2.0 sin carve-out, así que **sí** se puede ofrecer como servicio gestionado. Es la consola donde el cliente ve lo que cuesta cada agente. |
 | **OpenMeter** | [openmeterio/openmeter](https://github.com/openmeterio/openmeter) | **Apache-2.0** | 2463 | Go, Postgres, Kafka | Medición de uso y **billing** basado en consumo. La pieza que falta cuando el cliente no sólo quiere *ver* el gasto de tokens sino **facturárselo a sus propios clientes**. ⚠️ **Ojo con el slug: `openmeter/openmeter` es un stub de 1★ sin push desde 2020-12-25.** El repo real es `openmeterio/openmeter`. |
 | **OptScale** | [hystax/optscale](https://github.com/hystax/optscale) | **Apache-2.0** (`LICENSE.md`, rama `master`) | 2257 | Python, React, MongoDB | FinOps y optimización de costo multi-cloud (AWS, Azure, GCP, Alibaba, Kubernetes) **con el modelo multi-cloud ya armado**. La base para un engagement de FinOps de IA sin construir la ingesta de facturas desde cero. |
+| **Casdoor** | [casdoor/casdoor](https://github.com/casdoor/casdoor) | **Apache-2.0** (`master`, 11 357B) | 14931 | Go, Vue, Postgres/MySQL | **IAM "agent-first"**: OAuth 2.0/OIDC/SAML, SSO, MFA, y por su propia descripción gateway MCP y de agentes. **Nacido en 2020 como IAM clásico (familia Casbin), así que la madurez es de IAM real** y no de un proyecto de 2026 que descubrió OAuth. Es la plataforma a desplegar cuando el cliente pregunta *"¿con qué identidad actúa el agente?"* y no tiene Entra. |
+| **OpenFGA** | [openfga/openfga](https://github.com/openfga/openfga) | **Apache-2.0** (10 176B) | 6184 | Go, Postgres/MySQL | **Autorización relacional (ReBAC, estilo Zanzibar), CNCF.** Contesta *"¿este usuario puede ver este objeto?"*, que es la pregunta que OPA contesta peor. **Entra por una ruta medida, no por lista: es el motor que `stacklok/toolhive` ya consulta antes de reenviar cada tool call de MCP.** |
+| **IBM MCP Context Forge** | [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) | **Apache-2.0** (11 357B) | 4876 | Python | Gateway + **registry** + proxy delante de MCP, A2A y REST/gRPC, con respaldo de IBM. **Duplica la tracción de ToolHive.** Donde ToolHive aísla cada server, esto centraliza el catálogo: **se despliegan juntos, no se eligen.** |
+| **SkillHub** | [iflytek/skillhub](https://github.com/iflytek/skillhub) | **Apache-2.0** (11 346B) | 5478 | — | **Registry de skills de agentes self-hosted para empresa**: publicar, versionar, auditar qué skill corre en qué agente. La contraparte de catálogo del escaneo (SkillSpector). Origen iFlytek — **relevante para un despliegue APAC con localización de datos.** |
+| **SPIRE** | [spiffe/spire](https://github.com/spiffe/spire) | **Apache-2.0** (11 358B) | 2633 | Go | Implementación de referencia de **SPIFFE**, **CNCF graduado**: emite identidad de workload verificable (SVID) sin secretos estáticos. **Es el supuesto de base de todos los borradores IETF de identidad de agentes.** Se despliega, se opera y **exige expertise propia** — no es un `docker run` y listo. |
 
 ## ⚠️ Lo que los listados recomiendan y no conviene tomar
 
@@ -74,6 +86,11 @@ updated: 2026-11-23
 | [dora-team/fourkeys](https://github.com/dora-team/fourkeys) | La implementación de referencia de las métricas DORA, de Google, Apache-2.0 | **ARCHIVADO, sin push desde 2024-01-23.** Casi dos años muerta, justo mientras la industria discute si los agentes mejoran la entrega. Usar **Apache DevLake**. |
 | [qodo-ai/qodo-cover](https://github.com/qodo-ai/qodo-cover) | 5 691★, "el agente de generación de tests", primera opción en toda lista del tema | **AGPL-3.0** y **sin push desde 2026-04-05**. Licencia copyleft *y* proyecto detenido: la peor combinación para una pieza de pipeline. La capa se cubre con mutation testing clásico (Stryker, PIT, mutmut, Infection, cargo-mutants — Apache/BSD/MIT, todos vivos). |
 | [apache/ofbiz](https://github.com/apache/ofbiz) | ERP de la Apache Software Foundation, citado como "el ERP Apache" | **ARCHIVADO.** 804★, último push **2020-04-27**. Seis años sin movimiento. |
+| [netbirdio/netbird](https://github.com/netbirdio/netbird) | 31 231★, red zero-trust que conecta "personas, máquinas y **agentes AI**"; se cita como BSD | **BSD-3-Clause *excepto* `management/`, `signal/`, `relay/` y `combined/`, que son AGPL-3.0** — lo dice la primera línea del `LICENSE` (1 788B). **`management/` es el control plane**, o sea la pieza que hay que desplegar. Para una oferta gestionada, el carve-out cae justo encima del producto. |
+| [mksglu/context-mode](https://github.com/mksglu/context-mode) | 34 419★, el repo más grande que devuelve `agent sandbox`; se presenta como *"free, local plugin"* | **Elastic License 2.0** (3 840B): **prohíbe ofrecerlo como servicio gestionado a terceros** y prohíbe circunvalar su license key. La API dice `NOASSERTION`, así que **ningún badge avisa**. No es base de plataforma. |
+| [abshkbh/arrakis](https://github.com/abshkbh/arrakis) | 897★, "sandbox self-hosted totalmente customizable", en todo listado de microVM | **AGPL-3.0 (34 523B) y sin push desde 2025-06-02 — 17 meses.** Copyleft fuerte **y** abandonado. |
+| [mcp-router/mcp-router](https://github.com/mcp-router/mcp-router) | 2 126★, router de MCP para operar varios servers | **ARCHIVADO**: el repo declara fin de desarrollo, soporte **y updates de seguridad** el 2026-09-18. Un router de MCP sin parches de seguridad es peor que no tener router. |
+| [superhq-ai/superhq](https://github.com/superhq-ai/superhq) | 295★, "plataforma de orquestación de agentes sandboxeados" | **AGPL-3.0** (34 453B). Se registra por el contraste: **`superhq-ai/shuru`, del mismo autor, es Apache-2.0.** Misma org, dos licencias — **no se asume la licencia por organización.** |
 
 ## Cómo customizar con AI
 
