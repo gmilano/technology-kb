@@ -12,6 +12,100 @@ updated: 2026-11-23
 > agentes y skills ver `agents/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 7 *(segundo pase del día; el pase 6 cerró a las 14:58 UTC)*
+
+**Qué se midió:** el **plano de costo**, por primera vez en siete pases. Barrida por consultas
+cortas (`ai gateway`, `llm proxy`, `semantic cache`, `finops`, `token counting`) después de que
+la consulta larga `llm cost budget stars:>=150` devolviera **2 resultados**. Existencia por
+`git ls-remote`, métricas por `search/repositories`, licencias leídas del archivo **y de los
+subdirectorios** — regla nueva, ver abajo.
+
+### Línea base nueva: reducción de tokens en el borde
+
+**Primera medición de esta categoría. No hay serie histórica: estos son los valores de partida.**
+Lo notable no es que sean nuevos —tres de los cuatro se crearon en enero/febrero de 2026— sino
+que **esta KB llevaba seis pases sin verlos**, con ~380 000★ combinadas.
+
+| Repo | Licencia (archivo) | Stars 2026-11-23 | Creado | Último push | Lenguaje |
+|------|--------------------|------------------|--------|-------------|----------|
+| [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | Apache-2.0 (202 líneas) | **122344** | 2026-04-04 | 2026-11-23 | Go |
+| [cheaper-inference/OmniRoute](https://github.com/cheaper-inference/OmniRoute) | MIT | **89783** | 2026-02-13 | 2026-11-23 | TypeScript |
+| [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | **Apache-2.0 + BUSL-1.1 por directorio** | **87570** | 2026-01-22 | 2026-11-23 | Rust |
+| [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) | Apache-2.0 (190 líneas) | **80631** | 2026-01-07 | 2026-11-23 | Python |
+
+**Las cuatro con push el mismo día que se midieron.** Y están compuestas entre sí: OmniRoute
+declara apilar RTK + Caveman. **No es una categoría con cuatro competidores: es un stack.**
+
+### Por qué el filtro de categoría los escondía
+
+Tercer pase consecutivo en que el hallazgo grande viene de **arreglar la consulta, no de que
+aparezca algo nuevo**. Ninguno de los cuatro se describe como "cost", "budget" ni "finops":
+se describen como *proxy*, *gateway*, *compression* y —literalmente— *"why use many token when
+few token do trick"*. La categoría existía; el vocabulario de búsqueda era el equivocado.
+
+### Capas 2–4: gateway, caché y atribución
+
+| Repo | Licencia (archivo) | Stars | Último push | Capa |
+|------|--------------------|-------|-------------|------|
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | MIT + carve-out `enterprise/` | 63769 | 2026-11-23 | Gateway / tope de gasto |
+| [QuantumNous/new-api](https://github.com/QuantumNous/new-api) | **AGPL-3.0** (34522B) | 52399 | 2026-11-22 | Gateway + contabilidad de costo |
+| [songquanpeng/one-api](https://github.com/songquanpeng/one-api) | MIT | 37466 | ⚠️ 2026-01-09 | Gateway (dormido 10 meses) |
+| [Portkey-AI/gateway](https://github.com/Portkey-AI/gateway) | MIT (1067B) | 13433 | 2026-11-20 | Gateway |
+| [infracost/infracost](https://github.com/infracost/infracost) | Apache-2.0 | 12631 | 2026-11-23 | Costo en el PR |
+| [tensorzero/tensorzero](https://github.com/tensorzero/tensorzero) | Apache-2.0 | 11697 | ⚠️ 2026-06-11 | LLMOps (dormido 5 meses) |
+| [maximhq/bifrost](https://github.com/maximhq/bifrost) | Apache-2.0 (201 líneas) | 9966 | 2026-11-23 | Gateway + caché semántica |
+| [zilliztech/GPTCache](https://github.com/zilliztech/GPTCache) | MIT (1067B) | 8235 | 2026-09-22 | Caché semántica |
+| [katanemo/plano](https://github.com/katanemo/plano) | Apache-2.0 | 7119 | 2026-10-24 | Proxy sobre Envoy |
+| [opencost/opencost](https://github.com/opencost/opencost) | Apache-2.0 (`master`) | 6829 | 2026-11-20 | Atribución K8s |
+| [Helicone/helicone](https://github.com/Helicone/helicone) | Apache-2.0 (201 líneas) | 6293 | 2026-11-17 | Costo por request |
+| [aurelio-labs/semantic-router](https://github.com/aurelio-labs/semantic-router) | MIT (1066B) | 4044 | 2026-11-22 | Ruteo semántico |
+| [algorithmicsuperintelligence/optillm](https://github.com/algorithmicsuperintelligence/optillm) | Apache-2.0 | 4343 | 2026-11-16 | Proxy de inferencia |
+| [openmeterio/openmeter](https://github.com/openmeterio/openmeter) | Apache-2.0 | 2463 | 2026-11-23 | Medición / billing |
+| [hystax/optscale](https://github.com/hystax/optscale) | Apache-2.0 (`LICENSE.md`) | 2257 | 2026-11-11 | FinOps multi-cloud |
+| [AgentOps-AI/tokencost](https://github.com/AgentOps-AI/tokencost) | MIT (1064B) | 2004 | ⚠️ **2025-09-05** | Tabla de precios **dormida 14 meses** |
+| [sustainable-computing-io/kepler](https://github.com/sustainable-computing-io/kepler) | Apache-2.0 | 1606 | 2026-11-23 | Energía por pod |
+| [codefuse-ai/ModelCache](https://github.com/codefuse-ai/ModelCache) | Apache-2.0 (Ant Group) | 934 | ⚠️ **2025-06-30** | Caché semántica (dormida 17 meses) |
+| [Han-1413141/dsh-cost-meter](https://github.com/Han-1413141/dsh-cost-meter) | MIT (`master`) | 751 | 2026-11-23 | Costo por sesión (DeepSeek Harness) |
+| [redis/redis-vl-python](https://github.com/redis/redis-vl-python) | MIT (1067B) | 436 | 2026-11-23 | Caché semántica (librería) |
+| [simonw/ttok](https://github.com/simonw/ttok) | Apache-2.0 | 411 | 2026-10-09 | Conteo de tokens en shell |
+| [FinOps-Open-Cost-and-Usage-Spec/FOCUS_Spec](https://github.com/FinOps-Open-Cost-and-Usage-Spec/FOCUS_Spec) | **CC-BY-4.0** (documento) | 332 | 2026-11-23 | Vocabulario estándar |
+
+### La rama APAC del plano de costo — señal regional, no anécdota
+
+Cuatro de las piezas de costo salen del ecosistema chino y **ninguna es un puerto de algo
+occidental**: `new-api` (52399★, AGPL-3.0, el gateway más completo de la capa),
+`one-api` (37466★, su antecesor dormido), `codefuse-ai/ModelCache` (Ant Group) y
+`dsh-cost-meter` (751★, creado 2026-08-13, **UI bilingüe EN/中文**, mide cuotas de plan de
+coding además de tokens). Es consistente con la tendencia 7 de esta KB —la novedad ya no sale
+sólo de EE.UU.— y agrega el porqué: **donde el token es más barato, la herramienta que mide el
+token aparece antes.** Ver `intel/market.md` → APAC.
+
+### Dos muertes y una tabla de precios peligrosa
+
+- **`AgentOps-AI/tokencost` (2004★, MIT): sin push desde 2025-09-05.** Es una tabla de precios
+  por modelo. En 2026 los precios se movieron en los dos sentidos (bajas chinas de mayo,
+  subidas reportadas de agosto). **Una tabla de precios dormida no falla con un error: devuelve
+  un número con cara de exacto.** Es el repo más riesgoso que mide este pase.
+- **`codefuse-ai/ModelCache`: 17 meses sin push.** La caché semántica como producto se está
+  apagando, y hay una razón técnica medida: no aplica a tool calls con estado.
+- **`lm-sys/RouteLLM` (5728★, Apache-2.0): sin push desde 2024-08-10.** El repo canónico de
+  ruteo de costo-calidad lleva **más de dos años dormido** y por eso **no entró** a
+  `repos/foundations.md`. Su función la absorbieron los gateways.
+
+### Nota de método: la regla de licencias cambió este pase
+
+`rtk-ai/rtk` tiene badge Apache-2.0 **y** archivo `LICENSE` Apache-2.0 en la raíz, **y las dos
+cosas sub-declaran**: `engine/LICENSE` y `proxy/LICENSE` son BUSL-1.1 (Change Date 2030-09-09).
+La regla vigente de esta KB era *"leé la licencia del archivo, no del badge"* y **no alcanza**.
+Regla nueva: **buscar archivos de licencia en subdirectorios y leer la sección de licencia del
+README**. Detalle completo y consecuencia para entregables en `repos/foundations.md`.
+
+Segunda confirmación del mismo pase: `FOCUS_Spec` tiene la licencia en `license.md` **minúscula**
+y su rama por defecto es **`working_draft`** — ni `main` ni `master`. La causa conocida de
+`NOASSERTION` era "el archivo está en master y no en main"; **hay una tercera variante**.
+
+---
+
 ## 2026-11-23 — pase 6
 
 ### Línea base nueva: el plano de aislamiento, política e identidad

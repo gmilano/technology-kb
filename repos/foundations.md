@@ -7,14 +7,21 @@ updated: 2026-11-23
 # 🏗️ Repos fundacionales — Technology
 
 > Bases sobre las cuales construir: inferencia, acceso a modelos, protocolo, memoria, vectores,
-> orquestación durable, evaluación/observabilidad y —**nuevo en este pase**— **aislamiento,
-> política e identidad de agentes**. Los agentes se montan arriba.
-> Todas las filas re-verificadas el **2026-11-23**. **42 filas reales.**
+> orquestación durable, evaluación/observabilidad, aislamiento/política/identidad y —**nuevo en
+> este pase**— **costo: reducción de tokens, gateway, caché y atribución**. Los agentes se montan
+> arriba. **69 filas, 68 repos distintos** (`litellm` aparece dos veces a propósito: una por
+> neutralidad de proveedor, otra por tope de gasto). Licencias leídas del archivo, en la rama
+> correcta — y desde este pase, **también en los subdirectorios**.
 >
-> **Lo que agrega el pase 6:** un plano completo que la KB no tenía. Los cinco pases anteriores
-> cubrieron *cómo construir* un agente y *cómo medirlo*. Ninguno cubrió **cómo encerrarlo, cómo
-> autorizarlo y cómo identificarlo** — que es exactamente lo que un cliente regulado pregunta
-> primero y lo que la evidencia de este ciclo señala como la barrera #1 de producción.
+> **Lo que agrega el pase 7:** el plano de **costo**, con 28 filas nuevas. La tendencia 1 de esta
+> KB afirma desde el pase 2 que la competencia se movió al costo, y durante cinco pases no tuvo
+> un solo repo detrás. Al medirla aparecieron cuatro repos de **~380 000★ combinadas** que la KB
+> nunca había listado, y el encuadre resultó estar mal: **el plano de costo no es FinOps, es
+> comprimir antes de enviar el request.**
+>
+> **Lo que agregó el pase 6** y sigue vigente: **aislamiento, política e identidad de agentes** —
+> cómo encerrar al agente, cómo autorizarlo y cómo identificarlo, que es lo que un cliente
+> regulado pregunta primero.
 
 ## Inferencia y acceso a modelos
 
@@ -140,6 +147,122 @@ updated: 2026-11-23
 | [traceloop/openllmetry](https://github.com/traceloop/openllmetry) | Apache-2.0 | 7550 | 2026-11-23 | Instrumentación **OpenTelemetry-nativa**. La opción correcta si el cliente ya tiene stack OTel. | Sí — se enchufa al observability existente en vez de reemplazarlo |
 | [openlit/openlit](https://github.com/openlit/openlit) | Apache-2.0 | 3099 | 2026-11-23 | Alternativa OTel más chica, con foco en costo y trazas. | Sí, como complemento |
 
+## 💸 Costo: reducir tokens, enrutar, cachear y atribuir — **sección nueva (pase 7)**
+
+> **Por qué existe esta sección.** La tendencia 1 de esta KB dice desde el pase 2 que *"la
+> competencia se movió de la capacidad al costo"*. Durante cinco pases esa tendencia no tuvo
+> **un solo repo detrás**: se sostenía en cuatro agentes que mencionaban costo de pasada. Este
+> pase mide el plano y el resultado obliga a corregir el encuadre: **el plano de costo no es
+> FinOps, es compresión antes de enviar el request**, y es una de las categorías más grandes
+> del vertical por estrellas — **~380 000★ combinadas en cuatro repos que esta KB nunca listó.**
+>
+> Las búsquedas de `llm cost budget` devolvían 2 resultados. Las búsquedas cortas
+> (`ai gateway`, `llm proxy`, `semantic cache`, `finops`) devolvieron el plano completo.
+> **Se confirma otra vez la regla de acortar la consulta, y se confirma su mitad nueva: hay que
+> leer los resultados, no el total.**
+
+### Capa 1 — Reducción de tokens en el borde (antes de que el request salga de la máquina)
+
+La capa con más tracción y la que la KB no tenía. Las cuatro son permisivas y las cuatro
+comprimen **localmente**: ninguna manda el contenido a un tercero para comprimirlo.
+
+| Repo | Licencia (archivo) | Stars | Creado | Último push | Mecanismo | Ahorro declarado (auto-reportado) |
+|------|--------------------|-------|--------|-------------|-----------|-----------------------------------|
+| [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | **Apache-2.0** (202 líneas, sin modificar) + marca registrada sobre nombre y logo | **122344** | 2026-04-04 | 2026-11-23 | Skill + proxy local. Cuatro piezas separables: *say less* (estilo de respuesta), *read less* (comprime logs/JSON/CSV/YAML/salida de tests), *auto* (elige modelo), *blocks* (reusa scripts). Instala por `npx skills add`; plugin de Claude Code y extensión de Gemini CLI | **33.2% menos tokens de entrada** por sesión completa (6 tareas sintéticas, 18 pares, 18/18 respuestas correctas). Por archivo: YAML 99.1%, CSV 98.9%, tests 98.9%, logs 98.5%, JSON 98.5%. **HTML empeora 9.9%** |
+| [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | ⚠️ **Apache-2.0 + BUSL-1.1 según el directorio** — ver trampa abajo | **87570** | 2026-01-22 | 2026-11-23 | Binario Rust sin dependencias. Un hook reescribe `git status` → `rtk git status` y filtra la salida antes de que la lea el agente. Si el filtro falla devuelve la salida cruda y preserva el exit code. 100+ comandos, 18 herramientas | **60–90%** en comandos de dev comunes. Demo: `cargo test` 94.2%, `ls` 82.3%. **El README dice explícitamente que cortar 90% de la salida NO corta 90% del costo total** |
+| [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) | **Apache-2.0** (190 líneas, sin modificar) | **80631** | 2026-01-07 | 2026-11-23 | Router de contenido → compresor por tipo: SmartCrusher (JSON), CodeCompressor (AST de código), Kompress-v2 (texto). `CacheAligner` marca contenido volátil que rompería el prefijo de KV-cache del proveedor. **Tres modos: librería, proxy (`--port 8787`, sin cambios de código) y server MCP** | **20%** en coding agents (escenarios: 21% búsqueda de código, 57% debug de incidentes SRE, 42% exploración de codebase, 30% triage de issues); **60–95% en JSON** |
+| [cheaper-inference/OmniRoute](https://github.com/cheaper-inference/OmniRoute) | **MIT** (copyright a nombre personal, no de la org) | **89783** | 2026-02-13 | 2026-11-23 | Gateway local (`localhost:20128/v1`), un endpoint → muchos proveedores. Fallback por cuota en cuatro niveles (Subscription → API Key → Cheap → Free) con circuit breakers y 22 estrategias de ruteo. **Compone RTK + Caveman ("compresión apilada")** | **15–95%**, ~89% promedio. El README dice 394 proveedores y 1 491 modelos; el *About* dice 375 y 1 400+: **las dos cifras del mismo repo no coinciden** |
+
+**Lo que separa a headroom de las otras tres: publica evals de calidad, no sólo de ahorro.**
+GSM8K 0.870 con y sin compresión; TruthfulQA 0.530 → 0.560 (dentro del intervalo de confianza);
+SQuAD v2 97% con 19% de compresión; BFCL 97% con 32%. Las otras tres reportan ahorro y
+—salvo el 18/18 de caveman— no reportan el efecto en la tarea. **Para una propuesta, el ahorro
+sin eval de calidad no es un dato defendible: es una hipótesis.**
+
+**Tres advertencias que hay que leer antes de prometer el ahorro:**
+
+1. **El ahorro de "say less" puede ser cero según cómo factura el proveedor.** Las reglas de
+   caveman cuestan ~1 160 tokens de entrada; si el cliente paga por request y no por token
+   (caso GitHub Copilot), respuestas más cortas **no bajan la factura**.
+2. **rtk cuenta tokens como bytes/4.** El propio repo lo dice: los porcentajes son confiables,
+   los absolutos son aproximados. No sirve para facturar; sirve para decidir.
+3. **caveman manda telemetría anonimizada por defecto** (`caveman telemetry off` o
+   `DO_NOT_TRACK=1`). En rtk la telemetría está **apagada** por defecto. En un engagement con
+   datos de cliente esa diferencia se revisa **antes** de instalar, no después.
+
+### ⚠️ Trampa nueva del pase: la licencia escondida en el subdirectorio (rtk)
+
+**Modo de trampa que esta KB no había visto, y que rompe la regla vigente.** La regla era
+*"leé la licencia del archivo, no del badge"*. En `rtk-ai/rtk` **el badge dice Apache-2.0, el
+archivo `LICENSE` de la raíz dice Apache-2.0 — y ambos sub-declaran**, porque la restricción
+vive en otros dos archivos de licencia dentro de subdirectorios:
+
+| Descarga | Licencia | Contiene |
+|----------|----------|----------|
+| `rtk-<target>` (la que instala el script por defecto) | **Apache-2.0 + BUSL-1.1** | Hook core, todos los filtros **y el pipeline engine** |
+| `rtk-oss-<target>` | **Apache-2.0 solamente** | Hook core y todos los filtros. **Sin engine** |
+| `rtk-proxy-<target>` | **BUSL-1.1** | El daemon proxy. Nunca se bundlea con los otros dos |
+
+`engine/LICENSE` y `proxy/LICENSE` son **Business Source License 1.1** (texto de MariaDB),
+Licensor *RTK AI Labs*, **Change Date 2030-09-09**, Change License Apache-2.0. El
+*Additional Use Grant* **permite uso en producción sin cargo**, incluido como componente del
+binario `rtk` y del daemon `rtk-proxy`. Lo que **no** cubre es *"ofrecer el Licensed Work, o un
+derivado, a terceros como producto o servicio pago u hospedado"*.
+
+**Lectura directa para Globant, sin rodeos:** ese carve-out apunta exactamente al modelo de
+negocio de una consultora. Usar `rtk` **dentro** del equipo que trabaja para el cliente está
+cubierto por el grant. **Embeberlo en un entregable que el cliente revende, o exponerlo como
+servicio hospedado, no lo está** hasta 2030-09-09. El camino Apache-2.0 limpio existe y es
+explícito: `RTK_EDITION=oss sh` o `brew install rtk-ai/tap/rtk-oss` — se pierde el engine, se
+conservan los 100+ filtros, que es de donde sale el 60–90%. **Regla actualizada para esta KB:
+leer la licencia de la raíz no alcanza; hay que buscar archivos de licencia en subdirectorios
+y leer la sección de licencia del README.**
+
+### Capa 2 — Gateway, ruteo y tope de gasto
+
+| Repo | Licencia (archivo) | Stars | Último push | Rol | Nota |
+|------|--------------------|-------|-------------|-----|------|
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | **MIT + carve-out `litellm/enterprise/`** | 63769 | 2026-11-23 | Proxy multi-proveedor con **presupuesto y rate limit por key y por team** | Ya listado en esta KB por neutralidad de proveedor. **Lo que agrega este pase: es también la pieza de tope de gasto con más tracción**, y el tope por key/team es justo lo que hace posible el showback |
+| [QuantumNous/new-api](https://github.com/QuantumNous/new-api) | ⚠️ **AGPL-3.0** (34522B, leída del archivo) | 52399 | 2026-11-22 | Gateway self-hosted con ruteo, control de acceso, **usage tracking y contabilidad de costo** | **El gateway más completo de la capa y el menos usable para un entregable cerrado.** AGPL: si se expone por red, el cliente debe poder recibir el fuente. Se usa interno, no se embebe |
+| [Portkey-AI/gateway](https://github.com/Portkey-AI/gateway) | **MIT** (1067B) | 13433 | 2026-11-20 | Gateway con guardrails, ruteo condicional y fallbacks | **La opción MIT limpia** de la capa: sin carve-out, sin copyleft |
+| [maximhq/bifrost](https://github.com/maximhq/bifrost) | **Apache-2.0** (201 líneas) | 9966 | 2026-11-23 | Gateway en Go con **presupuestos jerárquicos** y caché semántica integrada | Permisivo y activo. Los benchmarks de overhead son del propio proyecto |
+| [lidge-jun/opencodex](https://github.com/lidge-jun/opencodex) | **MIT** (rama `master`) | 18724 | 2026-11-22 | Proxy de proveedor para Codex CLI y Claude Code | Resuelve "usar el modelo barato con el harness que el equipo ya tiene" |
+| [katanemo/plano](https://github.com/katanemo/plano) | **Apache-2.0** | 7119 | 2026-10-24 | Proxy y data plane sobre Envoy: ruteo de LLM, observabilidad, guardrails | El único de la capa construido sobre **Envoy**: encaja donde ya hay service mesh. Sin push en ~1 mes |
+| [algorithmicsuperintelligence/optillm](https://github.com/algorithmicsuperintelligence/optillm) | **Apache-2.0** | 4343 | 2026-11-16 | Proxy de inferencia que aplica técnicas de razonamiento en el proxy | Sube calidad a costa de tokens: **el vector opuesto al resto de la sección**. Útil para saber qué NO poner delante de un agente con presupuesto |
+| [songquanpeng/one-api](https://github.com/songquanpeng/one-api) | **MIT** | 37466 | ⚠️ **2026-01-09** | Gestión y redistribución de keys LLM, binario único | **10 meses sin push.** Fue el gateway de referencia del ecosistema chino y hoy `new-api` (fork vivo, AGPL) tomó la posta. Se lista por historia, no para adoptar |
+| [tensorzero/tensorzero](https://github.com/tensorzero/tensorzero) | **Apache-2.0** | 11697 | ⚠️ **2026-06-11** | Plataforma LLMOps: gateway + observabilidad + evals + optimización | **5 meses sin push.** La propuesta más ambiciosa de la capa y la más quieta |
+
+### Capa 3 — Caché semántica (no pagar dos veces por la misma pregunta)
+
+| Repo | Licencia (archivo) | Stars | Último push | Nota |
+|------|--------------------|-------|-------------|------|
+| [zilliztech/GPTCache](https://github.com/zilliztech/GPTCache) | **MIT** (1067B) | 8235 | **2026-09-22** | El más citado de la categoría. Backends FAISS/Qdrant/Redis/Milvus/Weaviate. **2 meses sin push** |
+| [codefuse-ai/ModelCache](https://github.com/codefuse-ai/ModelCache) | **Apache-2.0** (11905B, copyright **Ant Group**) | 934 | **2025-06-30** | ⚠️ **17 meses sin push.** La API de GitHub lo reporta `NOASSERTION`; **el archivo es Apache-2.0 limpio** — el header de copyright antes del texto de Apache es la causa, sexta vez que esta KB mide esa falla |
+| [redis/redis-vl-python](https://github.com/redis/redis-vl-python) | **MIT** (1067B) | 436 | 2026-11-23 | Pocas estrellas, **mantenido por Redis y con push de hoy**. Caché semántica como una función de una librería, sin servicio aparte |
+| [aurelio-labs/semantic-router](https://github.com/aurelio-labs/semantic-router) | **MIT** (1066B) | 4044 | 2026-11-22 | Ruteo por similitud semántica: manda la pregunta fácil al modelo barato antes de llamar al caro |
+
+**Advertencia de diseño medida, no inferida:** la caché semántica asume un mapeo
+*prompt → respuesta* sin estado. **No aplica a tool calls que cambian estado**, que es la mayoría
+de lo que hace un coding agent. Por eso la capa 1 (comprimir) tiene cuatro repos de seis cifras
+y la capa 3 tiene uno de cuatro cifras con dos meses sin push: **en agentes, comprimir escala y
+cachear no.**
+
+### Capa 4 — Medir, atribuir e imputar a una cuenta
+
+| Repo | Licencia (archivo) | Stars | Último push | Rol |
+|------|--------------------|-------|-------------|-----|
+| [opencost/opencost](https://github.com/opencost/opencost) | **Apache-2.0** (rama `master`) | 6829 | 2026-11-20 | Costo de Kubernetes en tiempo real (CNCF). La base para imputar GPU y pods de inferencia a un equipo |
+| [infracost/infracost](https://github.com/infracost/infracost) | **Apache-2.0** (rama `master`) | 12631 | 2026-11-23 | Costo de infra **en el pull request**, antes de aplicar el Terraform. El equivalente FinOps de un test |
+| [Helicone/helicone](https://github.com/Helicone/helicone) | **Apache-2.0** (201 líneas) | 6293 | 2026-11-17 | Logging y analítica de costo **por request**. Self-hostable y permisivo |
+| [openmeterio/openmeter](https://github.com/openmeterio/openmeter) | **Apache-2.0** | 2463 | 2026-11-23 | Medición de uso y billing. La pieza para **facturar** tokens a un cliente final, no sólo verlos |
+| [hystax/optscale](https://github.com/hystax/optscale) | **Apache-2.0** (`LICENSE.md`, rama `master`) | 2257 | 2026-11-11 | FinOps multi-cloud (AWS/Azure/GCP/Alibaba/K8s). El único de la capa que ya trae el modelo multi-cloud armado |
+| [sustainable-computing-io/kepler](https://github.com/sustainable-computing-io/kepler) | **Apache-2.0** | 1606 | 2026-11-23 | Consumo energético por pod. **La única pieza que convierte tokens en kWh** — relevante en EMEA, donde la energía es el costo (ver `intel/market.md`) |
+| [openai/tiktoken](https://github.com/openai/tiktoken) | **MIT** | 19713 | 2026-11-08 | Tokenizador BPE. El conteo exacto del que dependen las otras capas |
+| [simonw/ttok](https://github.com/simonw/ttok) | **Apache-2.0** | 411 | 2026-10-09 | Contar tokens desde la shell. Chico y suficiente para un pipeline de CI |
+| [AgentOps-AI/tokencost](https://github.com/AgentOps-AI/tokencost) | **MIT** (1064B) | 2004 | ⚠️ **2025-09-05** | **No usar para calcular costo.** Es una tabla de precios por modelo **sin push desde hace 14 meses**, y los precios de 2026 se movieron fuerte en los dos sentidos (ver APAC en `intel/market.md`). **Una tabla de precios dormida no es neutra: da un número con cara de exacto y equivocado** |
+| [Han-1413141/dsh-cost-meter](https://github.com/Han-1413141/dsh-cost-meter) | **MIT** (1083B, rama `master`) | 751 | 2026-11-23 | Costo por sesión y modelo, uso de tokens, presupuestos y **cuotas de plan de coding** para DeepSeek Harness. UI bilingüe EN/中文. Creado 2026-08-13. **Señal regional: ver APAC** |
+| [FinOps-Open-Cost-and-Usage-Spec/FOCUS_Spec](https://github.com/FinOps-Open-Cost-and-Usage-Spec/FOCUS_Spec) | ⚠️ **CC-BY-4.0 — licencia de documento, NO de software** | 332 | 2026-11-23 | El vocabulario estándar de costo (Joint Development Foundation). **No es código: no se "adopta", se implementa.** La licencia vive en `license.md` minúscula y la rama por defecto es `working_draft`, no `main` ni `master` |
+
 ## Brechas medidas, no silenciadas
 
 Consultas corridas sobre `search/repositories` el **2026-11-23**.
@@ -153,6 +276,10 @@ Una brecha informada es información; el silencio parece cobertura.
 | `latam gpt stars:>=50` | **0** | **Latam-GPT no tiene repositorio con tracción.** Es la iniciativa regional más citada de LATAM y no hay código con ≥50★ detrás del nombre. Dato nuevo de este pase y conviene no sobrevenderla en una propuesta. |
 | `agent identity authorization open source stars:>=500` | **1** | Un solo repo en todo GitHub: `thunder-id/thunderid` (621★). **La capa de identidad de agentes es un desierto medido, no una impresión.** |
 | `agent sandbox isolation stars:>=1000` | **2** | `perplexityai/SPACE` (2152★) y `OpenCoworkAI/open-cowork` (2285★, MIT, push 2026-10-20 — app de cowork, no sandbox: colisión de keyword). **Un solo resultado relevante de dos.** |
+| `llm cost budget stars:>=150` | **2** | `Han-1413141/dsh-cost-meter` (751★) y `ravikiranvm/aws-finops-mcp-server` (184★, **sin push desde 2025-06-11**). **Un falso cero por consulta larga:** el plano de costo existe y es enorme, pero no se autodescribe con esas palabras. Las consultas cortas lo devolvieron completo |
+| `token counting stars:>=300` | **4** | De los cuatro, `simonw/ttok` (411★) es el único que cuenta tokens como propósito; `code2prompt` (7769★) y `prompt-tower` (395★, **AGPL-3.0**) son empaquetadores de contexto y `claude-counter` (2512★) **no tiene push desde 2026-03-21**. **Contar tokens es una función, no un producto** |
+| Tope de gasto duro como repo propio | **ninguno con tracción** | La prensa técnica cita tres proyectos de tope duro de presupuesto: `ytp101/kilovolt` (**2★**, `NOASSERTION`), `llm0ai/llm0` (**7★**, MIT) y un "Tollgate" cuyo slug **no existe** en GitHub. **El tope de gasto duro no es un producto open source: es una feature que vive dentro de litellm, bifrost y new-api.** Cuarta confirmación de la tendencia 12 |
+| Columnas de IA en el estándar FOCUS | **abiertas, no liberadas** | Identidad de modelo y consumo de tokens (#2018), tokens cacheados vs no cacheados (#2099) y tiers de procesamiento (#2437) siguen siendo **issues abiertos**; el PR de AI Model Billing (#2605) sigue abierto. **El vocabulario estándar para facturar tokens todavía no existe en una versión liberada** — se registra como brecha del *estándar*, no de los repos |
 
 ---
 *Ver también: `verticals/solutions.md` para plataformas verticales completas y

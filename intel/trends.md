@@ -237,3 +237,118 @@ primera recomendación de los listados de guardrails. Alternativas vivas medidas
 
 ---
 *Ver también: `intel/market.md` (mercado por región) y `compose/patterns.md` (recetas).*
+
+## 16. El plano de costo no es FinOps: es comprimir antes de enviar
+
+**La tendencia 1 de este archivo estuvo cinco pases sin un solo repo detrás.** Afirmaba, desde
+el pase 2, que la competencia se había movido de la capacidad al costo, y la sostenía con cuatro
+agentes que mencionaban costo de pasada. El pase 7 midió la categoría y el encuadre estaba mal.
+
+Lo que existe no son dashboards de gasto. Son **cuatro proxies y compresores locales que recortan
+el prompt antes de que salga de la máquina**, con ~380 000★ combinadas:
+`JuliusBrussee/caveman` (122344★, Apache-2.0), `cheaper-inference/OmniRoute` (89783★, MIT),
+`rtk-ai/rtk` (87570★) y `headroomlabs-ai/headroom` (80631★, Apache-2.0).
+
+Dos datos que importan más que las estrellas:
+
+1. **Están compuestos entre sí.** OmniRoute declara apilar RTK + Caveman. No es una categoría con
+   cuatro competidores: **es un stack**, y eso significa que la decisión no es "cuál elijo" sino
+   "en qué orden los pongo".
+2. **Los cuatro comprimen localmente.** Ninguno manda el contenido a un tercero para comprimirlo.
+   Eso los hace compatibles con un engagement soberano — ver tendencia 18 y EMEA en
+   `intel/market.md`.
+
+**Y el dashboard de FinOps que uno esperaría encontrar primero resultó ser la capa más pobre.**
+`AgentOps-AI/tokencost` (2004★) es una tabla de precios **sin push desde 2025-09-05**;
+`lm-sys/RouteLLM` (5728★), el repo canónico de ruteo costo-calidad, **no tiene push desde
+2024-08-10**. Las piezas sanas de medición son de infraestructura genérica —`opencost`,
+`infracost`, `openmeter`, `kepler`— y ninguna sabe qué es un agente.
+
+**Consecuencia para una propuesta:** el ahorro rápido y defendible está en la capa 1 (comprimir),
+no en la capa 4 (medir). La capa 4 se arma, no se adopta.
+
+## 17. La licencia se esconde en el subdirectorio, y la regla de esta KB cambió
+
+Esta KB venía aplicando desde el ciclo 8 la regla *"leé la licencia del archivo, no del badge"*,
+que nació de medir que la API de GitHub sub-declara. **El pase 7 encontró un caso donde el badge
+y el archivo de la raíz dicen lo mismo y los dos sub-declaran.**
+
+`rtk-ai/rtk`: badge Apache-2.0, `LICENSE` de la raíz Apache-2.0 — y `engine/LICENSE` y
+`proxy/LICENSE` son **Business Source License 1.1**, Change Date **2030-09-09**. El
+*Additional Use Grant* permite producción, pero **no** ofrecer el trabajo o un derivado a
+terceros como producto o servicio pago u hospedado. Para una consultora eso no es un detalle
+legal: **es exactamente el modelo de negocio.** La salida limpia existe y está documentada
+(`rtk-oss`, Apache-2.0 puro, sin engine).
+
+Segundo caso el mismo día: `FOCUS_Spec` tiene la licencia en `license.md` **minúscula** y su
+rama por defecto es **`working_draft`**, ni `main` ni `master` — una tercera variante de la causa
+conocida de `NOASSERTION`. Y es **CC-BY-4.0**: licencia de documento, no de software. Un
+estándar no se adopta, se implementa.
+
+**Regla nueva, en vigor desde este pase:** buscar archivos de licencia **en subdirectorios**,
+leer la **sección de licencia del README**, y no asumir que la rama por defecto es `main`.
+Tres pases consecutivos encontraron un modo de trampa nuevo; la lista no está cerrada.
+
+## 18. El español y el portugués cuestan entre 30% y 60% más por la misma tarea
+
+**El dato más consecuente del pase, y es regional.** JPMorgan Private Bank reporta que un request
+en español o portugués consume **~30–60% más tokens** que el mismo request en inglés. No es una
+diferencia de calidad del modelo: es el tokenizador.
+
+Las implicancias se acumulan en la dirección equivocada para la región:
+
+- Un cliente de LATAM **paga más por el mismo trabajo**, con la misma factura por token.
+- La latencia sube por el mismo motivo.
+- Y el ecosistema de herramientas de reducción de costo **no habla español**: cuarto pase
+  consecutivo en que la búsqueda en español de este vertical devuelve **cero repos**.
+
+**Pero el mismo dato invierte el argumento de venta.** Si el ahorro de la capa 1 se aplica sobre
+una base 30–60% más alta, **el ROI de una dieta de tokens es estructuralmente mayor en LATAM que
+en cualquier otra región.** La misma receta que en North America es una optimización, acá es el
+caso de negocio. Receta concreta: `compose/patterns.md` → Receta 11.
+
+Contrapeso medido en la misma dirección: la Linux Foundation reporta que **Sabiá-3**, modelo
+brasileño, iguala performance de frontera a **~1/3–1/4 del costo por token** en tareas en
+portugués. El camino barato en LATAM no es sólo comprimir: es comprimir **y** usar el modelo
+que tokeniza bien el idioma.
+
+## 19. Todos miden el gasto de IA y tres de cada cuatro no pueden probar el valor
+
+El *State of FinOps 2026* de la FinOps Foundation —1 192 practicantes, **>$83B de gasto cloud
+anual**— mide que el **98% ya gestiona gasto de IA**, contra 63% en 2025 y 31% en 2024. En dos
+años pasó de un tercio a la práctica universal.
+
+Y la capacidad **más pedida de toda la encuesta** es monitoreo granular de gasto de IA: tokens,
+requests de LLM, utilización de GPU. **Lo más pedido es justamente lo que la tendencia 16 mide
+como la capa más pobre del open source.** Esa brecha es el negocio.
+
+**Lo que no se puede afirmar, y se dice:** las cifras que circulan de "73% excedió su presupuesto
+de IA" y "sólo 20% predijo el gasto con ±10%" vienen de resúmenes de terceros y **no se pudieron
+verificar contra el informe primario**. Se registran como no verificadas.
+
+**Y hay un conflicto abierto que esta KB no resuelve:** la utilización promedio de GPU se reporta
+como **~5%** (Cast AI, análisis de 23 000 clusters Kubernetes) y como **15–30% durante inferencia**
+en otra fuente. Son datasets y métodos distintos. **No son la misma cifra y no se promedian.**
+La diferencia entre 5% y 30% es la diferencia entre "el problema es la GPU ociosa" y "el problema
+es el token", y decide qué se vende primero.
+
+## 20. El ahorro sin eval de calidad es una hipótesis, no un dato
+
+De los cuatro repos de reducción de tokens, **uno solo publica evals de calidad** y no de ahorro:
+`headroom` reporta GSM8K 0.870 con y sin compresión, TruthfulQA 0.530 → 0.560 (dentro del
+intervalo de confianza), SQuAD v2 97% con 19% de compresión y BFCL 97% con 32%. `caveman` aporta
+un 18/18 en 6 tareas sintéticas y, mejor todavía, **tres mediciones de terceros** (Adobe Research
+1.4–2.4× menos costo; Elastic 63.6% menos tokens de salida; JetBrains 8.5% menos salida **sin
+pérdida medible de calidad, p = 0.82**).
+
+Los otros dos reportan porcentaje de ahorro y no reportan el efecto sobre la tarea.
+
+**Lo que hace creíble a esta categoría es que publica sus propios contraejemplos**, y conviene
+copiar ese estándar antes que el ahorro: `caveman` declara que **HTML empeora 9.9%** y que su
+estilo conciso le gana sólo **3%** a escribir `"Answer concisely."` en el prompt; `rtk` declara
+que cuenta tokens como **bytes/4** y que **cortar 90% de la salida no corta 90% del costo**.
+
+**Para una propuesta de Globant la regla cae sola:** un número de ahorro sin un número de calidad
+al lado no se lleva al cliente. Y hay un caso donde el ahorro es **cero por construcción**: si el
+proveedor factura por request y no por token (GitHub Copilot), respuestas más cortas no bajan
+nada. La pregunta previa a cualquier dieta de tokens es **cómo factura el proveedor**.

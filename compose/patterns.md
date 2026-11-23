@@ -285,6 +285,189 @@ cambia el diseño: la coordinación ya no hay que construirla.
 dependencia que rompe interfaces.** Fijar versión, y poner en el plan una revisión de
 compatibilidad por trimestre.
 
+## Receta 9 — Dieta de tokens para una flota de agentes *(nueva, pase 7)*
+
+**Para quién.** El cliente que ya tiene agentes funcionando y cuya pregunta dejó de ser "¿puede
+hacerlo?" y pasó a ser "¿cuánto cuesta cada vez que lo hace?". Es la receta que ataca el eje que
+el 98% de los practicantes de FinOps declara gestionar y que ninguna pieza open source resuelve
+sola.
+
+**Las piezas, todas verificadas el 2026-11-23, licencias leídas del archivo y de los
+subdirectorios.**
+
+| Orden | Pieza | Licencia | Qué recorta exactamente | Ahorro declarado (auto-reportado) |
+|-------|-------|----------|--------------------------|-----------------------------------|
+| 1 | [rtk-ai/rtk](https://github.com/rtk-ai/rtk) — edición **`rtk-oss`** | **Apache-2.0** (la edición por defecto es Apache-2.0 **+ BUSL-1.1**: ver nota de licencia) | La salida de los comandos de shell **antes** de que la lea el agente: `cargo test`, `pytest`, `git status`, `ls`, `rg`, linters, `kubectl`. 100+ comandos | 60–90% en salida de comandos; `cargo test` 94.2% |
+| 2 | [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) en modo **proxy** (`headroom proxy --port 8787`) | Apache-2.0 | Todo lo demás que entra al contexto: JSON, logs, archivos, chunks de RAG, código (compresor AST). **Sin cambios de código** | 20% en coding agents; 60–95% en JSON |
+| 3 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) — sólo *read less* + *blocks* | Apache-2.0 (+ marca registrada sobre nombre y logo) | Comprime logs/CSV/YAML/tests y **reusa scripts** que el agente ya escribió en vez de regenerarlos | 33.2% de entrada por sesión; *blocks* 397 → 76 tokens |
+| 4 | [BerriAI/litellm](https://github.com/BerriAI/litellm) **o** [Portkey-AI/gateway](https://github.com/Portkey-AI/gateway) | MIT + carve-out `enterprise/` / **MIT limpio** | El punto único por donde pasa todo: **presupuesto y rate limit por key y por team**, que es el tope duro | — |
+| 5 | [langfuse/langfuse](https://github.com/langfuse/langfuse) **o** [Helicone/helicone](https://github.com/Helicone/helicone) | MIT + carve-out `ee/` / **Apache-2.0** | El costo **por request y por agente**, que es lo que convierte el ahorro en un número presentable | — |
+| 6 | [openai/tiktoken](https://github.com/openai/tiktoken) o [simonw/ttok](https://github.com/simonw/ttok) | MIT / Apache-2.0 | El conteo de la línea base y del después. **No usar `tokencost` para esto: su tabla de precios está dormida desde 2025-09-05** | — |
+
+**Cómo se arma, y el orden importa por una razón medible:**
+
+1. **Primero la línea base, con el tokenizador real.** Una semana de uso normal instrumentado con
+   `litellm` + `langfuse`, sin tocar nada más. **Sin línea base no hay ahorro: hay una
+   afirmación.** Es el mismo arranque que la Receta 5 y por el mismo motivo.
+2. **Preguntar cómo factura el proveedor antes de instalar nada.** Si factura **por request** y no
+   por token (caso GitHub Copilot), los pasos 1–3 **no bajan la factura** y la receta se detiene
+   acá. Es el único caso en que el ahorro es cero por construcción, y descubrirlo después de
+   instalar es un costo hundido evitable con una pregunta.
+3. **`rtk-oss` primero**, porque es el ahorro más grande por unidad de esfuerzo: un binario, un
+   `rtk init -g`, y la salida de los tests deja de inundar el contexto. Si un filtro falla,
+   devuelve la salida cruda y preserva el exit code — **el modo de falla es degradar, no romper**.
+4. **`headroom` en modo proxy después**, porque cubre lo que `rtk` no ve. Activar `CacheAligner`:
+   comprimir contenido volátil **rompe el prefijo de KV-cache del proveedor y puede salir más
+   caro** que no comprimir. Es la interacción no obvia de la receta.
+5. **`caveman` sin *say less* al principio.** El propio repo mide que su estilo conciso le gana
+   sólo **3%** a escribir `"Answer concisely."` en el prompt, y que las reglas cuestan ~1 160
+   tokens de entrada. **Se empieza por *read less* y *blocks*, que es donde está el ahorro real.**
+   Y se revisa la telemetría: viene **encendida** por defecto (`caveman telemetry off`).
+6. **Medir calidad en cada paso, no sólo ahorro.** `deepeval` o `promptfoo` con la misma suite
+   antes y después. El estándar lo fija `headroom`, que publica GSM8K y BFCL junto al ahorro:
+   **un porcentaje de ahorro sin un número de calidad al lado no se lleva al cliente.**
+7. **Y no comprimir HTML.** `caveman` publica su propio contraejemplo: **9.9% peor** a nivel de
+   sesión. Para HTML, la ruta es renderizar a texto antes, no comprimir después.
+
+**⚠️ Nota de licencia que decide la variante, y hay que leerla antes de cotizar.** La descarga
+por defecto de `rtk` incluye `engine/` y el daemon `proxy/` bajo **BUSL-1.1** (Change Date
+**2030-09-09**). El *Additional Use Grant* permite uso en producción, pero **no** ofrecer el
+trabajo o un derivado a terceros como **producto o servicio pago u hospedado**.
+
+| Si el entregable es… | Variante | Cómo |
+|----------------------|----------|------|
+| Trabajo **del equipo de Globant** para el cliente (consultoría, migración, desarrollo) | `rtk` completo | Cubierto por el grant de producción |
+| Un **producto o servicio que el cliente revende u hospeda** para terceros | **`rtk-oss`** | `RTK_EDITION=oss sh` o `brew install rtk-ai/tap/rtk-oss`. Se pierde el engine, **se conservan los 100+ filtros**, que es de donde sale el 60–90% |
+| Duda | `rtk-oss` | La diferencia de ahorro es chica; la diferencia de riesgo legal no |
+
+**Variante EMEA — la misma receta vendida como soberanía.** Las tres piezas de compresión
+**comprimen localmente**: `headroom` declara que ningún prompt ni contenido de archivo sale de la
+máquina. Agregar [sustainable-computing-io/kepler](https://github.com/sustainable-computing-io/kepler)
+(Apache-2.0) para expresar el ahorro en **kWh** y no sólo en tokens, que es la unidad en la que
+piensa el costo un cliente europeo. **Se vende una sola instalación como dos entregables:** baja
+la factura de energía por token *y* no agrega un tercero al diagrama de flujo de datos que revisa
+el auditor. Ver `intel/market.md` → EMEA.
+
+**Esfuerzo:** 1 semana de línea base + 2-3 semanas de implementación y medición.
+
+**Entregable medible:** (a) línea base de tokens por tarea con tokenizador real, (b) el mismo
+número después de cada capa, (c) la suite de calidad con el mismo resultado antes y después, (d)
+el tope de gasto por team configurado en el gateway y (e) **la decisión de licencia documentada**.
+Lo que se presenta al cliente no es "ahorramos X%": es **la factura del proveedor del mes
+anterior y la del siguiente**, con la suite de calidad al lado demostrando que no se pagó el
+ahorro con resultados peores.
+
+## Receta 10 — Unit economics por engagement: showback antes de chargeback *(nueva, pase 7)*
+
+**Para quién.** North America, principalmente: la región donde el **98%** ya gestiona gasto de IA
+y donde la capacidad **más pedida de toda la encuesta** de FinOps —monitoreo granular de tokens,
+requests y GPU— es justamente la que el open source no entrega armada. No hay que vender el
+diagnóstico; está hecho. Hay que entregar el instrumento.
+
+**La decisión previa, que cambia el producto entero.** Medir primero la utilización real de GPU
+del cliente, porque las fuentes están en conflicto (**~5%** según Cast AI sobre 23 000 clusters;
+**15–30% durante inferencia** según otra fuente) y **las dos respuestas son distintas**:
+
+| Lo que mide el cliente | El problema es | La respuesta es |
+|------------------------|----------------|-----------------|
+| Utilización cerca de **5%** | **GPU ociosa** | `opencost` + `robusta-dev/krr` (MIT, 4796★) para rightsizing. El token no es el problema |
+| Utilización **15–30%** | **El token** | Receta 9, dieta de tokens |
+| Gasto dominado por **APIs de proveedor**, no por GPU propia | Atribución | Esta receta, completa |
+
+**Las piezas:**
+
+| Capa | Pieza | Licencia | Rol |
+|------|-------|----------|-----|
+| Etiquetado en el origen | [BerriAI/litellm](https://github.com/BerriAI/litellm) | MIT + carve-out | Una **key por team y por proyecto**. Sin esto no hay atribución posible: la factura del proveedor viene agregada por key, proyecto o workspace y nada más |
+| Costo por request | [Helicone/helicone](https://github.com/Helicone/helicone) | **Apache-2.0** | Log y analítica de costo por request, self-hostable |
+| Traza por agente | [langfuse/langfuse](https://github.com/langfuse/langfuse) | MIT + carve-out `ee/` | **Cuántos tokens consumió una corrida de un agente** — el chequeo que convierte "gastamos en IA" en "este agente cuesta esto por tarea" |
+| Infra de K8s | [opencost/opencost](https://github.com/opencost/opencost) | Apache-2.0 (`master`) | GPU y pods de inferencia imputados a un equipo |
+| Costo antes de aplicar | [infracost/infracost](https://github.com/infracost/infracost) | Apache-2.0 | El costo de la infra **en el pull request**. El equivalente FinOps de un test |
+| Facturar, no sólo ver | [openmeterio/openmeter](https://github.com/openmeterio/openmeter) | Apache-2.0 | Medición de uso para **emitir una factura** a un cliente final |
+| Multi-cloud armado | [hystax/optscale](https://github.com/hystax/optscale) | Apache-2.0 | AWS/Azure/GCP/Alibaba/K8s en un modelo ya hecho |
+| Vocabulario | [FOCUS_Spec](https://github.com/FinOps-Open-Cost-and-Usage-Spec/FOCUS_Spec) | **CC-BY-4.0 (documento)** | El estándar al que mapear las columnas. **No es código** |
+
+**Cómo se arma:**
+
+1. **Una key de `litellm` por team y por proyecto, antes de cualquier dashboard.** El orden no es
+   negociable: la atribución se pierde en el origen y no se recupera después. La factura del
+   proveedor no sabe qué equipo pidió qué.
+2. **Showback primero, chargeback después.** La FinOps Foundation trata el **showback como siempre
+   exigible** y el chargeback como dependiente de la política contable del cliente. Mostrar el
+   costo seis a ocho semanas **sin** imputarlo contablemente: hace confiables las etiquetas y
+   evita la pelea de "ese gasto no es de mi centro de costos" con datos todavía sucios.
+3. **`langfuse` para el costo por corrida de agente**, que es la unidad que el cliente entiende y
+   la que permite decir "esta automatización cuesta $X por ticket resuelto".
+4. **`opencost` + `infracost` sólo si hay GPU propia.** Si todo el gasto es API de proveedor,
+   estas dos piezas no aportan y agregarlas infla el proyecto.
+5. **Mapear a FOCUS sabiendo qué falta.** ⚠️ Las columnas específicas de IA del estándar —
+   identidad de modelo y consumo de tokens (#2018), tokens cacheados vs no cacheados (#2099),
+   tiers de procesamiento (#2437) y el PR de AI Model Billing (#2605) — **siguen abiertas, no
+   liberadas**. Se mapea lo que existe (`ConsumedQuantity`, `PricingUnit`, `SkuId`) y **se
+   documenta el hueco** en vez de inventar columnas que el próximo release va a contradecir.
+6. **`openmeter` sólo si el cliente le factura a alguien más.** Es la diferencia entre FinOps
+   interno y producto.
+
+**Esfuerzo:** 4-6 semanas hasta showback confiable; 8-10 si incluye chargeback y mapeo a FOCUS.
+
+**Entregable medible:** costo por **equipo, proyecto, agente y tarea**, reconciliado contra la
+factura del proveedor con una discrepancia declarada; el tope de gasto por team activo; y un
+documento de mapeo a FOCUS que **dice qué columnas no existen todavía**. Ese último punto es el
+diferencial: cualquiera entrega un dashboard, pocos entregan el dashboard **y** la lista de lo que
+el estándar todavía no sabe expresar.
+
+## Receta 11 — LATAM: comprimir primero, porque el idioma cuesta *(nueva, pase 7)*
+
+**Para quién.** Cualquier cliente cuyo tráfico de agentes esté en **español o portugués**. Es la
+receta más corta de esta KB y la que tiene el caso de negocio más fácil de calcular, por un dato
+que casi ningún comprador de la región sabe que lo afecta.
+
+**El argumento, en una línea de aritmética.** JPMorgan Private Bank mide que un request en
+español o portugués consume **~30–60% más tokens** que el mismo request en inglés. Es el
+tokenizador, no la calidad del modelo. Entonces: **el mismo porcentaje de compresión aplicado
+sobre una base 30–60% más alta rinde más plata.** La Receta 9 en North America es una
+optimización; **en LATAM es el caso de negocio**, y se calcula antes de instalar nada.
+
+**Las piezas, en este orden:**
+
+1. **Medir el sobreprecio del idioma primero, con el cliente mirando.** `tiktoken` (MIT) sobre una
+   muestra real de prompts del cliente, el mismo set traducido al inglés, y la diferencia en
+   pantalla. **Es el entregable de la primera semana y es el que vende el resto**: nadie discute
+   un número calculado sobre sus propios datos.
+2. **`headroom` en modo proxy** (Apache-2.0). Es la pieza que más conviene acá porque comprime
+   **JSON, logs y chunks de RAG** —contenido estructurado, donde el ahorro declarado es 60–95% y
+   donde el idioma pesa menos— antes de tocar la prosa, que es lo delicado en un idioma con menos
+   evals publicadas.
+3. **`rtk-oss`** (Apache-2.0). La salida de comandos de shell es **idioma-neutra**: los 60–90% de
+   ahorro se transfieren tal cual a un equipo hispanohablante. **Es la parte del ahorro que no
+   depende del idioma y por eso es la más segura de prometer.**
+4. **Evaluar el modelo regional, con la cautela puesta.** La Linux Foundation reporta que
+   **Sabiá-3** (Brasil) iguala performance de frontera a **~1/3–1/4 del costo por token** en
+   tareas en portugués. Si se confirma para el caso del cliente, **es un ahorro multiplicativo
+   con el de compresión, no alternativo**. El informe es de ~1 año: confirmar vigencia y precios
+   antes de ponerlo en una propuesta.
+5. **`litellm` o `Portkey-AI/gateway` con tope por team**, que acá hace doble trabajo: controla el
+   gasto **y** produce la evidencia de gobernanza. RSM mide que **>2/3** de los adoptantes de la
+   región planea escalar en 12 meses y **menos de 1 en 5** tiene marco formal de gobernanza.
+   **Dos entregables, una instalación** — y es la razón para no saltearse el gateway aunque el
+   cliente sólo haya pedido ahorro.
+6. **Evals en español/portugués, construidas en el engagement.** Acá no hay atajo y hay que
+   decirlo: la búsqueda en español de este vertical devuelve **0 repos**, cuarto pase consecutivo.
+   No existe la suite para descargar. **Se construye con `deepeval` (Apache-2.0) sobre tareas del
+   cliente, y eso mismo es IP del engagement** — la única pieza de esta receta que no se puede
+   copiar de GitHub, y por eso la más defendible.
+
+**Lo que no se promete.** El sobreprecio del idioma **no se elimina**: se recorta. El tokenizador
+es del proveedor del modelo y no se cambia desde el lado del cliente. Lo que se entrega es un
+sobreprecio **medido y reducido**, no desaparecido — y medido es ya más de lo que el cliente tiene
+hoy.
+
+**Esfuerzo:** 1 semana de medición del sobreprecio + 2 semanas de implementación + 2 de evals.
+
+**Entregable medible:** el sobreprecio ES/PT cuantificado sobre datos del cliente, el ahorro de
+compresión medido sobre esa base, una suite de evals en el idioma del cliente que antes no
+existía, y el tope de gasto por equipo activo y produciendo evidencia de gobernanza.
+
 ## Lo que NO conviene prometer
 
 1. **Merge automático.** Ninguna receta acá mergea sin humano. Gartner proyecta >40% de

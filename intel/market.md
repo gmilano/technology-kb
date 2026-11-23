@@ -151,6 +151,31 @@ patrón concreto está en `compose/patterns.md` (nodos de política en LangGraph
 el harness que la hace cumplible.** La barrera declarada número uno en la región es gobernanza,
 no capacidad técnica — y eso es consultoría, que es exactamente el músculo de Globant.
 
+**Actualización 2026-11-23 (pase 7) — el costo pasó de preocupación a práctica universal, y la
+capacidad más pedida es la que el open source no da.**
+
+| Dato | Medición | Fuente / cautela |
+|------|----------|------------------|
+| Gestión de gasto de IA | **98%** de los practicantes, contra **63% en 2025** y **31% en 2024** | *State of FinOps 2026*, FinOps Foundation: **1 192 practicantes, >$83B de gasto cloud anual**. En dos años pasó de un tercio a universal |
+| Capacidad más pedida de toda la encuesta | **Monitoreo granular de gasto de IA**: tokens, requests de LLM, utilización de GPU | Misma fuente. **Es exactamente la capa más pobre del open source** (ver `repos/foundations.md` → capa 4) |
+| Utilización de GPU | **~5%** (Cast AI, 23 000 clusters K8s) **vs 15–30% durante inferencia** (otra fuente) | ⚠️ **Conflicto no resuelto.** Datasets y métodos distintos; no se promedian |
+| Gobernanza de IA | Pocas organizaciones tienen un sistema de gestión de IA **integrado y auditable**; la mayoría aplica guías de forma selectiva | Encuesta Dentons. Consistente con la barrera #1 que esta KB ya registraba |
+| Inversión | Nivel de inversión **~14% más alto** en H1 2026 que en el mismo período del año anterior | DLA Piper |
+| Regulación | **Sin ley federal uniforme: las legislaturas estatales son el arquitecto principal.** El *America's AI Action Plan* (jul-2025) prioriza habilitar la adopción antes que restringirla | FTI Consulting |
+| Exceso de presupuesto de IA | "73% excedió su presupuesto", "sólo 20% predijo el gasto con ±10%" | ⚠️ **NO VERIFICADO.** Circula atribuido al *State of FinOps 2026* pero no se pudo confirmar contra el informe primario |
+
+**Lectura de venta.** North America es la región donde el comprador **ya aceptó que el costo es
+un problema** —98% lo gestiona— y **todavía no tiene la herramienta** que pide. No hay que vender
+el diagnóstico, que ya está hecho. Hay que vender el instrumento: atribución de tokens por
+equipo, por proyecto y por agente, que es lo que ninguna pieza open source de la capa 4 sabe
+hacer sola. El camino concreto está en `compose/patterns.md` → **Receta 10**, y arranca por
+showback (siempre exigible) antes que chargeback (depende de la política contable del cliente).
+
+**Y conviene decidir el conflicto de GPU antes de la propuesta, porque cambia el producto:** si
+la utilización real del cliente está cerca del 5%, el problema es GPU ociosa y la respuesta es
+`opencost` + rightsizing. Si está en 15–30%, el problema es el token y la respuesta es la dieta
+de la Receta 9. **Medir primero cuál de los dos es; no asumirlo.**
+
 ### EMEA
 
 **Estado.** La región donde la regulación es el producto. Dos fechas importan y **las fuentes se
@@ -206,7 +231,51 @@ agrega las dos piezas que faltaban y que son las que un auditor europeo pide pri
 (MIT, agentes de escritorio local-first donde el dato no sale del equipo).** Es un
 engagement de arquitectura y evidencia, con un diferencial defendible: casi nadie puede mostrar
 el expediente completo. Advertencia honesta a poner en la propuesta: la infraestructura soberana
-cuesta más que la hiperescalar, y el cliente debe entrar sabiéndolo.
+cuesta más que la hiperescalar — **pero ver la corrección del pase 7 más abajo: el "15–30% más"
+que esta KB venía repitiendo no tiene fuente primaria, y el sobrecosto real está en la energía,
+el tier soberano y el lead time, no en el precio por GPU-hora.**
+
+**Actualización 2026-11-23 (pase 7) — en EMEA el costo de la inferencia es energía, y la
+desventaja es estructural, no cíclica.**
+
+Las fuentes coinciden en el mecanismo: la inferencia es **80–90% del cómputo de IA**, y el precio
+de la electricidad europea —no el precio del GPU— es lo que mueve la aguja. La consecuencia es
+que el sobrecosto se paga **todos los meses**, no una vez.
+
+| Dato | Medición | Cautela |
+|------|----------|---------|
+| Energía de un campus de IA de 100 MW | **€38–55M/año en los nórdicos** vs **€118–149M/año en Dublín** | Estimaciones modeladas (no datos de mercado medidos), varían por PUE y contrato. **Pero el spread intra-EMEA de ~3x es el dato accionable** |
+| Rango alternativo, misma métrica | €44M a €170M+/año según mercado y estructura de contrato | Segunda fuente, mismo orden de magnitud |
+| Egress | Los hiperescalares cobran por GB y en inferencia de alto volumen puede **superar el costo de cómputo**; los proveedores soberanos europeos **suelen no cobrarlo** | Fuente comercial. **Verificable en el contrato del cliente, que es donde hay que verificarlo** |
+| Madurez | **~2/3 de las organizaciones EMEA siguen en etapas tempranas** de madurez de IA | IDC |
+| Barrera en servicios financieros | **37%** de las firmas EMEA ve seguridad y privacidad como barrera considerable | Deloitte |
+| Soberanía vs despliegue | Las organizaciones aceleran despliegues de IA **perdiendo visibilidad del dato** que los alimenta | Estudio Veeam (proveedor). Es la contradicción que abre la conversación de gobernanza |
+
+**⚠️ Corrección a esta misma KB.** Los pases 4 y 5 registraron que "la infraestructura soberana
+cuesta 15–30% más que la hiperescalar" y la advertencia quedó escrita arriba en esta sección.
+**Ese número no tiene fuente primaria** —aparece en una guía comercial sin cita— y la evidencia
+de este pase lo contradice en parte: una comparación de precios 2026 encontró **H100 de
+proveedores UE-nativos (Scaleway, OVHcloud) por debajo de los precios de lista on-demand de AWS
+y Azure**. El sobrecosto aparecería sobre todo en el **tier soberano-controlado** y en los
+**plazos de entrega** de aceleradores nuevos, no en el precio de lista. **La advertencia correcta
+para la propuesta ya no es "cuesta 15–30% más", que no se puede sostener, sino: el precio por
+GPU-hora puede ser competitivo y lo que se paga de más son la energía, el tier soberano y el
+lead time.** Sin benchmark independiente que compare precios de inferencia soberana vs
+hiperescalar: no se encontró ninguno.
+
+**Oportunidad nueva, y encaja con el plano de costo.** Los cuatro repos de reducción de tokens
+**comprimen localmente**: `headroom` declara explícitamente que ningún prompt ni contenido de
+archivo sale de la máquina para ser comprimido. **Eso convierte una herramienta de ahorro en una
+herramienta de soberanía**, y es raro poder vender las dos cosas con la misma pieza: baja la
+factura de energía por token procesado *y* no agrega un tercero al diagrama de flujo de datos que
+el auditor revisa. Sumar `sustainable-computing-io/kepler` (Apache-2.0) cierra el argumento,
+porque es la única pieza medida que convierte **tokens en kWh** — en EMEA ésa es la unidad en la
+que el cliente piensa el costo. Ver `compose/patterns.md` → Receta 9, variante EMEA.
+
+**Dato de ubicación que vale una recomendación concreta:** con un spread de ~3x entre nórdicos y
+Dublín para el mismo campus, **la decisión de región de inferencia pesa más que casi cualquier
+optimización de software** que se pueda hacer encima. Se recomienda tratarla como la primera
+decisión de arquitectura, no como un detalle de despliegue.
 
 ### APAC
 
@@ -253,6 +322,47 @@ LiteLLM + vLLM, no licenciar un modelo cerrado — y eso corta costos de forma m
 regional cruza Corea (estatuto), Vietnam (estatuto), Singapur (framework), Australia
 (voluntario) y China (etiquetado) a la vez. El framework de Singapur es el mejor punto de
 partida para el diseño.
+
+**Actualización 2026-11-23 (pase 7) — donde el token es más barato, la herramienta que mide el
+token aparece primero.**
+
+**La rama APAC del plano de costo es propia, no un puerto.** Cuatro de las piezas medidas este
+pase salen del ecosistema chino: `QuantumNous/new-api` (52399★, **AGPL-3.0**, el gateway más
+completo de la capa, con contabilidad de costo incluida), `songquanpeng/one-api` (37466★, MIT, su
+antecesor **dormido desde 2026-01-09**), `codefuse-ai/ModelCache` (Ant Group, Apache-2.0) y
+`Han-1413141/dsh-cost-meter` (751★, MIT, creado 2026-08-13, **UI bilingüe EN/中文**), que mide
+costo por sesión y **cuotas de plan de coding**, no sólo tokens.
+
+**Guerra de precios, con el conflicto explícito.** Las fuentes secundarias reportan que DeepSeek
+hizo **permanente un descuento del 75%** el 2026-05-22 (V4-Pro ~$0.435 entrada / $0.87 salida por
+millón; V4-Flash $0.14/$0.28, el tier más barato medido), con Qwen3 Max a ~$3.90 de salida y
+Xiaomi MiMo V2.5 a ~$3. **Y otras fuentes de agosto de 2026 reportan lo contrario: que DeepSeek
+subió precios el 2026-08-06, y que Zhipu también subió planes.** Ninguna de las dos mitades se
+pudo confirmar contra anuncios oficiales de los laboratorios. **Se registra el conflicto sin
+resolver**, y de ahí sale la regla operativa: ⚠️ **no cotizar un engagement con una tabla de
+precios de terceros.** Es exactamente el riesgo de `AgentOps-AI/tokencost`, dormido desde
+2025-09-05 (ver `repos/foundations.md`).
+
+**Lo que sí es estructural y no depende del conflicto:** la mayoría de los flagships chinos salen
+con **pesos abiertos** —la familia V4 de DeepSeek bajo **MIT**— y eso convierte el hosting en
+commodity. Para un engagement APAC el modelo barato es **autohospedable**, lo que cambia la
+pregunta de "qué API contrato" a "dónde corro los pesos".
+
+| Regulación | Estado medido | Nota |
+|------------|---------------|------|
+| **Corea del Sur** | *AI Basic Act* **vigente desde 2026-01-22** | Ya registrado en pases anteriores; se reconfirma |
+| **Vietnam** | **Ley de IA vigente desde 2026-03-01, con un año de gracia** | **Dato nuevo de este pase.** No estaba en ningún pase anterior de esta KB |
+| **Australia** | *National AI Plan* orientado a acelerar adopción, **apoyado en leyes existentes**; retrocede de reglas duras para alto riesgo. Nueva **Office of AI** coordinadora | Fuente de industria (BSA): tratar como abogacía |
+| **Singapur y Hong Kong** | Entraron a 2026 **sin ley de IA específica**; modelo de guías voluntarias y assurance | Mayer Brown / Linklaters |
+| **India** | En jul-2026 el gobierno **señaló** que podría ir a legislación dedicada | Señal, no ley |
+| **Adopción** | Forrester: **Singapur, Australia, Nueva Zelanda y Corea superan a la mayoría de países de North America y Europa** en adopción empresarial | El sudeste asiático es mucho menos uniforme |
+
+**Lectura de venta.** APAC es la región donde el costo por token ya es bajo, así que **la dieta de
+tokens vende menos y la soberanía del peso vende más**. El engagement natural es autohospedar un
+modelo de pesos abiertos con `vLLM`/`SGLang` detrás de un gateway permisivo —`Portkey-AI/gateway`
+(MIT) o `maximhq/bifrost` (Apache-2.0), **no `new-api`, que es AGPL-3.0**— y resolver el
+cumplimiento por jurisdicción, que con Corea vigente, Vietnam vigente y Singapur/Hong Kong
+voluntarios **no admite una sola configuración**. Ver `compose/patterns.md` → Receta 6.
 
 ### LATAM
 
@@ -328,6 +438,51 @@ LATAM" consultadas este ciclo traían **cifras de plantilla sin rellenar**, y la
 de este repo tiene registrado que las estadísticas de proveedor sobre LATAM **se contradicen
 entre sí hasta 2:1**. Las cifras de arriba se limitan deliberadamente a BID, Universidad de los
 Andes y textos normativos con fecha.
+
+**Actualización 2026-11-23 (pase 7) — el dato que cambia la conversación: el idioma cuesta.**
+
+**JPMorgan Private Bank mide que un request en español o portugués consume ~30–60% más tokens
+que el mismo request en inglés.** No es calidad de modelo: es el tokenizador. Es el dato más
+consecuente de este pase y es el único que **invierte** el argumento habitual sobre la región.
+
+Lo que se acumula en contra:
+
+| Dato | Medición | Fuente / cautela |
+|------|----------|------------------|
+| Costo por idioma | **+30–60% de tokens** para el mismo request en ES/PT | JPMorgan Private Bank. Sube costo **y** latencia |
+| A dónde va el dinero | La suscripción y el cómputo los cobran proveedores globales: **el ingreso sale de la región** | Misma fuente |
+| GPU local | Google Cloud São Paulo **sin GPU más allá de T4**; Azure **no publica precios de GPU** para Brazil South ni Mexico Central | Blog de proveedor. Implica que muchos equipos **alquilan capacidad afuera** |
+| Herramientas en español | **0 repos** en cuatro pases consecutivos de búsquedas en español de este vertical | Medición propia, `search/repositories` |
+| Gobernanza | **>2/3** de los adoptantes planea escalar en 12 meses, y **menos de 1 en 5** tiene marco formal de gobernanza de IA | RSM 2026. **La brecha ES la venta** |
+| Productividad | IA podría sumar **1.9–2.3% anual** de productividad regional | WEF/McKinsey |
+
+Lo que juega a favor:
+
+- **El ROI de la dieta de tokens es estructuralmente mayor acá.** Si el ahorro de la capa 1
+  (20–60% según contenido) se aplica sobre una base **30–60% más alta**, la misma receta que en
+  North America es una optimización marginal, **en LATAM es el caso de negocio**. Ésta es la
+  oportunidad nueva del pase y está lista para proponer: `compose/patterns.md` → **Receta 11**.
+- **Modelo regional con economía propia:** la Linux Foundation reporta que **Sabiá-3** (Brasil)
+  iguala performance de frontera a **~1/3–1/4 del costo por token** en tareas en portugués. El
+  camino barato no es sólo comprimir: es comprimir **y** usar el modelo que tokeniza bien el
+  idioma. (Informe de ~1 año: confirmar vigencia antes de cotizar.)
+- **Infraestructura con fecha y monto:** Microsoft **$2.7B** en campus de São Paulo; AWS **$5B**
+  en Querétaro, México; laboratorio de IA de Google en México **enero 2026**; **MeetKai Brasil**
+  ganó en **junio 2026** la licitación "IA Soberana" de **SERPRO** para una plataforma nacional
+  sobre hardware Nvidia; *AI Factory* en Monterrey con meta de **100 MW para 2030**.
+
+**Contrapeso honesto, porque la región se sobrevende fácil:** hay reportes de que la inversión de
+Nvidia fluye a Europa y Asia y que LATAM **no aparece en el pitch**, y hay cobertura del costo
+social de los datacenters. Las cifras de costo laboral nearshore que circulan (US$75–110/hora)
+vienen de blogs de vendors de nearshoring: **son material de marketing y así se registran.**
+
+**Lectura de venta, concreta.** El pitch de LATAM dejó de ser "la región adopta IA" —que ya es
+cierto y no diferencia— y pasa a ser aritmético: **el cliente de LATAM paga un sobreprecio de
+30–60% por idioma que la mayoría no sabe que está pagando, y existen cuatro piezas permisivas que
+lo recortan sin cambiar de modelo ni de proveedor.** Eso se mide antes y después con la misma
+herramienta, en la factura del proveedor. Y se combina con lo que esta KB ya tenía: **menos de 1
+en 5 tiene gobernanza formal**, así que el mismo gateway que mide el ahorro es el que produce la
+evidencia de gobernanza. Dos entregables, una instalación.
 
 ## Posicionamiento Globant
 

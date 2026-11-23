@@ -8,11 +8,16 @@ updated: 2026-11-23
 
 > Plataformas reales y funcionales, customizables con una capa agentic arriba.
 > Modelo: partir de algo que ya opera un equipo de ingeniería, no de un framework vacío.
-> Todas re-verificadas el **2026-11-23** (pase 6): existencia, estrellas y **licencia leída del archivo**.
+> Todas re-verificadas el **2026-11-23**: existencia, estrellas y **licencia leída del archivo**.
 >
 > **Este archivo reemplaza una fila de ejemplo** (`| — | — | — | — | Por completar |`) que
-> estuvo publicada como dato 142 días y se compila como entidad literal. **13 filas reales**, con
-> **Odoo agregado en este pase**: era la referencia canónica de ERP open source y faltaba.
+> estuvo publicada como dato 142 días y se compila como entidad literal. **16 filas reales, cero
+> filas de ejemplo.**
+>
+> **Pase 7:** tres plataformas de **costo y medición** —Helicone, OpenMeter y OptScale, las tres
+> Apache-2.0— porque el plano de costo que agrega este pase necesita una consola, y la más citada
+> del segmento (Arize Phoenix) está bloqueada por licencia para una oferta gestionada.
+> **Pase 6:** Odoo, que era la referencia canónica de ERP open source y faltaba.
 
 ## Plataformas recomendadas
 
@@ -31,6 +36,9 @@ updated: 2026-11-23
 | **Odoo** | [odoo/odoo](https://github.com/odoo/odoo) | **LGPL-3.0** (archivo leído, 43 529B, rama `master`) | 56040 | Python, Postgres, OWL | ERP/CRM modular: ventas, compras, inventario, contabilidad, RRHH. **La referencia canónica del vertical, y faltaba en esta KB hasta el pase 6.** **La licencia es el dato que importa y GitHub la reporta como `NOASSERTION`:** el archivo dice **LGPL-3.0** para Odoo Community. Al ser LGPL y no GPL, **un módulo propietario que se enlaza con Odoo Community es viable** — exactamente la diferencia con ERPNext (GPL-3.0), donde no lo es. Odoo Enterprise es otra cosa y es propietaria: no mezclar. Para una capa agentic encima, Community + módulo propio es el camino limpio. |
 | **Krayin CRM** | [krayin/laravel-crm](https://github.com/krayin/laravel-crm) | **MIT** | 24198 | PHP, Laravel, MySQL | CRM open source con **licencia MIT** — la rareza del segmento. Twenty (el CRM más citado) es AGPL-3.0 con archivos comerciales; Krayin no tiene esa carga. |
 | **AureusERP** | [aureuserp/aureuserp](https://github.com/aureuserp/aureuserp) | **MIT** | 12278 | PHP, Laravel, FilamentPHP | ERP moderno **MIT**. Más chico (12.3k★) pero es la única base de ERP del set sin copyleft: si el cliente exige licencia permisiva, es la única puerta. |
+| **Helicone** | [Helicone/helicone](https://github.com/Helicone/helicone) | **Apache-2.0** (201 líneas, sin modificar) | 6293 | TypeScript, Postgres, ClickHouse | Plataforma de observabilidad y **costo por request** de LLM, self-hostable. **Agregada en el pase 7 y es la alternativa permisiva al hueco que deja Arize Phoenix** (Elastic License 2.0, ver trampas abajo): Apache-2.0 sin carve-out, así que **sí** se puede ofrecer como servicio gestionado. Es la consola donde el cliente ve lo que cuesta cada agente. |
+| **OpenMeter** | [openmeterio/openmeter](https://github.com/openmeterio/openmeter) | **Apache-2.0** | 2463 | Go, Postgres, Kafka | Medición de uso y **billing** basado en consumo. La pieza que falta cuando el cliente no sólo quiere *ver* el gasto de tokens sino **facturárselo a sus propios clientes**. ⚠️ **Ojo con el slug: `openmeter/openmeter` es un stub de 1★ sin push desde 2020-12-25.** El repo real es `openmeterio/openmeter`. |
+| **OptScale** | [hystax/optscale](https://github.com/hystax/optscale) | **Apache-2.0** (`LICENSE.md`, rama `master`) | 2257 | Python, React, MongoDB | FinOps y optimización de costo multi-cloud (AWS, Azure, GCP, Alibaba, Kubernetes) **con el modelo multi-cloud ya armado**. La base para un engagement de FinOps de IA sin construir la ingesta de facturas desde cero. |
 
 ## ⚠️ Lo que los listados recomiendan y no conviene tomar
 

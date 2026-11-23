@@ -11,6 +11,71 @@ updated: 2026-11-23
 > Este archivo sigue **agentes y skills**. Para infraestructura ver `repos/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 7 *(segundo pase del día; el pase 6 cerró a las 14:58 UTC)*
+
+**Qué se midió:** el eje de **costo** aplicado a agentes y skills. El pase 6 cerró hace una hora
+con las 32 filas de `agents/top.md` re-verificadas, así que este pase **no las vuelve a medir**:
+mide la categoría que faltaba. Infraestructura de costo completa en `repos/trending.md`.
+
+### Hallazgo del pase: el artefacto de costo con más estrellas del vertical es una *skill*
+
+`JuliusBrussee/caveman` — **Apache-2.0, 122 344★, creado 2026-04-04, push 2026-11-23.**
+Se instala con `npx skills add`, tiene plugin de Claude Code y extensión de Gemini CLI, y
+declara soporte para **30+ agentes** (Claude Code, Codex, Gemini CLI, OpenCode, aider).
+Su descripción es *"why use many token when few token do trick"*.
+
+**Por qué entra en este archivo y no sólo en `repos/foundations.md`:** es la **tercera
+confirmación de la tendencia 2** de esta KB —la metodología es el artefacto, no el modelo—
+y la más fuerte hasta ahora. La serie que esta KB viene midiendo:
+
+| Pase | Artefacto | Qué es | Stars |
+|------|-----------|--------|-------|
+| 5 | [obra/superpowers](https://github.com/obra/superpowers) | Framework de skills + metodología de SDLC | 324726 |
+| 6 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | **Un solo prompt** empaquetado como plugin | 197323 |
+| 7 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | **Una skill que hace al agente hablar menos** | **122344** |
+
+**Tres de los artefactos más estrellados del vertical no son agentes ni frameworks: son
+instrucciones.** Y el del pase 7 agrega un dato nuevo al patrón: la instrucción no sólo cambia
+*cómo trabaja* el agente, **cambia cuánto cuesta**. Para Globant esto baja a algo muy concreto:
+la pieza de IP más chica que se puede entregar a un cliente —una skill— es también la que tiene
+el ROI más fácil de medir, porque se mide en la factura del proveedor.
+
+### Lo que caveman mide y lo que no — leerlo antes de prometerlo
+
+Lo auto-reportado por el repo, con la honestidad que el propio repo tiene:
+
+| Pieza | Resultado declarado | Calidad de la evidencia |
+|-------|---------------------|-------------------------|
+| Sesión completa (*read less* + *say less*) | **33.2% menos tokens de entrada** | 6 tareas sintéticas, 18 pares, **18/18 respuestas correctas**. Chico pero con control de calidad |
+| Comprimir archivos sueltos | YAML 99.1%, CSV 98.9%, tests 98.9%, logs 98.5%, JSON 98.5% | Medición por archivo, no por sesión |
+| **HTML** | **9.9% PEOR** a nivel de sesión | **El repo publica su propio contraejemplo.** Sin compresor de HTML todavía |
+| *say less* vs `"Answer concisely."` | 4 119 vs 4 334 tokens de salida = **3%** | **El prompt gratis logra casi todo el efecto.** El repo lo dice |
+| *auto* (elección de modelo) | **0.46×** el costo de Opus 5.5 en xhigh | Corrida interina de 85 tareas; tasa de resolución 43.7% vs 44.3%. **El repo declara que la brecha de calidad está sin resolver** |
+| Terceros citados | Adobe Research 1.4–2.4× menos costo; Elastic 63.6% menos tokens de salida; JetBrains 8.5% menos salida **sin pérdida medible de calidad (p = 0.82)** | Tres organizaciones independientes. **Lo más vendible del plano** |
+
+**Dos cosas que invalidan el ahorro y hay que decirlas en la propuesta:** (1) las reglas de
+*say less* cuestan ~1 160 tokens de entrada, así que **si el cliente paga por request y no por
+token —caso GitHub Copilot— el ahorro es cero**; (2) manda **telemetría anonimizada por
+defecto** (`caveman telemetry off` / `DO_NOT_TRACK=1`), lo que en un engagement con datos de
+cliente se revisa antes de instalar. El repo además vende *Caveman Cloud* y una app Mac:
+**la skill es open source, el producto alrededor no.**
+
+### Lo que NO se encontró, dicho explícitamente
+
+| Búsqueda | Resultado | Lectura |
+|----------|-----------|---------|
+| Agente que optimice su propio costo de forma autónoma | **ninguno con tracción** | Todo lo medido es **pasivo**: comprime, cachea, enruta. Nada decide "esta tarea no vale lo que cuesta". **Es la brecha más interesante del plano y el lugar natural de un agente propio** |
+| Skill de reducción de costo en español | **0** | Cuarto pase consecutivo con cero resultados en español en este vertical. Ver `intel/market.md` → LATAM, donde el dato de tokens lo hace peor |
+| Tope de gasto duro como repo propio | 2★ y 7★ | `ytp101/kilovolt` (2★) y `llm0ai/llm0` (7★), ambos citados por la prensa técnica como si fueran categoría. **Cuarta confirmación de la tendencia 12** |
+
+### Agentes del pase 6: sin re-medición en este pase
+
+Las 32 filas de `agents/top.md` se verificaron a las 14:58 UTC de hoy. **Re-medirlas una hora
+después produciría ruido, no serie.** Se registra la decisión para que la ausencia no se lea
+como falta de cobertura. Próxima re-verificación: el pase que siga a technology en la rotación.
+
+---
+
 ## 2026-11-23 — pase 6
 
 **Qué se midió:** (a) las 28 filas de `agents/top.md` re-verificadas a 48h de distancia, (b) una

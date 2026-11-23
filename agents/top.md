@@ -15,6 +15,17 @@ updated: 2026-11-23
 > son **4 agregados**, y uno de ellos es grande: `NousResearch/hermes-agent` con **265 593★** nunca
 > había sido listado en esta KB. Era el tercer repo del vertical por estrellas y no estaba.
 
+> **Nota del pase 7 (2026-11-23, segundo pase del día):** este archivo **no se re-midió** en el
+> pase 7. Las 32 filas de abajo se verificaron a las 14:58 UTC de hoy en el pase 6; volver a
+> medirlas una hora después da ruido, no serie. El pase 7 agregó un plano distinto —**costo**—
+> que es infraestructura y vive en [`repos/foundations.md`](../repos/foundations.md). Ahí están
+> los cuatro repos de reducción de tokens (~380 000★ combinadas) que esta KB no tenía, y la
+> trampa de licencia de `rtk` (Apache-2.0 en la raíz, **BUSL-1.1 en `engine/` y `proxy/`**) que
+> obliga a cambiar cómo esta KB lee licencias. La skill `caveman` (122 344★) se registra en
+> [`agents/trending.md`](./trending.md), que es el archivo que sigue agentes **y skills**.
+> **No se agregaron filas acá: no se encontraron agentes nuevos en el eje de costo, y padear la
+> tabla sería peor que dejarla como está.**
+
 ## Harnesses y agentes de codificación
 
 | Nombre | Repo | Licencia | Stars | Último push | Descripción |
