@@ -12,6 +12,87 @@ updated: 2026-11-23
 > agentes y skills ver `agents/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 11 *(sexto pase del día; pases 6-10 a las 14:58, 15:56, 16:57, 17:58 y 18:53 UTC)*
+
+**Qué se midió:** primero, **toda la KB, una URL a la vez**; después, **la capa de infraestructura
+que el pase 10 declaró inexistente**. Método: existencia por `git ls-remote` (control corrido
+contra dos slugs falsos: `ec=128`), estrellas / `pushed_at` / `archived` / `created_at` por
+`search/repositories`, y **licencia leída del archivo**, resolviendo primero su nombre
+(`LICENSE`, `LICENSE.txt`, `LICENSE.md`, `LICENSE-MIT`, `LICENSE-APACHE`, `COPYING`) y la rama.
+
+### 1. Barrido de verificación completo — **251 URLs, 251 vivas, cero 404**
+
+Es el primer barrido total de esta KB. **251 URLs de repo extraídas de los 9 archivos markdown y
+verificadas una por una: las 251 existen y son públicas.** No hay un solo 404 en la KB.
+
+Metadata fresca para **245 de 251**. Los 6 que faltan son los falsos negativos ya conocidos de
+`search/repositories` — `All-Hands-AI/OpenHands`, `block/goose`, `CycloneDX/cdxgen`,
+`dynatrace-oss/dtctl`, `invariantlabs-ai/mcp-scan`, `mrgeoffrich/mini-infra` — **todos vivos por
+`ls-remote`**. Octava confirmación del patrón y, por primera vez, **con tasa: 6/251 = 2,4%.**
+
+### 2. La capa nueva: **decidir durante la ejecución** (7 repos, todos permisivos)
+
+El pase 10 cerró con *"cero producto agentic"* en este hueco, apoyado en
+`agent egress firewall stars:>=200` → **1**. Ensanchando el término:
+
+| Consulta | Pase 10 | Pase 11 |
+|----------|---------|---------|
+| `agent egress firewall stars:>=200` | 1 | 1 |
+| `agent firewall stars:>=200` | *no consultada* | **11** |
+| `agent runtime policy stars:>=100` | *no consultada* | **13** |
+| `agent permission policy stars:>=500` | 0 | **0** *(sin cambio)* |
+
+**Nueve de los diez repos verificados fueron creados en 2026.** La categoría no estaba vacía:
+estaba naciendo, y el sustantivo angosto produjo un falso cero. Los 7 usables están ahora en
+`repos/foundations.md` como **Capa 5** de la sección 🔒: hol-guard (1 122★), clawpatrol (1 097★,
+Deno Land Inc), pipelock (1 020★), ironcurtain (684★), Adrian (598★), Aegis (524★) y
+OpenGuardrails (372★) — **cuatro Apache-2.0 y dos MIT, más uno con su API de modelo aún no
+pública.**
+
+### 3. La capa de evaluación, que resultó estar poblada y grande
+
+| Repo | Licencia (archivo) | Stars | Creado | Rol |
+|------|--------------------|-------|--------|-----|
+| [Tencent/AI-Infra-Guard](https://github.com/Tencent/AI-Infra-Guard) | Apache-2.0 (11 362B) | **7622** | 2024-12-25 | AI red teaming full-stack: Agent + Skills + MCP scan. **El más maduro del plano.** APAC |
+| [google/agents-cli](https://github.com/google/agents-cli) | Apache-2.0 (11 357B) | **6397** | 2026-04-08 | Crear, **evaluar** y desplegar skills |
+| [NVIDIA/SkillEvaluator](https://github.com/NVIDIA/SkillEvaluator) | Apache-2.0 (11 431B) | **4448** | 2026-06-24 | 500+ reglas estáticas sin API key + **medición del efecto de la skill** (con y sin). arXiv 2608.20614 |
+| [future-agi/future-agi](https://github.com/future-agi/future-agi) | Apache-2.0 (11 308B) | **2289** | 2026-04-23 | Evaluar, observar y mejorar — **ofrecible como gestionado**, al contrario de Arize Phoenix |
+| [lemony-ai/cascadeflow](https://github.com/lemony-ai/cascadeflow) | MIT (1 067B) | **3921** | 2025-10-24 | Runtime en cascada: **costo + latencia + calidad + política como una sola decisión**. ⚠️ ~2 meses sin push |
+
+**Pero `eval driven stars:>=200` devuelve 3.** Hay herramientas de evaluación; **falta tooling del
+método**, mientras Gartner (2026-11-18) proyecta el *eval-driven development* del **<20% de los
+equipos en 2026 al 70% en 2028**. Brecha con fecha y sin producto → tendencia 32.
+
+### 4. Inferencia local, agregada por razón de región
+
+| Repo | Licencia | Stars | Push | Por qué entra |
+|------|----------|-------|------|---------------|
+| [openvinotoolkit/openvino](https://github.com/openvinotoolkit/openvino) | Apache-2.0 | 12250 | 2026-11-23 | **La pieza que hace viable "nada sale de la máquina" en hardware que el cliente ya tiene** (CPU/GPU/NPU, cuantización). Proyecto de 2018: el más estable de su tabla. EMEA soberano |
+| [jingyaogong/minimind](https://github.com/jingyaogong/minimind) | Apache-2.0 | 69370 | 2026-11-23 | LLM de 64M desde cero en 2 h. Formación, **vivo**, origen China → **evidencia APAC** |
+| [karpathy/nanochat](https://github.com/karpathy/nanochat) | MIT | 60812 | ⚠️ 2026-09-07 | Pipeline completo y legible de un LLM chico. Formación, **no dependencia** |
+
+### 5. Correcciones de estado (lo que esta KB decía y hoy es falso)
+
+| Repo | Decía | Hoy |
+|------|-------|-----|
+| [tensorzero/tensorzero](https://github.com/tensorzero/tensorzero) | "dormido 5 meses", 11 697★, *"la propuesta más ambiciosa de la capa"* | ❌ **`archived: true`**. Cerrada, no quieta |
+| [Moep90/agent-toolkit-for-kapitan](https://github.com/Moep90/agent-toolkit-for-kapitan) | "✅ vivo, 0★" | ❌ **`archived: true`**. 0★ **y** archivado → segunda confirmación de la tendencia 12 |
+
+### 6. Trampas de licencia del pase — **las dos encima de la capa que hacía falta**
+
+- [FailproofAI/failproofai](https://github.com/FailproofAI/failproofai) — **10 135★**, el más grande
+  de `agent runtime policy`. `LICENSE` (1 988B) **empieza diciendo "MIT License" y termina con
+  `Commons Clause v1.0`**, cuya definición de *"Sell"* incluye *"fees for hosting or
+  **consulting/support services**"*. **Bloquea la consultoría, no el SaaS.** La API dice
+  `NOASSERTION`: ningún badge avisa.
+- [hardenrun/aif](https://github.com/hardenrun/aif) — **1 963★**, el más grande de `agent firewall`.
+  `LICENSE.txt` (7 872B) es el **"AIF Beta License Agreement"** de VizopsAI Inc: **binario,
+  revocable, sin servicio gestionado, sin producto competidor, con recall remoto de versiones**.
+  Y se autodescribe **pre-execution**: ni abierto ni del plano.
+- [debpalash/VoiceStudio](https://github.com/debpalash/VoiceStudio) — **117 079★**, **AGPL-3.0**
+  (34 523B leídos). Por estrellas entraría en el top-15 del vertical y ningún listado menciona
+  la licencia.
+
 ## 2026-11-23 — pase 10 *(quinto pase del día; pase 6 14:58 UTC, pase 7 15:56, pase 8 16:57, pase 9 17:58)*
 
 **Qué se midió:** el plano de **ejecución** —dónde corre el agente y de parte de quién actúa—.
@@ -349,7 +430,7 @@ few token do trick"*. La categoría existía; el vocabulario de búsqueda era el
 | [songquanpeng/one-api](https://github.com/songquanpeng/one-api) | MIT | 37466 | ⚠️ 2026-01-09 | Gateway (dormido 10 meses) |
 | [Portkey-AI/gateway](https://github.com/Portkey-AI/gateway) | MIT (1067B) | 13433 | 2026-11-20 | Gateway |
 | [infracost/infracost](https://github.com/infracost/infracost) | Apache-2.0 | 12631 | 2026-11-23 | Costo en el PR |
-| [tensorzero/tensorzero](https://github.com/tensorzero/tensorzero) | Apache-2.0 | 11697 | ⚠️ 2026-06-11 | LLMOps (dormido 5 meses) |
+| [tensorzero/tensorzero](https://github.com/tensorzero/tensorzero) | Apache-2.0 | 11697 | 🪦 2026-06-11 | LLMOps — ❌ **ARCHIVADO**, corregido en el pase 11 (antes: "dormido 5 meses") |
 | [maximhq/bifrost](https://github.com/maximhq/bifrost) | Apache-2.0 (201 líneas) | 9966 | 2026-11-23 | Gateway + caché semántica |
 | [zilliztech/GPTCache](https://github.com/zilliztech/GPTCache) | MIT (1067B) | 8235 | 2026-09-22 | Caché semántica |
 | [katanemo/plano](https://github.com/katanemo/plano) | Apache-2.0 | 7119 | 2026-10-24 | Proxy sobre Envoy |

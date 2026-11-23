@@ -893,6 +893,116 @@ pone un kernel en espacio de usuario; Firecracker/Kata dan kernel propio. **Si e
 "¿y si el agente escapa del contenedor?", la respuesta honesta depende del `RuntimeClass` elegido
 y se escribe en el documento de arquitectura, no se contesta en la reunión.**
 
+## Receta 20 — Los **cuatro momentos de decisión**: el control que se compone porque no se vende *(nueva, pase 11)*
+
+**Por qué existe, y por qué corrige a la receta 18.** La receta 18 armó la autorización *por
+llamada* con primitivos genéricos (SPIRE + Casdoor + OpenFGA + ToolHive) porque el pase 10 midió
+**cero producto agentic** en ese plano. **El pase 11 ensanchó la consulta y encontró siete repos
+permisivos que sí hacen el trabajo** — `agent firewall stars:>=200` devuelve **11**, no 1. Esta
+receta no reemplaza la 18: **le pone adelante la pieza que faltaba y ordena los cuatro momentos.**
+
+**La idea central, y es lo que hay que explicarle al cliente antes de cotizar:** hay **cuatro
+momentos** en los que se puede decir "no" a un agente, **y ninguno cubre a los otros tres**.
+
+| # | Momento | Qué pregunta | Pieza (licencia leída) | Stars |
+|---|---------|--------------|------------------------|-------|
+| 1 | **Antes de instalar** | *¿este artefacto es seguro?* | [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) + [snyk/agent-scan](https://github.com/snyk/agent-scan) + [Tencent/AI-Infra-Guard](https://github.com/Tencent/AI-Infra-Guard) — Apache-2.0 | 27 414 / 3 276 / **7 622** |
+| 2 | **Antes del merge** | *¿esta skill mejora o empeora el resultado?* | [NVIDIA/SkillEvaluator](https://github.com/NVIDIA/SkillEvaluator) — Apache-2.0 (11 431B) | **4 448** |
+| 3 | **Durante la llamada** | *¿esta acción, ahora, se permite?* | [hashgraph-online/hol-guard](https://github.com/hashgraph-online/hol-guard) **o** [denoland/clawpatrol](https://github.com/denoland/clawpatrol) **o** [Justin0504/Aegis](https://github.com/Justin0504/Aegis) — Apache-2.0 / MIT / MIT | 1 122 / 1 097 / 524 |
+| 3b | **Durante, hacia afuera** | *¿a dónde puede salir el dato?* | [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) — Apache-2.0 | 1 020 |
+| 4 | **Después** | *¿qué hizo, y lo puedo probar?* | [chainloop-dev/chainloop](https://github.com/chainloop-dev/chainloop) — Apache-2.0 | 616 |
+
+**Las piezas del momento 3, comparadas de verdad** (los tres fueron verificados archivo de
+licencia en mano, no por badge):
+
+| Pieza | Elegir ésta cuando | Límite real |
+|-------|--------------------|-------------|
+| **hol-guard** (1 122★, Apache-2.0) | Es el default: lo más grande usable, push de hoy, y **es el reemplazo vivo de `protectai/llm-guard`** (archivado 2026-07-08) que todo listado sigue recomendando | Comunidad chica; el soporte lo pone Globant |
+| **clawpatrol** (1 097★, MIT, © Deno Land Inc) | **El cliente es regulado y pregunta quién mantiene esto.** Respaldo de una empresa de runtime establecida, no de un individuo | Más joven (creado 2026-04-28) |
+| **AEGIS** (524★, MIT) | Se necesitan **audit trail criptográfico + aprobación human-in-the-loop + kill switch** juntos, y respaldo académico citable (arXiv 2603.12621, USC Viterbi) | El más chico de los tres |
+| **ironcurtain** (684★, Apache-2.0) | La política la tiene que poder leer y escribir **alguien de negocio**: usa "constituciones" en inglés llano | El repo **pone un asterisco sobre la palabra "secure"**: citar la salvedad, no esconderla |
+| **OpenGuardrails** (372★, Apache-2.0) | Se requiere **decisión local sin red** y **secretos sustituidos por placeholders** antes de que el request salga | ⚠️ **Su API de modelo todavía no es pública**: hoy sólo la mitad de reglas locales es desplegable |
+
+**Cómo se arma, en orden:**
+
+1. **Momento 3 primero, con reglas locales y en `dry-run`.** Desplegar hol-guard (o clawpatrol)
+   **registrando y no bloqueando**, dos semanas. Lo que sale de ahí —la lista real de tool calls
+   que el agente del cliente hace— es el insumo de la política. **Escribir la política antes de
+   tener esa lista produce reglas que nadie puede defender en una reunión.**
+2. **Recién después, el momento 1.** Escáner en la puerta de instalación. Va segundo porque es el
+   más fácil de vender y el que menos riesgo saca: una skill maliciosa que nunca se instaló no
+   explica el incidente del agente que borró una tabla con permisos legítimos.
+3. **Momento 3b el mismo día que el momento 3.** `pipelock` en el borde de red. **Una jaula sin
+   control de egreso aísla el filesystem y deja la red abierta, que es la mitad que exfiltra.**
+4. **Momento 2 cuando ya hay flota.** `SkillEvaluator` en CI: corre **500+ reglas estáticas sin
+   API key** (barato) y **mide el efecto de la skill comparando corridas con y sin ella** (el dato
+   que convierte "agregamos una skill" en una decisión). Ver receta 21.
+5. **Momento 4 desde el día uno, aunque vacío.** `chainloop` firmando. Es la diferencia entre
+   decir que el agente se portó bien y poder demostrarlo — y es el expediente del CRA (receta 16).
+6. **La autorización de la receta 18 (OpenFGA) va *detrás* del momento 3, no en su lugar.**
+   hol-guard decide *"esta acción es riesgosa"*; OpenFGA decide *"esta identidad no puede sobre
+   este objeto"*. **Son dos preguntas distintas y el cliente regulado necesita las dos.**
+
+**Las dos piezas que NO se usan, y hay que decirlo en la propuesta** (ver trampas del pase 11):
+**`FailproofAI/failproofai`** (10 135★) es **MIT + Commons Clause** y su definición de *"Sell"*
+incluye *"fees for hosting or consulting/support services"* — **bloquea este engagement, no el
+SaaS**; **`hardenrun/aif`** (1 963★) es **binario propietario en beta con recall remoto de
+versiones**. Son los dos repos más grandes del plano y **los dos primeros que va a encontrar el
+arquitecto del cliente si busca solo.** Llegar con esto leído es parte del valor.
+
+**Esfuerzo:** 6-8 semanas para los momentos 3, 3b y 1 con política defendible. **No prometer el
+momento 2 en el mismo tramo**: necesita flota andando para tener contra qué comparar.
+
+## Receta 21 — **Eval-driven development** antes de que lo pida el cliente *(nueva, pase 11 — North America y LATAM)*
+
+**Por qué existe, con la cifra que la justifica.** Gartner (2026-11-18) proyecta que el
+*eval-driven development* pasa de **menos del 20% de los equipos de ingeniería en 2026 al 70% en
+2028**, y que las organizaciones **con** infraestructura de harness tendrán **60% menos defectos
+post-deploy** para 2028. Al mismo tiempo, esta KB midió que
+**`eval driven in:name,description stars:>=200` devuelve 3 repos.** **La demanda tiene fecha y el
+tooling del método no existe.** Eso es una receta, no una tendencia.
+
+**Y el dato que la hace urgente, no interesante:** la adopción escaló (McKinsey: 27%→40% de las
+empresas grandes escalando agentes) y **el impacto en EBIT quedó plano en 37%**. En LATAM la forma
+es más cruda: **67% de las grandes empresas ya tiene IA en producción y sólo 23% puede mostrar
+impacto medible** (BID/McKinsey). **El cliente no necesita otro agente: necesita el delta.**
+
+| Orden | Pieza | Licencia (archivo) | Qué aporta |
+|-------|-------|--------------------|------------|
+| 1 | [confident-ai/deepeval](https://github.com/confident-ai/deepeval) | Apache-2.0 | **La línea de base numérica, antes de tocar nada.** Es el paso 1 de la receta 5 y acá es el paso 1 otra vez |
+| 2 | [apache/devlake](https://github.com/apache/devlake) | Apache-2.0 (25 182B) | **Métricas DORA sobre el CI que el cliente ya tiene.** Receta 17: ocho semanas **antes** del primer agente |
+| 3 | [NVIDIA/SkillEvaluator](https://github.com/NVIDIA/SkillEvaluator) | Apache-2.0 (11 431B) | La compuerta en el PR: **500+ reglas estáticas sin API key** + **el efecto de la skill con y sin ella**. Plantillas de CI reutilizables |
+| 4 | [google/agents-cli](https://github.com/google/agents-cli) | Apache-2.0 (11 357B) | Crear, **evaluar** y desplegar skills como artefactos versionados, no como prompts pegados |
+| 5 | [promptfoo/promptfoo](https://github.com/promptfoo/promptfoo) | MIT (1 052B, sin carve-out) | Evals como archivos en el repo, corriendo en CI. **MIT limpio: la pieza que se puede meter en el producto del cliente** |
+| 6 | [future-agi/future-agi](https://github.com/future-agi/future-agi) **o** [langfuse/langfuse](https://github.com/langfuse/langfuse) | Apache-2.0 / MIT + carve-out `ee/` | La consola donde el cliente **ve** la serie de tiempo. future-agi es **Apache-2.0 sin carve-out → ofrecible gestionada** |
+| 7 | [modelscope/evalscope](https://github.com/modelscope/evalscope) | Apache-2.0 | Evaluación en **el idioma del cliente**, no en el ranking global. Receta 14, obligatorio en LATAM |
+
+**Cómo se arma, en orden, y el orden es la receta:**
+
+1. **DevLake + DeepEval antes del primer agente.** Si el agente ya está desplegado, **cualquier
+   número posterior es una opinión** — y la evidencia DORA dice que lo esperable es throughput
+   arriba **y** estabilidad abajo al mismo tiempo, así que sin línea de base el cliente va a
+   atribuir a la IA lo que ya creía.
+2. **El eval se escribe como archivo en el repo del cliente, nunca en una consola SaaS.** Es la
+   diferencia entre un entregable que el cliente opera y uno que abandona — y la cuarta predicción
+   de Gartner dice que **70% abandona lo que construyó el forward-deployed engineering de un
+   vendor** para 2028. **Esa predicción describe nuestro modo de falla, no el de la competencia.**
+3. **SkillEvaluator en el PR, bloqueando, desde la primera semana.** Barato (reglas estáticas, sin
+   API key) y es el único de la lista que responde *"¿esta skill sirve?"* contrastando corridas en
+   vez de opinando.
+4. **evalscope en español y portugués antes de elegir el modelo**, si el engagement es LATAM. El
+   ranking global de embeddings no transfiere (tendencia 24).
+5. **La consola al final y para el cliente, no para nosotros.** Una serie de tiempo de calidad que
+   el cliente puede leer sin nosotros es lo que convierte el 23% que no puede probar impacto en un
+   número presentable al board.
+
+**Esfuerzo:** 4 semanas para los pasos 1-3 si el CI es accesible; **las 8 semanas de línea de base
+del paso 1 corren en paralelo al resto del engagement, no lo bloquean.**
+
+**Lo que esta receta NO promete:** que el eval haga buena a la IA. Mide. El ahorro o la mejora sin
+eval de calidad es una hipótesis (tendencia 20) y con eval sigue siendo un número que puede salir
+mal — **lo que cambia es que se sabe.**
+
 ## Lo que NO conviene prometer
 
 1. **Merge automático.** Ninguna receta acá mergea sin humano. Gartner proyecta >40% de

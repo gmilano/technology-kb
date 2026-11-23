@@ -11,6 +11,85 @@ updated: 2026-11-23
 > Este archivo sigue **agentes y skills**. Para infraestructura ver `repos/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 11 *(sexto pase del día; pases 6-10 a las 14:58, 15:56, 16:57, 17:58 y 18:53 UTC)*
+
+### Hallazgo del pase: **el plano del "durante" no estaba vacío — la consulta estaba mal**
+
+El pase 10 cerró con una afirmación fuerte y la sostuvo con una sola consulta:
+`agent egress firewall in:name,description stars:>=200` → **1**, y de ahí
+*"cero producto agentic"* para la decisión durante la ejecución. **Este pase ensanchó el término
+y la conclusión se cae.**
+
+| Consulta (`search/repositories`, 2026-11-23, pase 11) | Total | El más grande |
+|-------------------------------------------------------|-------|---------------|
+| `agent firewall in:name,description stars:>=200` | **11** | `hardenrun/aif` **1 963★** — *licencia propietaria* |
+| `agent runtime policy in:name,description stars:>=100` | **13** | `FailproofAI/failproofai` **10 135★** — *MIT + Commons Clause* |
+| `agent guardrails in:name,description stars:>=300` | **16** | `NVIDIA-NeMo/Guardrails` 7 559★ (Apache-2.0) |
+| `agent kill switch in:name,description stars:>=100` | **4** | `Justin0504/Aegis` **524★** (MIT) |
+| `skill evaluation in:name,description stars:>=500` | **17** | `Tencent/AI-Infra-Guard` **7 622★** (Apache-2.0) |
+| `eval driven in:name,description stars:>=200` | **3** | `tripleyak/SkillForge` 919★ (MIT) |
+| `tool call intercept in:name,description stars:>=100` | **2** | ninguno del vertical (uno es Android, GPL-3.0) |
+| `agent permission policy in:name,description stars:>=500` | **0** | **cero, igual que en el pase 10** |
+
+**Dos lecturas, y la segunda es la que decide un engagement.**
+
+**1) La categoría existe y es recién nacida.** De los diez repos del plano que este pase verificó
+uno por uno, **nueve fueron creados en 2026** y el restante (`Tencent/AI-Infra-Guard`) en diciembre
+de 2024. No había nada que encontrar en el pase 6 porque **no existía**; en el pase 10 ya existía y
+el término `egress` lo escondió. **La corrección es de método: en una categoría que se está
+nombrando sola, el sustantivo angosto da falsos ceros.**
+
+**2) El filtro que importa es la licencia, y se come los dos primeros puestos.**
+
+| Repo | Stars | Licencia **leída del archivo** | ¿Usable por Globant? |
+|------|-------|-------------------------------|----------------------|
+| [hardenrun/aif](https://github.com/hardenrun/aif) | 1 963 | **AIF Beta License Agreement** (7 872B, VizopsAI Inc) | ❌ **No.** Binario, revocable, prohíbe servicio gestionado y producto competidor, **recall remoto de versiones** |
+| [FailproofAI/failproofai](https://github.com/FailproofAI/failproofai) | 10 135 | **MIT + Commons Clause v1.0** (1 988B) | ❌ **No.** "Sell" incluye *fees for hosting or **consulting/support services*** |
+| [hashgraph-online/hol-guard](https://github.com/hashgraph-online/hol-guard) | 1 122 | Apache-2.0 (11 358B) | ✅ Sí |
+| [denoland/clawpatrol](https://github.com/denoland/clawpatrol) | 1 097 | MIT (1 066B, © Deno Land Inc) | ✅ Sí |
+| [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) | 1 020 | Apache-2.0 (11 345B) | ✅ Sí *(ya listado, pase 10)* |
+| [provos/ironcurtain](https://github.com/provos/ironcurtain) | 684 | Apache-2.0 (11 342B) | ✅ Sí |
+| [secureagentics/Adrian](https://github.com/secureagentics/Adrian) | 598 | Apache-2.0 (11 358B) | ✅ Sí |
+| [Justin0504/Aegis](https://github.com/Justin0504/Aegis) | 524 | MIT (1 066B) | ✅ Sí |
+| [openguardrails/openguardrails](https://github.com/openguardrails/openguardrails) | 372 | Apache-2.0 (11 357B) | ⚠️ Sí, **pero su API de modelo todavía no es pública** |
+
+**El techo usable del plano es 1 122★.** Comparado con los 27 414★ del escáner que decide *antes*
+(`NVIDIA/SkillSpector`), la asimetría es de **24x**. La tendencia 30 no se cae: **se vuelve
+cuantitativa, y queda reescrita como tendencia 33 en `intel/trends.md`.**
+
+### Y el segundo plano que este pase encontró poblado: **la compuerta de evaluación**
+
+`skill evaluation stars:>=500` devuelve **17** repos, con nombres grandes y permisivos:
+**`Tencent/AI-Infra-Guard` (7 622★, Apache-2.0, APAC)**, **`google/agents-cli` (6 397★,
+Apache-2.0)** y **`NVIDIA/SkillEvaluator` (4 448★, Apache-2.0)** — este último con **500+ reglas
+estáticas que corren sin API key** y, el dato que lo separa de un linter, **mide el efecto de una
+skill comparando corridas con y sin ella.**
+
+**Pero `eval driven stars:>=200` devuelve 3.** Hay herramientas de evaluación y **no hay
+herramientas del *método***, justo cuando Gartner (2026-11-18) predice que el *eval-driven
+development* pasa de **menos del 20% de los equipos en 2026 al 70% en 2028**. Es la brecha más
+accionable que midió este pase: la demanda tiene fecha y el tooling del proceso no existe.
+
+### Cambios de estado medidos este pase *(no son altas: son correcciones)*
+
+| Repo | Lo que decía esta KB | Lo que dice la API hoy |
+|------|---------------------|------------------------|
+| [tensorzero/tensorzero](https://github.com/tensorzero/tensorzero) | *"5 meses sin push. La propuesta más ambiciosa de la capa y la más quieta"* — 11 697★ | **`archived: true`.** Ya no está quieta: **está cerrada.** Último push 2026-06-11 |
+| [Moep90/agent-toolkit-for-kapitan](https://github.com/Moep90/agent-toolkit-for-kapitan) | *"✅ vivo, 0★ hoy, push 2026-10-07"* | **`archived: true`.** Un repo de **0★** que la prensa técnica usó para rellenar la categoría, y ahora también archivado: **segunda confirmación de la tendencia 12** |
+
+### Barrido de verificación completo — el primero de esta KB
+
+**251 URLs de repo extraídas de los 9 archivos y verificadas una por una con `git ls-remote`:
+las 251 vivas, cero 404.** Además, metadata fresca (`search/repositories`) para 245 de esas 251 —
+**los 6 restantes son los falsos negativos ya documentados** (`All-Hands-AI/OpenHands`,
+`block/goose`, `CycloneDX/cdxgen`, `dynatrace-oss/dtctl`, `invariantlabs-ai/mcp-scan`,
+`mrgeoffrich/mini-infra`): octava confirmación del patrón, y **ahora se sabe que afecta a 6 repos
+de 251, o sea 2,4%** — una tasa, no una anécdota.
+
+De las 47 filas previas de `agents/top.md`: **47 vivas, 47 licencias coincidentes con el archivo
+leído, deriva máxima de estrellas +286 en ~1 hora** (`morluto/rea`). **Nada que reescribir, y eso
+también es un resultado:** la tabla del pase 10 aguantó la verificación independiente del pase 11.
+
 ## 2026-11-23 — pase 10 *(quinto pase del día; pase 6 a las 14:58 UTC, pase 7 a las 15:56, pase 8 a las 16:57, pase 9 a las 17:58)*
 
 ### Hallazgo del pase: **el plano de ejecución está torcido, y se puede contar**

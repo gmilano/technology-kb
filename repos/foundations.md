@@ -45,6 +45,9 @@ updated: 2026-11-23
 | [ollama/ollama](https://github.com/ollama/ollama) | MIT | 187924 | 2026-11-22 | Correr modelos abiertos localmente con un comando. Su propia descripción lista Kimi, GLM, MiniMax y DeepSeek **antes** que gpt-oss: el default local es open-weights no-estadounidense. | Sí — es el piso de todo despliegue con dato sensible |
 | [vllm-project/vllm](https://github.com/vllm-project/vllm) | Apache-2.0 | 97403 | 2026-11-23 | Servidor de inferencia de alto throughput. Lo que se usa cuando Ollama ya no alcanza. | Sí — la capa de serving de producción |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm) | **MIT + carve-out** | 63765 | 2026-11-23 | Proxy y SDK unificado sobre ~100 proveedores. **MIT excepto `litellm/enterprise/`**. **Dato nuevo: la API de GitHub ya reporta `NOASSERTION` para este repo** (antes decía MIT) — el carve-out se volvió visible también para los escáneres automáticos del cliente. | Sí — es *la* pieza de neutralidad de proveedor |
+| [openvinotoolkit/openvino](https://github.com/openvinotoolkit/openvino) | Apache-2.0 (11 357B) | 12250 | 2026-11-23 | Toolkit de **optimización y despliegue de inferencia** (Intel): cuantización y ejecución eficiente en CPU/GPU/NPU. **Agregado en el pase 11** por una razón de región, no de popularidad: es la pieza que hace viable *"nada sale de la máquina"* en **hardware que el cliente ya tiene**, sin comprar GPUs. Proyecto de 2018 — el más viejo y estable de esta tabla | ✅ **Sí** — EMEA soberano y cliente regulado |
+| [karpathy/nanochat](https://github.com/karpathy/nanochat) | MIT (1 072B) | 60812 | ⚠️ 2026-09-07 | *"The best ChatGPT that $100 can buy"*: pipeline completo y legible de entrenamiento + inferencia de un LLM chico. **Agregado en el pase 11 como material de capacitación, no como dependencia** — es la referencia que un equipo lee para entender el stack de punta a punta. ⚠️ Sin push desde 2026-09-07 | ⚠️ **Referencia / formación**, no base de producto |
+| [jingyaogong/minimind](https://github.com/jingyaogong/minimind) | Apache-2.0 (11 357B) | 69370 | 2026-11-23 | Entrenar un LLM de 64M desde cero en dos horas. **Agregado en el pase 11**: mismo rol formativo que `nanochat` pero **vivo** (push de hoy) y **documentado en chino e inglés** — origen China, **evidencia APAC** y la vía práctica para un equipo que necesita entender fine-tuning antes de vendérselo a un cliente | ⚠️ **Referencia / formación** |
 
 ## Protocolo e interoperabilidad
 
@@ -104,6 +107,37 @@ updated: 2026-11-23
 > lado propietario, **Microsoft Entra Agent ID llegó a GA en abril de 2026** — es decir, el
 > ecosistema cerrado ya tiene producto y el abierto todavía no. **Esa asimetría es una oportunidad
 > de arquitectura para Globant y un riesgo de lock-in para el cliente.**
+
+### Capa 5 — **La decisión durante la ejecución** — *sección nueva (pase 11)*
+
+> **Esta capa existe porque el pase 11 corrigió al pase 10.** El pase 10 declaró este hueco vacío
+> con la consulta `agent egress firewall stars:>=200` → 1. Con el término ensanchado,
+> `agent firewall stars:>=200` devuelve **11**, y `agent runtime policy stars:>=100` devuelve **13**.
+> **La categoría existía: nueve de los diez repos verificados fueron creados en 2026.**
+>
+> **Pero los dos más grandes no son usables, y por licencia, no por calidad** — ver las trampas
+> del pase 11 en `agents/top.md`. Lo que queda, y es lo que se lista acá, **arranca en 1 122★.**
+
+| Repo | Licencia (archivo leído) | Stars | Último push | Qué decide, exactamente |
+|------|--------------------------|-------|-------------|-------------------------|
+| [hashgraph-online/hol-guard](https://github.com/hashgraph-online/hol-guard) | **Apache-2.0** (11 358B) | 1122 | 2026-11-23 | **El más grande usable de la capa.** *Antivirus y firewall para agentes*: bloquea tools riesgosas, acceso a secretos y prompt injection. **Es el reemplazo vivo y permisivo de `protectai/llm-guard`** (archivado 2026-07-08), que sigue siendo la primera recomendación de todo listado |
+| [denoland/clawpatrol](https://github.com/denoland/clawpatrol) | **MIT** (1 066B, © 2026 Deno Land Inc) | 1097 | 2026-11-20 | *"Security firewall for agents"*. **El valor no es el tamaño: es el dueño.** Respaldo de Deno Land Inc — un runtime establecido, no un proyecto personal. Es la diferencia entre proponerlo y no poder proponerlo a un cliente regulado |
+| [pipelab-org/pipelock](https://github.com/pipelab-org/pipelock) | **Apache-2.0** (11 345B) | 1020 | 2026-11-23 | **Egreso.** Firewall de salida con DLP y escaneo de prompt injection, consciente de MCP. Ya listado en el pase 10: **una jaula sin control de egreso aísla el filesystem y deja la red abierta** |
+| [provos/ironcurtain](https://github.com/provos/ironcurtain) | **Apache-2.0** (11 342B) | 684 | 2026-11-20 | **El diseño más interesante de la capa:** la política se escribe como **"constituciones" en inglés llano**, no como Rego ni Cedar. **El repo pone un asterisco sobre la palabra *secure* y enlaza la salvedad** — honestidad que conviene citar al cliente, no esconder. Autor: Niels Provos |
+| [secureagentics/Adrian](https://github.com/secureagentics/Adrian) | **Apache-2.0** (11 358B) | 598 | 2026-10-21 | Monitorea **y controla** agentes en runtime, atrapando comportamiento malicioso mientras ocurre. De los pocos que dice *controlar* y no sólo *observar* |
+| [Justin0504/Aegis](https://github.com/Justin0504/Aegis) | **MIT** (1 066B, limpio — ver "casos limpios") | 524 | 2026-10-31 | **La definición más precisa del plano:** *"Every tool call. Intercepted. Classified. Blocked — before it executes"*. Trae **audit trail criptográfico + aprobaciones human-in-the-loop + kill switch**, los tres juntos. arXiv 2603.12621, cobertura USC Viterbi (ago-2026) |
+| [openguardrails/openguardrails](https://github.com/openguardrails/openguardrails) | **Apache-2.0** (11 357B) | 372 | 2026-11-18 | Decide **en la máquina, con reglas locales y sin red**; sólo escala al modelo lo indecidible. Tres ideas que vale copiar aunque no se adopte el repo: **distingue "inseguro" de "es tu decisión"**; **reemplaza secretos por placeholders antes de que el request salga** y le da el valor real al tool sólo tras permitir la llamada; y **una negativa no termina la tarea** (le dice al agente qué sí puede hacer). ⚠️ **Su API de modelo todavía no es pública**: hoy sólo la mitad de reglas locales es desplegable |
+
+> **Cómo se compone esta capa con las anteriores, en una frase:** la capa 1 **contiene**, el escáner
+> de artefacto (`SkillSpector`, `agent-scan`, `AI-Infra-Guard`) decide **una vez antes de instalar**,
+> `SkillEvaluator` decide **antes del merge**, y esta capa 5 decide **en cada llamada**. Las cuatro
+> son necesarias y **ninguna sustituye a otra** — es el punto de la receta 20.
+>
+> **Brecha que sigue abierta, y ahora con número:** el techo usable de esta capa es **1 122★**
+> contra **27 414★** del escáner que decide antes. **24x de asimetría.** Y
+> `agent permission policy stars:>=500` devuelve **0** por segundo pase consecutivo: para
+> *"¿este agente, de parte de este usuario, puede hacer esta cosa?"* sigue habiendo sólo primitivos
+> genéricos (OPA, OpenFGA, Cedar, SPIRE) y **ningún producto agentic.** Tendencia 33.
 
 ### Capa transversal — Red-teaming, guardrails y cadena de suministro
 
@@ -263,6 +297,10 @@ updated: 2026-11-23
 | [evidentlyai/evidently](https://github.com/evidentlyai/evidently) | Apache-2.0 | 8078 | **2026-09-29** | Evaluación y monitoreo de LLM, RAG, agentes y modelos clásicos. **Casi 2 meses sin push** — el único de esta sección que se está quedando quieto. | Sí, con la salvedad |
 | [traceloop/openllmetry](https://github.com/traceloop/openllmetry) | Apache-2.0 | 7550 | 2026-11-23 | Instrumentación **OpenTelemetry-nativa**. La opción correcta si el cliente ya tiene stack OTel. | Sí — se enchufa al observability existente en vez de reemplazarlo |
 | [openlit/openlit](https://github.com/openlit/openlit) | Apache-2.0 | 3099 | 2026-11-23 | Alternativa OTel más chica, con foco en costo y trazas. | Sí, como complemento |
+| [Tencent/AI-Infra-Guard](https://github.com/Tencent/AI-Infra-Guard) | **Apache-2.0** (11 362B) | 7622 | 2026-11-23 | Plataforma full-stack de **AI red teaming**: Agent Scan, Skills Scan y escaneo MCP en un producto. **Agregado en el pase 11.** Creado 2024-12-25 — el más maduro del plano de seguridad de agentes. Tencent: **evidencia APAC**, y Apache-2.0 sin carve-out | ✅ **Sí** — el más maduro del plano |
+| [google/agents-cli](https://github.com/google/agents-cli) | **Apache-2.0** (11 357B) | 6397 | 2026-11-17 | CLI + skills para **crear, evaluar y desplegar** skills de agentes, de Google. **Agregado en el pase 11** por el verbo del medio: es tooling de *eval-driven development*, el método que Gartner proyecta del <20% al 70% de los equipos (2026→2028) | ✅ **Sí** |
+| [NVIDIA/SkillEvaluator](https://github.com/NVIDIA/SkillEvaluator) | **Apache-2.0** (11 431B = canónico + línea de copyright NVIDIA; cuerpo verificado) | 4448 | 2026-11-23 | **La compuerta de calidad antes del merge.** 500+ reglas estáticas **sin API key de LLM**, plantillas de CI reutilizables y —lo que lo separa de un linter— **mide el efecto de una skill comparando corridas con y sin ella**. arXiv 2608.20614. **Agregado en el pase 11** | ✅ **Sí** — compuerta en CI |
+| [future-agi/future-agi](https://github.com/future-agi/future-agi) | **Apache-2.0** (11 308B) | 2289 | 2026-11-23 | Plataforma end-to-end para evaluar, observar y mejorar apps de LLM y agentes. **Agregada en el pase 11**: Apache-2.0 sin carve-out, o sea **la alternativa ofrecible como servicio gestionado** frente a Arize Phoenix (Elastic License 2.0) | ✅ **Sí**, ofrecible gestionada |
 
 ## 💸 Costo: reducir tokens, enrutar, cachear y atribuir — **sección nueva (pase 7)**
 
@@ -345,9 +383,10 @@ y leer la sección de licencia del README.**
 | [maximhq/bifrost](https://github.com/maximhq/bifrost) | **Apache-2.0** (201 líneas) | 9966 | 2026-11-23 | Gateway en Go con **presupuestos jerárquicos** y caché semántica integrada | Permisivo y activo. Los benchmarks de overhead son del propio proyecto |
 | [lidge-jun/opencodex](https://github.com/lidge-jun/opencodex) | **MIT** (rama `master`) | 18724 | 2026-11-22 | Proxy de proveedor para Codex CLI y Claude Code | Resuelve "usar el modelo barato con el harness que el equipo ya tiene" |
 | [katanemo/plano](https://github.com/katanemo/plano) | **Apache-2.0** | 7119 | 2026-10-24 | Proxy y data plane sobre Envoy: ruteo de LLM, observabilidad, guardrails | El único de la capa construido sobre **Envoy**: encaja donde ya hay service mesh. Sin push en ~1 mes |
+| [lemony-ai/cascadeflow](https://github.com/lemony-ai/cascadeflow) | **MIT** (1 067B) | 3921 | ⚠️ **2026-09-25** | Runtime **en cascada**: decide dentro del lazo sobre **costo, latencia, calidad y política a la vez** | **Agregado en el pase 11.** La única pieza medida que trata la decisión de política y la de costo como **la misma decisión** — lo que la receta 9 hace a mano. ⚠️ ~2 meses sin push: vigilar antes de comprometerlo |
 | [algorithmicsuperintelligence/optillm](https://github.com/algorithmicsuperintelligence/optillm) | **Apache-2.0** | 4343 | 2026-11-16 | Proxy de inferencia que aplica técnicas de razonamiento en el proxy | Sube calidad a costa de tokens: **el vector opuesto al resto de la sección**. Útil para saber qué NO poner delante de un agente con presupuesto |
 | [songquanpeng/one-api](https://github.com/songquanpeng/one-api) | **MIT** | 37466 | ⚠️ **2026-01-09** | Gestión y redistribución de keys LLM, binario único | **10 meses sin push.** Fue el gateway de referencia del ecosistema chino y hoy `new-api` (fork vivo, AGPL) tomó la posta. Se lista por historia, no para adoptar |
-| [tensorzero/tensorzero](https://github.com/tensorzero/tensorzero) | **Apache-2.0** | 11697 | ⚠️ **2026-06-11** | Plataforma LLMOps: gateway + observabilidad + evals + optimización | **5 meses sin push.** La propuesta más ambiciosa de la capa y la más quieta |
+| [tensorzero/tensorzero](https://github.com/tensorzero/tensorzero) | **Apache-2.0** | 11697 | 🪦 **2026-06-11** | Plataforma LLMOps: gateway + observabilidad + evals + optimización | ❌ **ARCHIVADO — corregido en el pase 11.** Los pases anteriores lo registraron como *"la propuesta más ambiciosa de la capa y la más quieta"*; `archived: true` confirmado por API el 2026-11-23. **No está quieta: está cerrada. No proponerla.** Salida: `litellm` o `Portkey-AI/gateway` para el gateway, `langfuse`/`Helicone` para la observabilidad, `deepeval` para los evals — tres piezas vivas en vez de una muerta |
 
 ### Capa 3 — Caché semántica (no pagar dos veces por la misma pregunta)
 

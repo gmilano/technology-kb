@@ -672,3 +672,109 @@ una dependencia en el mercado más concentrado de los dos últimos años.
 > con lo que se observa en los defaults de los harnesses del vertical; **las magnitudes no están
 > corroboradas por una segunda fuente independiente y no se deben citar a un cliente como dato
 > de mercado cerrado.**
+
+## 32. Gartner le puso nombre al *harness*, y con eso le puso línea de base al negocio
+
+*Nueva en el pase 11.* El **2026-11-18** Gartner publicó sus *Top Strategic Technology Trends in
+Software Engineering for 2026 and Beyond* y nombró **"harness engineering"**: configurar los
+agentes de codificación con **el contexto, los estándares y las guardrails** necesarios para que
+ejecuten tareas de ingeniería de forma confiable. La frase que cierra el argumento de toda esta KB
+es suya: **a medida que las diferencias entre modelos frontera se angostan, el diseño del harness
+pasa a determinar la calidad del output más que la elección del modelo.**
+
+Cuatro predicciones fechadas, y lo valioso **no son los targets: son los puntos de partida de 2026**,
+porque es contra ésos que se vende un engagement.
+
+| Predicción (Gartner) | 2026 (línea de base) | Target | Fecha |
+|----------------------|----------------------|--------|-------|
+| Empresas que **sandboxean workflows agentic en preproducción** | **10%** | 70% | 2030 |
+| Equipos de ingeniería con **eval-driven development** | **<20%** | 70% | 2028 |
+| Organizaciones con infraestructura de harness → **menos defectos post-deploy** | — | **60% menos** | 2028 |
+| Empresas que **abandonan** agentic AI construido por *forward-deployed engineering* de un vendor | — | 70% | 2028 |
+
+**Por qué esto cambia la conversación comercial, no sólo la técnica.** Hasta el pase 10 esta KB
+sostenía que el harness es el artefacto (tendencia 2) con evidencia de repos: `superpowers`
+(324 911★), `ECC` (309 467★), `impeccable` (115 537★) — proyectos que venden **método**, no modelo.
+Ahora hay un analista que lo dice, le pone **fecha** y, sobre todo, **admite que hoy sólo el 10%
+sandboxea y menos del 20% evalúa**. Esto es: **el mercado reconoce la necesidad y no tiene la
+práctica instalada.** Ése es exactamente el hueco que un AI Studio ocupa.
+
+**Y la cuarta predicción es una advertencia para Globant, no para la competencia.** "70% abandonan
+lo construido por forward-deployed engineering de un vendor" describe el modo de falla de un
+engagement de consultoría: **el entregable que el cliente no puede operar sin nosotros se abandona.**
+La lectura correcta es la que ya sostienen las recetas 1 y 17: entregar harness, línea de base y
+consola operables por el cliente — no una demo que depende del equipo que la construyó.
+
+> **Cautela de fuente, declarada:** la investigación completa de Gartner es paywall. Las cifras
+> arriba vienen del **comunicado de prensa del 2026-11-18** y de coberturas secundarias
+> (Business News Week, Dutch IT Channel, SMEStreet, IT Voice) que **coinciden entre sí** en las
+> cuatro predicciones y en la definición de harness engineering. Los documentos citados por título
+> —*Innovation Insight: Coding Agent Harness Engineering* y *Build the AI Coding Harness to Scale
+> Agentic Software Engineering*— existen en el catálogo de Gartner pero **no fueron leídos.**
+
+## 33. El plano del "durante" no estaba vacío: estaba naciendo, y se mide en 24x
+
+*Nueva en el pase 11. **Corrige la tendencia 30**, que la declaraba inexistente.*
+
+La tendencia 30 (pase 10) sostuvo que el escáner decide **antes**, la jaula **no decide**, y
+**nadie decide durante**. La segunda mitad es falsa, y el error fue de método: la consulta
+`agent egress firewall stars:>=200` devuelve **1**, pero **`agent firewall stars:>=200` devuelve
+11** y `agent runtime policy stars:>=100` devuelve **13**. **En una categoría que se está nombrando
+sola, el sustantivo angosto produce falsos ceros.** Queda como regla de esta KB.
+
+Lo que sí se sostiene, y ahora con número:
+
+| Plano | Pieza más grande | Stars |
+|-------|------------------|-------|
+| Decidir **antes de instalar** (escáner de artefacto) | `NVIDIA/SkillSpector` | **27 414** |
+| Decidir **antes del merge** (evaluación de skill) | `Tencent/AI-Infra-Guard` | **7 622** |
+| Decidir **durante la llamada** — *usable por licencia* | `hashgraph-online/hol-guard` | **1 122** |
+| *"¿puede este agente, de parte de este usuario, hacer esto?"* | **nada** (`agent permission policy stars:>=500` = 0, dos pases seguidos) | **0** |
+
+**24x de asimetría entre decidir antes y decidir durante**, y la línea de abajo sigue en cero.
+**Nueve de los diez repos del plano fueron creados en 2026**: la capa tiene meses, no años.
+
+**Y el filtro que la angosta más no es técnico.** Los dos repos más grandes del plano quedan
+afuera por licencia: `FailproofAI/failproofai` (10 135★) es **MIT + Commons Clause** —cuya
+definición de *"Sell"* incluye literalmente *"fees for hosting or consulting/support services"*—
+y `hardenrun/aif` (1 963★) es un **binario propietario en beta con recall remoto de versiones**.
+**Si se ordena el plano por tamaño, los puestos 1 y 2 son inutilizables para una consultora, y el
+primer repo usable aparece en el puesto 3 con el 11% de las estrellas del primero.**
+
+Consecuencia de arquitectura, directa: **esta capa se compone, no se compra.** Receta 20.
+
+## 34. La adopción escaló y el EBIT no se movió: el año en que la brecha dejó de ser técnica
+
+*Nueva en el pase 11.* Dos series de la misma encuesta de **McKinsey (2026)**, leídas juntas:
+
+- Empresas de **más de USD 1 000 M** que **escalaron agentes** en al menos una función:
+  **27% → 40%.**
+- Las que atribuyen **impacto positivo en el EBIT a nivel empresa**: **37%, plano.**
+
+**La capacidad de desplegar creció 13 puntos y el valor demostrable no se movió ni uno.** Es la
+forma más dura de la tendencia 19 ("todos miden el gasto y tres de cada cuatro no pueden probar el
+valor"), y ahora tiene dos puntos en el tiempo en vez de uno.
+
+Alrededor, tres datos que explican el mecanismo y **cada uno es una línea de servicio**:
+
+1. **Gobernanza: sólo el 21% reporta gobernanza madura de IA agentic** (Deloitte, encuesta
+   multinacional). La barrera declarada no es el modelo (tendencia 9), y sigue sin moverse.
+2. **Build vs buy se invirtió: el 32% decidió NO comprar al menos un producto o feature de software
+   porque podía construirlo internamente con herramientas de codificación agentic** (McKinsey).
+   Esto es a la vez **la oportunidad** (el cliente quiere construir, y construir es lo que un
+   studio hace) **y el riesgo** (el cliente cree que puede construir solo).
+3. **El gasto se concentró donde está esta KB:** Menlo Ventures estima que en 2026 **codificación
+   (USD 34 000 M, 7,7x) y chatbots empresariales (USD 25 000 M, 3,0x) son el 76% de un mercado de
+   USD 77 300 M.** **Codificación es la categoría de aplicación más grande de la IA empresarial** —
+   no una vertical más.
+
+**La lectura para el posicionamiento:** el cliente de 2027 no va a preguntar *"¿pueden poner un
+agente a escribir código?"*. Ya lo escaló y no puede probar que sirvió. Va a preguntar **"¿pueden
+demostrar el delta?"**, y la respuesta es la receta 17 (línea de base antes del primer agente) más
+el eval-driven development que Gartner proyecta del <20% al 70%. **Medir dejó de ser higiene de
+proyecto y pasó a ser el entregable.**
+
+> **Cautela de fuente:** las cifras de McKinsey y Deloitte provienen de coberturas secundarias de
+> sus encuestas 2026; los reportes primarios no fueron leídos. Las de Menlo Ventures vienen de un
+> fondo de venture, parte interesada (misma cautela que la tendencia 31). **La dirección de las
+> tres fuentes coincide; las magnitudes exactas no deben citarse a un cliente como dato cerrado.**

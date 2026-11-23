@@ -96,6 +96,24 @@ consultadas este ciclo contenían **cifras de plantilla sin rellenar**. Ese es e
 falla que esta familia de KBs viene registrando. Cuando una cifra regional no tiene fuente
 primaria, acá dice que no la tiene.
 
+### Actualización del pase 11 (2026-11-23) — **codificación es la categoría de aplicación más grande, no una vertical más**
+
+Menlo Ventures estima que en 2026 **codificación (USD 34 000 M, 7,7x interanual)** y **chatbots
+empresariales (USD 25 000 M, 3,0x)** concentran el **76% de un mercado de USD 77 300 M**.
+
+**El dato reordena la prioridad de toda esta KB:** el vertical "technology" no es un sector cliente
+entre doce — **es la categoría de aplicación donde se gasta la mayor parte del dinero de IA
+empresarial**, y además la de crecimiento más rápido (7,7x contra 3,0x del segundo).
+
+Y la línea de base que acompaña, de Gartner (2026-11-18): **sólo el 10% de las empresas sandboxea
+workflows agentic en preproducción** y **menos del 20% de los equipos de ingeniería practica
+eval-driven development.** **Gasto máximo, práctica mínima.** Ése es el espacio de servicio.
+
+> **Cautela:** las magnitudes de Menlo vienen de **un fondo de venture** (parte interesada, misma
+> cautela que la tendencia 31) y las de Gartner del **comunicado de prensa**, no de la
+> investigación paywall. Direcciones consistentes; magnitudes no corroboradas por segunda fuente
+> independiente.
+
 ## Opportunities by region
 
 ### North America
@@ -289,6 +307,48 @@ la multa.
 Se vende como reducción de time-to-production con un número de partida medible (DevLake sobre los
 datos del cliente, antes de tocar nada) y una compuerta de entrega auditable como entregable.
 Receta 15 y Receta 17.
+
+#### Actualización del pase 11 (2026-11-23) — **la adopción escaló, el EBIT no, y la regulación sigue siendo estatal**
+
+**El dato de negocio.** McKinsey 2026: las empresas de más de USD 1 000 M que **escalaron** agentes
+en al menos una función pasaron de **27% a 40%**, y las que atribuyen **impacto positivo en EBIT a
+nivel empresa** siguen en **37%, plano**. **13 puntos más de despliegue, cero puntos más de valor
+demostrable.** En NA, donde la adopción es la más alta del mundo, esto define el pitch: el cliente
+no necesita que le muestren un agente andando, necesita **el delta medido** (receta 17).
+
+**Y el build-vs-buy se invirtió:** **32% decidió NO comprar al menos un producto o feature porque
+podía construirlo internamente con herramientas de codificación agentic** (McKinsey). Es la
+oportunidad y el riesgo en el mismo número.
+
+**La brecha de medición también está en la adopción, no sólo en la "producción".** Dos cifras
+oficiales de 2026 sobre el mismo país:
+
+| Fuente | Cifra | Qué mide realmente |
+|--------|-------|--------------------|
+| **US Census Bureau** (ago-2026) | **23,2%** de las firmas usan IA | Uso en una **ventana de dos semanas**, todas las firmas |
+| **Stanford AI Index 2026** | **90%** de adopción organizacional | **Cualquier** uso, organizaciones grandes |
+
+**~4x de rango sobre el mismo mercado**, por definición y por universo — la misma enfermedad que
+la tendencia 13 diagnosticó para la palabra "producción" (rango 8x). **Regla de engagement: no
+citar una cifra de adopción sin la definición y el universo pegados.**
+
+**Regulación: sin ley federal, y el intento de preemption se frenó.** A agosto de 2026 hay **cinco
+leyes estatales de IA que ya obligan**, entre ellas **California SB 53** (modelos frontera),
+**Texas TRAIGA** e **Illinois** (IA en empleo); **Colorado derogó y reemplazó la suya antes de que
+entrara en vigencia, en mayo de 2026**; y el **borrador federal bipartidista de preemption de junio
+de 2026 está trabado**. **Canadá** lanzó su estrategia **"AI for All" el 2026-06-04**. **México
+sigue sin ley general de IA** (ver LATAM).
+
+**Lo que esto significa operativamente:** la matriz de cumplimiento de un cliente norteamericano
+es **por estado y por sector**, no nacional, y **cambia de un trimestre al otro** (Colorado es la
+prueba). Eso favorece la arquitectura de la receta 6: la política como dato versionado y
+evaluable, no como reglas cableadas en el agente.
+
+> **Vacío declarado de este pase en NA:** no se encontró una fuente primaria y verificable para
+> las cuotas de mercado de herramientas de codificación con IA (una fuente secundaria afirma
+> "GitHub Copilot Enterprise 54% de penetración" **sin metodología publicada**). **No se usa.**
+> Lo que sí está medido y es citable: Gartner, 2026-11-18 — **sólo el 10% de las empresas
+> sandboxea workflows agentic en preproducción hoy** (target 70% para 2030).
 
 ### EMEA
 
@@ -495,6 +555,44 @@ funciona es `woodpecker-ci` + `gitea` + `tektoncd/pipeline` + `flagd` + `twinny`
 locales — **todo Apache-2.0 o MIT**. Las dos plataformas de feature flags más citadas, **Unleash
 (AGPL-3.0) y Flipt (GPL-3.0)**, quedan afuera de un entregable distribuible.
 
+#### Actualización del pase 11 (2026-11-23) — **la fecha del AI Act está en disputa y la soberanía ya se compra**
+
+**⚠️ Conflicto de fuentes NO resuelto, y es el dato más consultado de la región.** Sobre cuándo
+obligan de verdad las reglas de **alto riesgo** del AI Act, las fuentes de este pase se contradicen:
+
+| Versión | Qué afirma |
+|---------|-----------|
+| A | Las disposiciones de alto riesgo rigen **desde el 2026-08-02** |
+| B | El 2026-08-02 trajo **aplicación general y sanciones**, y el **cumplimiento pleno de alto riesgo se corrió al 2027-12-02** por la reprogramación del *Digital Omnibus* de mayo de 2026 |
+
+**No se resuelve en este pase y no se debe afirmar ninguna de las dos a un cliente.** Es una
+pregunta para el área legal del cliente con la fuente oficial (EUR-Lex) en la mano. **Lo que sí es
+seguro: la dirección es más obligación, no menos, y el *Cloud and AI Development Act* sigue siendo
+propuesta, no ley.**
+
+**La soberanía dejó de ser discurso y tiene contratos firmados.** En **abril de 2026** la Comisión
+adjudicó **cuatro contratos marco de nube soberana por hasta EUR 180 M a seis años**; entre los
+proveedores europeos nombrados: **Scaleway, STACKIT y OVHcloud**. Y los hiperescalares
+respondieron: **AWS European Sovereign Cloud está en disponibilidad general desde el 2026-01-15**,
+con su primera región en **Brandenburgo**.
+
+**Pero el mercado no se movió al mismo ritmo que la política:** los proveedores europeos siguen en
+**~15% de cuota**, contra **~70% de los tres hiperescalares**. Gartner reporta que **61% de los CIO
+de Europa Occidental ya prioriza proveedores de nube locales** (cifra vía cobertura secundaria).
+
+**La oportunidad concreta, y este pase le agregó la pieza que faltaba.** La brecha entre "quiero
+soberanía" (61% de CIOs) y "compro europeo" (15% de cuota) es un problema de **capacidad de
+ejecución**, que es lo que se vende. Y el stack de la receta 4 ahora incluye
+**`openvinotoolkit/openvino` (Apache-2.0, 12 250★)**: optimización de inferencia en **CPU/GPU/NPU
+que el cliente ya tiene**, o sea *"nada sale de la máquina"* **sin comprar GPUs** — que es la
+objeción real en un presupuesto europeo, donde la infra soberana cuesta 15-30% más. Se compone con
+`twinnydotdev/twinny` (MIT, asistente de código con modelos locales) y `Orkas-AI/Orkas` (MIT,
+local-first), ya listados.
+
+> **Vacío declarado:** sigue sin existir un repo *de origen europeo* que sea base de plataforma
+> agentic soberana. La receta 4 se arma con partes permisivas porque **no hay nada que adoptar**.
+> Cuarto pase consecutivo que se registra este cero.
+
 ### APAC
 
 > **Actualización del pase 10 (2026-11-23) — el mapa regulatorio, por país y con fechas.**
@@ -675,6 +773,45 @@ multi-jurisdiccional*. Un cliente con operación en China, Corea y Japón enfren
 con tres niveles de exigibilidad**, y la política de despliegue —qué se puede desplegar, dónde, con
 qué registro— es declarativa y versionable con `conftest` y `kyverno` (ambos Apache-2.0). **La
 política como código es la única forma de que tres regímenes no se conviertan en tres pipelines.**
+
+#### Actualización del pase 11 (2026-11-23) — **la región produjo la pieza de seguridad más madura del vertical**
+
+**El hallazgo de repos de este pase es de APAC, y no es chico.**
+**`Tencent/AI-Infra-Guard` (7 622★, Apache-2.0, `LICENSE` 11 362B leído)** es una plataforma
+**full-stack de AI red teaming** —Agent Scan, Skills Scan y escaneo de MCP en un solo producto— y
+**fue creada el 2024-12-25**: es decir, **el proyecto más maduro de todo el plano de seguridad de
+agentes que mide esta KB no es de 2026 y no es norteamericano.** Se suma a
+`alibaba/open-code-review` (55 652★, pase 10), `HKUDS/nanobot` (50 288★), `keploy` (India) y
+`iflytek/skillhub`. **Cuarto pase consecutivo con evidencia de que la novedad no sale sólo de
+EE.UU.** (tendencia 7). Y `jingyaogong/minimind` (69 370★, Apache-2.0, China) entra como material
+de formación vivo.
+
+**El mapa regulatorio, actualizado y con fechas:**
+
+| País | Instrumento | Estado a 2026-11 |
+|------|-------------|------------------|
+| **Corea del Sur** | **AI Basic Act** | **Vigente desde el 2026-01-22** + Plan Básico 2026-2028. El régimen más desarrollado de la región; **el período de gracia avanza hacia multas administrativas plenas a principios de 2027** |
+| **China** | **Ley de Ciberseguridad reformada** | **Vigente desde el 2026-01-01**, con **cláusula de seguridad de IA** añadida. Borrador de reglas sobre **servicios de IA interactiva (abr-2026)**; el borrador de Ley de IA de mayo-2024 **sigue pendiente** |
+| **India** | AI Governance Guidelines + IT Rules | Sin ley específica vinculante. **Etiquetado obligatorio de contenido generado por IA desde el 2026-02-20.** En julio de 2026 el gobierno **señaló que podría legislar** |
+| **Japón** | **AI Promotion Act** | **Sin sanciones** (promoción primero). **Plan Básico de IA actualizado en julio de 2026** |
+
+**La lectura operativa no cambió, se endureció:** no hay modelo regulatorio único en APAC. Corea,
+China y Vietnam tienen reglas vinculantes; Japón, Singapur, Hong Kong, Australia e India se apoyan
+en derecho existente y guías. **Los instrumentos que de hecho obligan hoy son los de datos
+personales** —PIPL (China), APPI (Japón), PIPA (Corea), DPDP (India)— y **los reguladores
+financieros son los más activos por sector.** Esto es exactamente la receta 6: una política por
+jurisdicción, versionada, con el agente leyéndola como dato.
+
+**El detalle con consecuencia comercial inmediata:** el etiquetado de contenido generado por IA en
+India (desde 2026-02-20) y en China (desde sep-2025) **es un requisito de producto, no de
+compliance**: si el entregable del engagement genera texto, imagen o código visible al usuario
+final, el marcado tiene que estar **en la arquitectura**, no en el manual.
+
+> **Vacío declarado:** las búsquedas de este pase **no devolvieron cifras de adopción empresarial
+> de APAC verificables para 2026** ni un listado creíble de players regionales de tooling de
+> ingeniería. Lo medido y citable de la región es **código** (los repos arriba) y **regulación**
+> (la tabla), no penetración de mercado. **Las cifras de adopción de APAC de pases anteriores no
+> fueron re-verificadas en este pase y deben tratarse como tales.**
 
 ### LATAM
 
@@ -929,6 +1066,43 @@ una ventaja operativa: la política que se escribe para EMEA se reusa en LATAM c
 **`SBOM español stars:>=5` → 0**, con piso de cinco estrellas. **Seis pases, cuatro planos, cero
 herramientas que se describan en español.** Y en este plano el detalle muerde distinto: **el
 auditor que va a leer el expediente de cumplimiento sí habla español.**
+
+#### Actualización del pase 11 (2026-11-23) — **el 67% ya desplegó y el 23% puede probarlo: la brecha regional tiene número propio**
+
+**El dato de la región en este pase, y es el mejor que esta KB le encontró a LATAM.** Una cifra
+de **BID (IDB) con McKinsey**: **67% de las grandes empresas de la región ya tiene al menos un
+proyecto de IA en producción, y sólo 23% reporta impacto medible en métricas de negocio.**
+
+**44 puntos de brecha entre desplegar y demostrar.** Es la versión latinoamericana de la
+tendencia 34 (McKinsey global: escalamiento 27%→40%, EBIT plano en 37%) y **es más ancha acá**.
+La consecuencia comercial es directa y poco intuitiva: **en LATAM el trabajo que se vende no es el
+primer piloto —ya lo hicieron— sino la medición del que ya está corriendo.** Receta 17 (línea de
+base) y receta 5 (piloto→producción, que arranca con DeepEval para tener un número antes de tocar
+nada) son el entregable de entrada, no el upsell.
+
+**Regulación: los dos mercados grandes siguen sin ley, por motivos distintos.**
+
+| País | Estado a 2026-11 |
+|------|------------------|
+| **Brasil** | **PL 2338/2023** —el proyecto más desarrollado de la región— **aprobado por el Senado el 2024-12-10**, sigue **trabado en la Cámara de Diputados**, y la votación **podría esperar hasta después de las elecciones de octubre de 2026.** Brasil además **lanzó el primer sandbox regulatorio de IA de la región (2025)**: el país que no tiene ley tiene el mecanismo de experimentación |
+| **México** | **Sin ley de IA dedicada.** La ley de protección de datos renovada **agrega el derecho a objetar decisiones automatizadas** —eso **sí** es exigible hoy y pega directo en cualquier agente que decida sobre una persona—. Hay un proyecto del Senado de **febrero de 2026** que crearía un regulador con clasificación por riesgo, **no votado**. El gobierno empuja explícitamente **"soberanía tecnológica"** para reducir dependencia de modelos extranjeros |
+
+**Dónde está la oportunidad, y es la misma puerta por dos lados.** Brasil y México están invirtiendo
+en **modelos entrenados con datos locales, en idiomas locales, bajo regulación local**. Eso es
+demanda directa de **fine-tuning, evaluación en idioma y despliegue**, que es precisamente lo que
+la tendencia 24 (el ranking global de embeddings no transfiere al idioma del cliente) y la
+receta 14 convirtieron en método medible. **El derecho mexicano a objetar decisiones automatizadas
+cierra el círculo: exige la superficie de human-in-the-loop** que la receta 7 y `plannotator`
+cubren — no es un nice-to-have, es un requisito legal vigente.
+
+> **Vacíos declarados de este pase en LATAM, y son tres:**
+> 1. **No se encontró ningún repo open source de origen latinoamericano** en los planos medidos
+>    este pase (decisión durante la ejecución, evaluación de skills). **Séptimo cero consecutivo.**
+> 2. Las búsquedas **no devolvieron players regionales** de tooling de ingeniería con IA: los
+>    nombres que aparecen son **estatales** (plan nacional y supercomputadora pública de México,
+>    estrategia nacional de Brasil de 2022), no privados.
+> 3. **Nada nuevo sobre Chile, Argentina, Colombia ni Perú** en este pase. Lo de Latam-GPT/CENIA
+>    viene del ciclo 4 y **no fue re-verificado hoy.**
 
 ## Posicionamiento Globant
 

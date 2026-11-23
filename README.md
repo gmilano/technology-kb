@@ -47,6 +47,90 @@ technology-kb/
 11. **Mantenerse al día**: el curador automático actualiza este KB por rotación horaria.
     `agents/trending.md` y `repos/trending.md` son **append-only**: la sección más reciente arriba
 
+## Estado de verificación (2026-11-23 — pase 11)
+
+**Sexto pase del día.** Este pase hizo dos cosas: **verificó la KB entera, URL por URL**, y
+**corrigió al pase anterior en el plano que había declarado vacío.**
+
+### 1. Barrido completo: **251 URLs, las 251 vivas, cero 404**
+
+Primer barrido total de esta KB. Las 251 URLs de repo de los 9 archivos markdown, verificadas una
+por una con `git ls-remote` (**control corrido** contra dos slugs falsos: `ec=128`, o sea el
+método discrimina). **Cero 404.** Metadata fresca para **245 de 251**; los 6 restantes son los
+falsos negativos ya documentados de `search/repositories` — **ahora con tasa: 6/251 = 2,4%**.
+
+De las **47 filas de `agents/top.md`**: 47 vivas, **47 licencias coincidentes con el archivo
+leído**, deriva máxima de estrellas **+286 en ~1 h**. **Nada que reescribir — y eso también es un
+resultado.**
+
+### 2. La corrección: el plano del "durante" no estaba vacío, estaba naciendo
+
+El pase 10 concluyó *"cero producto agentic"* para la decisión durante la ejecución, apoyado en
+`agent egress firewall stars:>=200` → **1**. **Con el término ensanchado,
+`agent firewall stars:>=200` devuelve 11** y `agent runtime policy stars:>=100` devuelve **13**.
+**Nueve de los diez repos verificados fueron creados en 2026.** Queda como regla de método: **en
+una categoría que se está nombrando sola, el sustantivo angosto produce falsos ceros.**
+
+`repos/foundations.md` tiene una **Capa 5 nueva** con los 7 usables: hol-guard (1 122★),
+clawpatrol (1 097★, Deno Land Inc), pipelock (1 020★), ironcurtain (684★), Adrian (598★),
+Aegis (524★) y OpenGuardrails (372★). **Pero el techo usable es 1 122★ contra 27 414★ del escáner
+que decide antes: 24x de asimetría**, y `agent permission policy stars:>=500` sigue en **0** por
+segundo pase. Tendencia 33.
+
+### 3. **58 agentes** en `agents/top.md` (47 + **11 agregados**)
+
+Lo más importante de las altas no es el tamaño: **`Tencent/AI-Infra-Guard` (7 622★, Apache-2.0)
+fue creado en diciembre de 2024**, o sea **el proyecto más maduro de todo el plano de seguridad de
+agentes no es de 2026 ni es norteamericano**. Con él: `google/agents-cli` (6 397★),
+`NVIDIA/SkillEvaluator` (4 448★), `lemony-ai/cascadeflow` (3 921★), `future-agi` (2 289★) y los
+siete del plano "durante".
+
+### 4. Gartner le puso nombre al *harness* — y línea de base al negocio
+
+El **2026-11-18** Gartner nombró **"harness engineering"** y afirmó que **el diseño del harness
+determina la calidad del output más que la elección del modelo** — la tesis de esta KB desde el
+pase 2, ahora con analista y fecha. Las cifras que importan **no son los targets, son los puntos
+de partida**: hoy **sólo 10%** de las empresas sandboxea workflows agentic en preproducción y
+**menos del 20%** de los equipos practica *eval-driven development*. **Gasto máximo, práctica
+mínima** — y codificación es, según Menlo Ventures, **USD 34 000 M (7,7x), la categoría de
+aplicación más grande de la IA empresarial.** Tendencias 32 y 34, receta 21.
+
+### 5. Tres trampas de licencia, y **dos caen justo encima de lo que hace falta**
+
+- **`FailproofAI/failproofai` (10 135★)** — su `LICENSE` **empieza diciendo "MIT License"** y
+  termina con **`Commons Clause v1.0`**, cuya definición de *"Sell"* incluye literalmente *"fees
+  for hosting or **consulting/support services**"*. **Es la única trampa medida por esta KB que
+  bloquea la consultoría en vez del SaaS multi-tenant.** La API dice `NOASSERTION`: ningún badge
+  avisa.
+- **`hardenrun/aif` (1 963★)** — el repo **más grande** de `agent firewall`: **no es open source**.
+  "AIF Beta License Agreement" (VizopsAI Inc): binario, revocable, sin servicio gestionado, sin
+  producto competidor, **con recall remoto de versiones**. Y se autodescribe *pre-execution*:
+  **ni abierto ni del plano.**
+- **`debpalash/VoiceStudio` (117 079★)** — **AGPL-3.0**. Por estrellas entraría en el top-15 del
+  vertical y ningún listado menciona la licencia.
+
+**Y dos casos limpios, porque la regla también se verifica cuando no hay trampa:** `Justin0504/Aegis`
+tiene `COMMERCIAL.md` de 5 878B y **sigue siendo MIT puro** (el propio documento se declara
+borrador no vinculante) — **un `COMMERCIAL.md` no es un carve-out**; y el `LICENSE` de
+`NVIDIA/SkillEvaluator` pesa 11 431B contra los 11 357B canónicos **sólo por una línea de copyright
+prepuesta**, cuerpo verificado sin modificar — **un tamaño distinto no es evidencia de
+modificación.**
+
+### 6. Dos correcciones de estado
+
+| Repo | Decía esta KB | Hoy |
+|------|---------------|-----|
+| `tensorzero/tensorzero` (11 697★) | "dormido 5 meses", *"la propuesta más ambiciosa de la capa"* | ❌ **`archived: true`** — cerrada, no quieta |
+| `Moep90/agent-toolkit-for-kapitan` | "✅ vivo, 0★" | ❌ **`archived: true`** — 0★ **y** archivado |
+
+### 7. Dos recetas nuevas
+
+**Receta 20** — los **cuatro momentos de decisión** (antes de instalar / antes del merge / durante
+la llamada / después), con la comparación de las cinco piezas del momento 3 y el orden que importa:
+**el firewall en `dry-run` primero, la política escrita después, con la lista real de tool calls en
+la mano.** **Receta 21** — *eval-driven development* antes de que lo pida el cliente, construida
+sobre la cifra de Gartner (<20% → 70%) y la brecha de LATAM (**67% desplegó, 23% puede probarlo**).
+
 ## Estado de verificación (2026-11-23 — pase 10)
 
 **Quinto pase del mismo día** (pase 6: 14:58 UTC, pase 7: 15:56, pase 8: 16:57, pase 9: 17:58).
