@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-21
+updated: 2026-11-23
 ---
 
 # 🧩 Patrones de composición — Technology
@@ -195,6 +195,96 @@ la competencia.
 
 ---
 
+## Receta 7 — Jaula de agentes: aislar, autorizar, auditar *(nueva, pase 6)*
+
+**Para quién.** Cualquier cliente cuyo bloqueo declarado sea "no podemos poner esto en producción
+porque no sabemos qué puede hacer". Es la receta que ataca la barrera #1 medida del vertical
+—gobernanza, no capacidad— y la que responde la primera pregunta de compras y legales.
+
+**Las piezas, todas verificadas el 2026-11-23 y todas Apache-2.0 salvo donde se indica.**
+
+| Capa | Pieza | Licencia | Qué resuelve exactamente |
+|------|-------|----------|--------------------------|
+| Ejecución | [perplexityai/SPACE](https://github.com/perplexityai/SPACE) **o** [e2b-dev/E2B](https://github.com/e2b-dev/E2B) | Apache-2.0 | El código que el agente escribió corre en **microVM Firecracker** (SPACE, aislamiento de hipervisor) o en sandbox con SDK maduro (E2B). **SPACE cuando el cliente pregunta "¿y si escapa del contenedor?"; E2B cuando la prioridad es velocidad de integración.** |
+| Entorno por agente | [dagger/container-use](https://github.com/dagger/container-use) | Apache-2.0 | Cada agente, su contenedor y su rama. Dos agentes no se pisan. |
+| Plano de herramientas | [stacklok/toolhive](https://github.com/stacklok/toolhive) | Apache-2.0 | **Cada MCP server en contenedor aislado, política de acceso por request, secretos cifrados, aislamiento de red, y arranque con permisos mínimos sin credenciales locales.** Es la pieza que convierte "instalamos 30 MCP servers" en "operamos 30 MCP servers". |
+| Auditoría del plano MCP | [cisco-ai-defense/mcp-scanner](https://github.com/cisco-ai-defense/mcp-scanner) **+** [invariantlabs-ai/mcp-scan](https://github.com/invariantlabs-ai/mcp-scan) | Apache-2.0 | **Los dos, no uno.** El de Cisco mira el server (estático); el de Invariant mira el cliente y el **drift de configuración**. La auditoría pública de 2026 concluye que ninguno solo alcanza. |
+| Política | [open-policy-agent/opa](https://github.com/open-policy-agent/opa) + [permitio/opal](https://github.com/permitio/opal) | Apache-2.0 | La decisión "puede / no puede" vive **fuera** del agente, en Rego, y se actualiza sin redeploy. Si la regla está en el prompt no es auditable. |
+| Autorización verificable | [cedar-policy/cedar](https://github.com/cedar-policy/cedar) | Apache-2.0 | Cuando hay que **demostrar** que una política no puede permitir algo: análisis estático, verificado formalmente. Reemplaza a OPA solo si ese requisito existe. |
+| Identidad | [thunder-id/thunderid](https://github.com/thunder-id/thunderid) | Apache-2.0 (LF Decentralized Trust) | Agente como identidad de primera clase **con autoridad delegada**. **Declarar su madurez: 621★.** Se adopta sabiendo que es temprano, o se deja el hueco explícito en la arquitectura. |
+| Secretos | [openbao/openbao](https://github.com/openbao/openbao) | **MPL-2.0** | El agente nunca ve una credencial de larga vida. **MPL-2.0 es copyleft débil, no permisivo: decirlo.** |
+| Red-teaming continuo | [promptfoo/promptfoo](https://github.com/promptfoo/promptfoo) + [NVIDIA/garak](https://github.com/NVIDIA/garak) | MIT / Apache-2.0 | Prompt injection, jailbreak y fuga de datos **en CI, en cada cambio de prompt**. |
+| Guardrails en runtime | [guardrails-ai/guardrails](https://github.com/guardrails-ai/guardrails) **o** [NVIDIA-NeMo/Guardrails](https://github.com/NVIDIA-NeMo/Guardrails) | Apache-2.0 | **No usar `protectai/llm-guard`: está archivado desde 2026-07-08** aunque siga siendo la primera recomendación de los listados. |
+| Cadena de suministro | [aquasecurity/trivy](https://github.com/aquasecurity/trivy) + [anchore/syft](https://github.com/anchore/syft) + [sigstore/cosign](https://github.com/sigstore/cosign) | Apache-2.0 | **Con agentes que agregan dependencias solos, el SBOM dejó de ser trámite.** Y la firma es la única prueba de qué artefacto entró a producción. |
+| Due diligence | [ossf/scorecard](https://github.com/ossf/scorecard) | Apache-2.0 | Se corre sobre **cualquier** repo que una búsqueda recomiende, antes de adoptarlo. Es la contramedida directa al modo de falla de este pase (ver `intel/trends.md` #12). |
+| Metodología de auditoría | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill) | MIT | **El aporte conceptual más fuerte del pase, y se adopta como método, no como dependencia** (sin push desde 2026-09-14): auditoría en seis fases donde **agentes separados intentan refutar cada hallazgo candidato** antes de reportarlo. Esa fase de refutación es lo que baja los falsos positivos y es replicable con cualquier harness. |
+
+**Cómo se arma, en orden, y el orden importa:**
+
+1. **Primero la jaula, después el agente.** SPACE o E2B + `container-use` antes de escribir un
+   prompt. Un agente que ya corre sin aislamiento no se aísla después: se reescribe.
+2. **ToolHive antes del primer MCP server, no después del trigésimo.** Migrar 30 MCP servers
+   sueltos a un runner con política es un proyecto; arrancar con el runner no cuesta nada.
+3. **OPA + OPAL con las reglas vacías desde el día uno.** El valor no es la primera regla: es que
+   exista el lugar donde ponerla cuando el régimen cambie —y en North America **puede cambiar
+   durante el proyecto**, con litigio activo sobre preempción de leyes estatales.
+4. **Los dos escáneres MCP en CI, no uno.**
+5. **La fase de refutación de Cloudflare sobre los hallazgos**, con `promptfoo` midiendo el antes
+   y el después. Sin eso, un informe de seguridad agentic es una lista de falsos positivos.
+6. **Scorecard como portero de adopción.** Ninguna dependencia nueva entra sin pasar por ahí.
+7. **La identidad se declara como hueco, no se simula.** Si el cliente necesita identidad de
+   agentes madura hoy, la opción abierta no existe y la cerrada (Entra Agent ID, GA abril 2026)
+   genera lock-in. **Decirlo es el entregable; pretender que está resuelto es el riesgo.**
+
+**Esfuerzo:** 6-8 semanas para el plano completo sobre un agente ya existente; 3-4 si se monta
+junto con el agente desde cero (de ahí el orden del punto 1).
+
+**Entregable medible:** un agente con (a) aislamiento demostrable, (b) política externalizada y
+versionada, (c) SBOM firmado de lo que produce, (d) suite de red-teaming en CI con línea base
+numérica, y (e) **un documento de identidad y delegación que diga explícitamente qué está
+resuelto y qué no**. Los cinco puntos son auditables por un tercero, y eso es exactamente lo que
+pide el procurement que hoy frena los despliegues.
+
+## Receta 8 — Flota de agentes con aislamiento por rama *(nueva, pase 6)*
+
+**Para quién.** Migración o refactor que toca decenas de repos y donde el cuello de botella es la
+revisión humana, no la generación.
+
+**Qué cambió respecto de la Receta 3.** La receta 3 usa `stablyai/orca` como coordinador, y en
+agosto Orca tenía 35 500★. **Hoy tiene 134 037★ — 3.8x en tres meses**, y la pieza maduró: cada
+agente trabaja en **su propio git worktree** y se dispara desde Slack, Linear o GitHub. Eso
+cambia el diseño: la coordinación ya no hay que construirla.
+
+**Las piezas:**
+
+| Rol | Pieza | Licencia | Stars |
+|-----|-------|----------|-------|
+| Coordinador de flota | [stablyai/orca](https://github.com/stablyai/orca) | MIT | 134 037 |
+| Gestión del equipo de agentes | [paperclipai/paperclip](https://github.com/paperclipai/paperclip) | MIT | 116 192 |
+| Aislamiento por agente | [dagger/container-use](https://github.com/dagger/container-use) | Apache-2.0 | 4 105 |
+| Ejecución del cambio | [SWE-agent/SWE-agent](https://github.com/SWE-agent/SWE-agent) o [All-Hands-AI/OpenHands](https://github.com/All-Hands-AI/OpenHands) | MIT | 20 855 / ~94.1k |
+| Contexto de impacto | [backstage/backstage](https://github.com/backstage/backstage) | Apache-2.0 | 34 904 |
+| Reducción de contexto en review | [tirth8205/code-review-graph](https://github.com/tirth8205/code-review-graph) | MIT | 32 913 |
+| Durabilidad | [temporalio/temporal](https://github.com/temporalio/temporal) | MIT | 24 568 |
+| Línea base numérica | [confident-ai/deepeval](https://github.com/confident-ai/deepeval) | Apache-2.0 | 19 604 |
+
+**Cómo se arma:**
+
+1. **Backstage primero** para saber a quién afecta cada repo. Sin el grafo de dueños, 50 PRs
+   simultáneos son 50 interrupciones mal dirigidas.
+2. **DeepEval sobre 3 repos piloto antes de escalar**, para tener el número de partida. Es la
+   misma disciplina que la receta de LATAM: medir antes de prometer.
+3. **Orca coordinando, un worktree por repo, `container-use` por si el cambio requiere ejecutar.**
+4. **Temporal alrededor del lote**, para que un fallo en el repo 37 no obligue a reempezar.
+5. **`code-review-graph` en el review**, que es donde está el cuello de botella real.
+6. **Paperclip solo si el equipo de agentes es permanente**, no para un lote único.
+
+**Esfuerzo:** 4 semanas de montaje, después ~1 semana por lote de ~50 repos.
+
+**Advertencia honesta:** Orca creció 3.8x en tres meses. **Una dependencia que se mueve así es una
+dependencia que rompe interfaces.** Fijar versión, y poner en el plan una revisión de
+compatibilidad por trimestre.
+
 ## Lo que NO conviene prometer
 
 1. **Merge automático.** Ninguna receta acá mergea sin humano. Gartner proyecta >40% de
@@ -211,6 +301,23 @@ la competencia.
    vs diciembre 2027). Es el tipo de dato que no se pone en un contrato de segunda mano.
 5. **Costo por tarea estable.** Es la variable más volátil del vertical y la que más creció
    como preocupación. Poner techo con TokenEconomizer y facturar con el techo explícito.
+6. **"Agentes en producción" como si fuera un estado definido.** El rango publicado va de
+   **8.6% a 70%** según cómo se defina. **Definir el término en la propuesta** —SLA, on-call,
+   audit trail— y medir contra esa definición. Sin eso, cualquier cifra que se cite es refutable
+   con otra del mismo rango.
+7. **Identidad de agentes resuelta con open source.** No lo está: `thunder-id/thunderid` (621★) es
+   el único repo de la categoría con ≥500★ en todo GitHub, el borrador AIMS no tiene adopción de
+   working group, la revisión MCP `2026-07-28` **no define formato de audit trail**, y OAuth 2.1
+   **sigue siendo Internet-Draft**. La opción madura es propietaria (Entra Agent ID, GA abril
+   2026) y genera lock-in. **Declarar el hueco; no simular que está cerrado.**
+8. **Que `microsoft/agent-framework` sea una base disponible.** Microsoft lo documenta como el
+   sucesor open source de AutoGen y Semantic Kernel, pero **no es clonable anónimamente** (tercer
+   pase consecutivo de esta KB que no lo alcanza). Lo que sí es público: `agent-framework-go`
+   (696★) y los samples. Y **AutoGen está archivado con una advertencia explícita de Microsoft
+   contra su uso en producción.**
+9. **Un escáner de seguridad MCP porque lo recomendó un artículo.** Tres de los cuatro que
+   devuelve una búsqueda tienen **0 estrellas** y uno **no tiene archivo de licencia**. Correr
+   `ossf/scorecard` antes de adoptar, siempre.
 
 ---
 *Ver también: `verticals/solutions.md` (plataformas) y `intel/market.md` (contexto regional).*

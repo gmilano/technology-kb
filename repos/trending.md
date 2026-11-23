@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-21
+updated: 2026-11-23
 ---
 
 # 📈 Repos trending — Technology
@@ -11,6 +11,76 @@ updated: 2026-11-21
 > Este archivo sigue **infraestructura**: inferencia, protocolo, datos, plataforma. Para
 > agentes y skills ver `agents/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
+
+## 2026-11-23 — pase 6
+
+### Línea base nueva: el plano de aislamiento, política e identidad
+
+**Primera medición de esta categoría en la KB.** No hay serie histórica contra la que comparar —
+estos son los valores de partida, y es deliberado registrarlos como tales en vez de inventar un
+movimiento. Licencias leídas del archivo, en la rama correcta.
+
+| Repo | Licencia (archivo) | Stars 2026-11-23 | Último push | Capa |
+|------|--------------------|------------------|-------------|------|
+| [aquasecurity/trivy](https://github.com/aquasecurity/trivy) | Apache-2.0 (11356B) | 39648 | 2026-11-23 | Cadena de suministro |
+| [promptfoo/promptfoo](https://github.com/promptfoo/promptfoo) | **MIT** (1052B, sin carve-out) | 27586 | 2026-11-23 | Red-teaming / evals |
+| [open-policy-agent/opa](https://github.com/open-policy-agent/opa) | Apache-2.0 | 12508 | 2026-11-23 | Política |
+| [NVIDIA/garak](https://github.com/NVIDIA/garak) | Apache-2.0 | 10139 | 2026-11-18 | Red-teaming de LLM |
+| [anchore/syft](https://github.com/anchore/syft) | Apache-2.0 | 9955 | 2026-11-23 | SBOM |
+| [superradcompany/microsandbox](https://github.com/superradcompany/microsandbox) | Apache-2.0 (11323B) | 9182 | 2026-11-23 | Aislamiento de ejecución |
+| [openbao/openbao](https://github.com/openbao/openbao) | **MPL-2.0** (15956B) | 9156 | 2026-11-23 | Secretos |
+| [guardrails-ai/guardrails](https://github.com/guardrails-ai/guardrails) | Apache-2.0 | 7638 | 2026-11-18 | Guardrails |
+| [NVIDIA-NeMo/Guardrails](https://github.com/NVIDIA-NeMo/Guardrails) | Apache-2.0 (`LICENSE.md` 653B) | 7557 | 2026-11-19 | Guardrails |
+| [sigstore/cosign](https://github.com/sigstore/cosign) | Apache-2.0 | 6465 | 2026-11-22 | Firma de artefactos |
+| [ossf/scorecard](https://github.com/ossf/scorecard) | Apache-2.0 | 5861 | 2026-11-23 | Due diligence de dependencias |
+| [permitio/opal](https://github.com/permitio/opal) | Apache-2.0 (rama `master`) | 5527 | 2026-11-16 | Distribución de política |
+| [e2b-dev/E2B](https://github.com/e2b-dev/E2B) | Apache-2.0 (11346B) | 14980 | 2026-11-23 | Aislamiento de ejecución |
+| [dagger/container-use](https://github.com/dagger/container-use) | Apache-2.0 (10757B) | 4105 | 2026-11-14 | Aislamiento por agente |
+| [stacklok/toolhive](https://github.com/stacklok/toolhive) | Apache-2.0 (11343B) | 2353 | 2026-11-23 | Aislamiento del plano MCP |
+| [perplexityai/SPACE](https://github.com/perplexityai/SPACE) | Apache-2.0 (11370B) | 2152 | 2026-11-23 | microVM Firecracker |
+| [cedar-policy/cedar](https://github.com/cedar-policy/cedar) | Apache-2.0 (10141B) | 1892 | 2026-11-20 | Autorización verificada formalmente |
+| [cisco-ai-defense/mcp-scanner](https://github.com/cisco-ai-defense/mcp-scanner) | Apache-2.0 (11356B) | 1127 | 2026-11-19 | Auditoría MCP |
+| [thunder-id/thunderid](https://github.com/thunder-id/thunderid) | Apache-2.0 (11356B) | 621 | 2026-11-23 | **Identidad de agentes** |
+
+**Dos lecturas de esta tabla, y las dos son sobre el reparto, no sobre los totales.**
+
+1. **18 de 19 son Apache-2.0 o MIT.** Es la categoría más permisiva que ha medido esta KB —
+   lo contrario del plano de plataformas, donde la mitad de los repos más estrellados no son
+   open source en sentido OSI. La única excepción es `openbao` (MPL-2.0, copyleft débil), y
+   existe precisamente porque la alternativa propietaria (Vault, BUSL) empujó un fork OSI.
+2. **La pirámide está invertida respecto del riesgo.** Lo que escanea *dependencias* tiene
+   decenas de miles de estrellas; lo que **identifica al agente** tiene 621. **El eslabón más
+   débil del plano de seguridad agentic es justo el que casi nadie construyó.**
+
+> ⚠️ **Trampa de licencia de esta sección:** [semgrep/semgrep](https://github.com/semgrep/semgrep)
+> (17 900★) es **LGPL-2.1** (`LICENSE` 26 525B en rama `master`, "GNU LESSER GENERAL PUBLIC
+> LICENSE"), no Apache ni MIT. Sirve como herramienta separada en CI; **no se incorpora a un
+> producto distribuible** sin análisis legal. Equivalente permisivo: Trivy.
+
+### Protocolo: A2A entra a la KB, y el spec se lee aparte de los servers
+
+| Repo | Licencia | Stars | Último push | Dato nuevo |
+|------|----------|-------|-------------|-----------|
+| [a2aproject/A2A](https://github.com/a2aproject/A2A) | Apache-2.0 (11357B) | **26642** | 2026-11-20 | **v1.0 bajo Linux Foundation el 2026-04-09**; en **agosto de 2026 pasó a la Agentic AI Foundation**, la misma casa que MCP. >150 organizaciones. **MCP conecta un agente a herramientas; A2A conecta agentes entre sí** — la frase que conviene usar en una propuesta. Caveat medido: el análisis independiente coincide en que su despliegue real en producción es **mucho menor** que el de MCP. |
+| [modelcontextprotocol/modelcontextprotocol](https://github.com/modelcontextprotocol/modelcontextprotocol) | en transición MIT→Apache | **9755** | 2026-11-23 | **El spec, no los servers.** Lo que define la revisión `2026-07-28`: autorización **opcional**, y si se usa, el server HTTP es un **resource server OAuth 2.1** con RFC 8707 / 9728 / 9207 y step-up authorization; **Dynamic Client Registration deprecada** a favor de Client ID Metadata Documents. Varias fuentes secundarias afirman que OAuth es obligatorio: **no lo es.** Leer el repo. |
+
+### Delta de infraestructura a 48h (2026-11-21 → 2026-11-23)
+
+Ventana corta: se corrió para detectar archivado y cambio de licencia, **no para proyectar
+crecimiento**. Los movimientos son por construcción pequeños.
+
+| Repo | 11-21 | 11-23 | Δ | Nota |
+|------|-------|-------|---|------|
+| [supabase/supabase](https://github.com/supabase/supabase) | 115212 | 115376 | +164 | |
+| [vllm-project/vllm](https://github.com/vllm-project/vllm) | 97296 | 97403 | +107 | |
+| [ollama/ollama](https://github.com/ollama/ollama) | 187793 | 187924 | +131 | |
+| [mem0ai/mem0](https://github.com/mem0ai/mem0) | 69292 | 69371 | +79 | |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | 63639 | 63765 | +126 | **La API ahora reporta `NOASSERTION`** donde antes decía MIT. El carve-out de `litellm/enterprise/` se volvió visible para los escáneres automáticos del cliente. |
+| [langfuse/langfuse](https://github.com/langfuse/langfuse) | 37686 | 37751 | +65 | **Mismo cambio: `MIT` → `NOASSERTION`.** Dos repos del set en la misma dirección en 48h: **el campo `license` de la API se está volviendo más conservador, no los proyectos más restrictivos.** Es un cambio de medición, no de licencia — y confundirlos sería exactamente el error que esta KB registra desde el ciclo de travel. |
+| [evidentlyai/evidently](https://github.com/evidentlyai/evidently) | push 2026-09-29 | push **2026-09-29** | — | Casi 2 meses sin movimiento. El único de la sección de evals que se está quedando quieto. |
+| [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) | 92141 | 92188 | +47 | Plano, como el pase anterior. La licencia se mueve más que las estrellas. |
+
+---
 
 ## 2026-11-21
 

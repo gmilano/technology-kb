@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-21
+updated: 2026-11-23
 ---
 
 # 📈 Agentes trending — Technology
@@ -10,6 +10,75 @@ updated: 2026-11-21
 > debajo. Reescribir el archivo destruye la tendencia que el archivo existe para registrar.
 > Este archivo sigue **agentes y skills**. Para infraestructura ver `repos/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
+
+## 2026-11-23 — pase 6
+
+**Qué se midió:** (a) las 28 filas de `agents/top.md` re-verificadas a 48h de distancia, (b) una
+barrida de repos **creados en los últimos 90 días** con ≥5000★, y (c) una barrida de
+**seguridad/sandbox/guardrails creados en los últimos 180 días** con ≥1000★ — eje nuevo de este
+pase. Todo por `search/repositories`, licencias leídas del archivo.
+
+### Hallazgo del pase: cuatro agentes grandes que la KB no tenía
+
+**No es que sean nuevos. Es que el filtro de categoría los escondía.** Las búsquedas de
+"coding agents" no devuelven agentes de propósito general ni skills, y así quedaron afuera
+repos de seis cifras de estrellas.
+
+| Nombre | Repo | Licencia (archivo) | Stars | Creado | Último push | Por qué importa |
+|--------|------|--------------------|-------|--------|-------------|-----------------|
+| hermes-agent | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | MIT (1069B) | **265593** | 2026-02-25 | 2026-11-23 | **Tercero del vertical por estrellas.** Agente de propósito general de Nous Research. Seis pases de esta KB sin listarlo. |
+| ponytail | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | MIT (1070B) | **197323** | 2026-06-12 | 2026-11-22 | "Hace que tu agente piense como el senior más vago de la sala." **Un solo prompt empaquetado como plugin/skill** para Claude Code, Codex y Cursor, con comandos `review` y `audit` y benchmarks en el repo. 197k★ para un prompt: **el artefacto que más estrellas junta en este vertical ya no es un framework, es una instrucción.** |
+| orca | [stablyai/orca](https://github.com/stablyai/orca) | MIT (1069B) | **134037** | — | 2026-11-23 | **35 500★ en agosto (ciclo 4) → 134 037★ hoy: 3.8x en 3 meses, el crecimiento más violento que mide esta KB.** Flota de agentes con suscripción propia, cada uno en su git worktree, disparable desde Slack/Linear/GitHub. |
+| paperclip | [paperclipai/paperclip](https://github.com/paperclipai/paperclip) | MIT (1068B, rama `master`) | **116192** | — | 2026-11-23 | Server Node + UI React que **orquesta un equipo de agentes para operar un negocio**. >2700 PRs mergeados, Postgres embebido, tests: es producto, no demo. |
+
+### Eje nuevo: seguridad de agentes — primera medición
+
+| Nombre | Repo | Licencia (archivo) | Stars | Creado | Último push | Lectura |
+|--------|------|--------------------|-------|--------|-------------|---------|
+| security-audit-skill | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill) | **MIT** (1077B) | **77382** | 2026-06-18 | **2026-09-14** | **El hallazgo más utilizable del pase.** Skill de auditoría de seguridad en **seis fases**: mapeo, caza con agentes aislados, **agentes separados que intentan refutar cada candidato**, salida legible por máquina, verificación de registros y reporte. Exige **sandbox impuesto por el SO antes de ejecutar código del target**. El README dice que fue el punto de partida del harness de descubrimiento de vulnerabilidades de Cloudflare. **Caveat honesto: sin push en ~2.3 meses y con 87 PRs abiertos.** Se adopta como *metodología* (la fase de refutación es el aporte real) más que como dependencia viva. |
+| garak | [NVIDIA/garak](https://github.com/NVIDIA/garak) | Apache-2.0 | 10139 | — | 2026-11-18 | Escáner de vulnerabilidades de LLM. Vivo, corporativo, permisivo. |
+| mcp-scanner | [cisco-ai-defense/mcp-scanner](https://github.com/cisco-ai-defense/mcp-scanner) | Apache-2.0 | 1127 | — | 2026-11-19 | **El único escáner MCP con tracción de cuatro cifras.** |
+| toolhive | [stacklok/toolhive](https://github.com/stacklok/toolhive) | Apache-2.0 | 2353 | — | 2026-11-23 | Corre cada MCP server en contenedor aislado con política por request y secretos cifrados. |
+| SPACE | [perplexityai/SPACE](https://github.com/perplexityai/SPACE) | Apache-2.0 | 2152 | — | 2026-11-23 | Sandboxes en **microVM Firecracker**: aislamiento a nivel hipervisor, no de contenedor. |
+
+> **Modo de falla nuevo, y es el que más conviene recordar.** Buscando "escáner de seguridad MCP
+> open source", la prensa técnica devuelve `mcplens` (**0★**), `mcpscan` (**0★**), `mcp-shield`
+> (**0★ y sin archivo de licencia**) y `Abanoub-Rodolf/mcp-scan` (**1★**) presentados como
+> herramientas establecidas. **No es una licencia que miente ni una estrella inflada: es un vacío
+> de categoría que la prensa rellena con repos de cero estrellas.** En seguridad eso es peor que
+> en cualquier otra categoría, porque el artefacto que uno adopta es precisamente el que debería
+> estar auditado. Contramedida concreta: `ossf/scorecard` (Apache-2.0, 5861★) sobre cualquier repo
+> que una búsqueda recomiende, antes de adoptarlo.
+
+### Nuevas trampas de licencia medidas este pase
+
+| Repo | Stars | Lo que dice el badge | Lo que dice el archivo |
+|------|-------|----------------------|------------------------|
+| [hypit-ai/hypit](https://github.com/hypit-ai/hypit) | **31195** | `NOASSERTION` | **Apache-2.0 *modificada*** (`LICENSE`, 3298B, leído completo). Bloquea **multi-tenant** (dos o más partes fuera de tu organización con workspaces separados, con o sin cobro) y **redistribución comercial**, y prohíbe quitar el logo de la CLI y de los reportes generados. **Pero el carve-in importa y es preciso: "usarlo para el trabajo de tu propia organización, incluido trabajo comercial y trabajo hecho para tus clientes" y los despliegues single-tenant operados por y para una organización SÍ están permitidos sin licencia comercial.** Traducción para Globant: **un despliegue single-tenant por cliente es viable; un SaaS multi-cliente operado por Globant, no.** Tercera variante del patrón Dify en esta familia de KBs. |
+| [lexmount/moli](https://github.com/lexmount/moli) | 24339 | `Apache-2.0` | **Licencia DOBLE**: el repo trae `LICENSE-MIT` (1073B) **y** `LICENSE-APACHE` (11 356B). Es el patrón de Rust y es *más* permisivo que lo que el badge sugiere — el consumidor elige. Se registra porque es el primer caso en esta KB en que el badge **sub**declara y el archivo da más libertad, no menos. |
+
+### Auditoría de 48h sobre las 28 filas del pase anterior
+
+**Cero muertes, cero archivados nuevos, 28/28 vivas por `ls-remote`.** Movimiento relevante:
+
+| Repo | 2026-11-21 | 2026-11-23 | Δ | Nota |
+|------|-----------|-----------|---|------|
+| [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop) | 25832 | **26293** | **+461** | **La mayor velocidad relativa del set (+1.8% en 48h).** Computer-use por árbol de accesibilidad. |
+| [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | 58583 | 58974 | +391 | |
+| [usestrix/strix](https://github.com/usestrix/strix) | 76851 | 77205 | +354 | Pentesting agentic sigue siendo la categoría nueva que más tracciona. |
+| [morluto/rea](https://github.com/morluto/rea) | 471850 | 475098 | +3248 | Sigue siendo #1 del vertical. |
+| [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | 194754 | **194730** | **−24** | **El único que perdió estrellas.** Consistente con lo que es: una pieza de museo, no una herramienta. |
+| [Aider-AI/aider](https://github.com/Aider-AI/aider) | push 2026-05-22 | push **2026-05-22** | 0 días de movimiento | **Seis meses exactos dormido, confirmado en dos pases.** |
+| [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) | push 2026-02-11 | push **2026-02-11** | ídem | 9+ meses dormido. |
+| [xai-org/grok-build](https://github.com/xai-org/grok-build) | 27837★ | push **2026-09-29** | — | **Dormido ~2 meses.** El ciclo 4 ya había registrado que no acepta PRs externos: open source de una sola vía, y ahora también detenido. |
+
+**Lectura de la ventana de 48h:** los deltas son chicos por construcción y **no sirven para
+proyectar**; sirven para detectar *muerte y archivado*, que es para lo que se corrió. El dato
+útil no es el crecimiento, es que **ningún repo del set cambió de licencia ni se archivó en 48h**
+mientras tres repos agentic de Microsoft sí están archivados (AutoGen, TaskWeaver,
+azure-trust-agents — ver `agents/top.md`).
+
+---
 
 ## 2026-11-21
 

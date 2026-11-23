@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-21
+updated: 2026-11-23
 ---
 
 # 📡 Tendencias — Technology
@@ -120,10 +120,120 @@ y es, literalmente, el trabajo de consultoría.
 | `agente IA desarrollo software stars:>=20` | **0** | El tooling open source no habla español |
 | `agentes programacion codigo stars:>=10` | **0** | Ídem con piso de 10★ |
 | `sovereign AI europe stars:>=100` | **0** | **La soberanía europea no es código**: es procurement, geografía de datos y certificación |
-| `microsoft/agent-framework` | **repo muerto** | Lo listaba el ciclo 4 con 12.5k★; `ls-remote` falla hoy |
+| `latam gpt stars:>=50` | **0** | **Nuevo (pase 6).** Latam-GPT es la iniciativa soberana más citada de LATAM y **no tiene repo con 50★**. No es un punto de partida técnico |
+| `agent identity authorization open source stars:>=500` | **1** | **Nuevo (pase 6).** `thunder-id/thunderid`, 621★. **La identidad de agentes es un desierto medido** |
+| `agent sandbox isolation stars:>=1000` | **2, uno relevante** | **Nuevo (pase 6).** `perplexityai/SPACE` (2 152★) y una colisión de keyword |
+| `MCP seguridad escaner stars:>=10` | **0** | **Nuevo (pase 6).** No hay herramienta de auditoría MCP en español, ni una |
+| `microsoft/agent-framework` | **inalcanzable anónimamente** | Tercer pase que no lo alcanza. **Corrección de método: el ciclo 4 lo llamó "muerto"; lo correcto es "no accesible sin credenciales"** — `ls-remote` pide usuario y `raw` da 404, mientras los satélites `agent-framework-go` (696★) y `Agent-Framework-Samples` (398★) son públicos |
 
 Ahí es donde pertenece la IP propietaria: no hay nada abierto que adoptar, así que lo que se
 construya es diferencial real y no commodity.
+
+## 11. El plano que falta no es el agente: es la jaula, la política y el nombre
+
+*Nueva en el pase 6.* La KB pasó cinco ciclos midiendo **con qué construir** un agente y **cómo
+evaluarlo**. Este pase midió **cómo encerrarlo, cómo autorizarlo y cómo identificarlo**, y la
+forma de la categoría es la tendencia:
+
+| Capa | Pieza de referencia medida | Stars |
+|------|---------------------------|-------|
+| Cadena de suministro | `aquasecurity/trivy` (Apache-2.0) | 39 648 |
+| Red-teaming | `promptfoo/promptfoo` (MIT) | 27 586 |
+| Política | `open-policy-agent/opa` (Apache-2.0) | 12 508 |
+| Aislamiento de ejecución | `e2b-dev/E2B` (Apache-2.0) | 14 980 |
+| Aislamiento del plano MCP | `stacklok/toolhive` (Apache-2.0) | 2 353 |
+| **Identidad del agente** | `thunder-id/thunderid` (Apache-2.0, LF Decentralized Trust) | **621** |
+
+**La pirámide está invertida respecto del riesgo.** Lo que escanea una dependencia tiene 40 000
+estrellas; lo que responde "¿quién es este agente y de parte de quién actúa?" tiene 621. La
+consulta `agent identity authorization open source stars:>=500` devuelve **un solo repositorio en
+todo GitHub**. Y del lado cerrado, **Microsoft Entra Agent ID llegó a GA en abril de 2026**.
+
+**La consecuencia práctica:** la identidad de agentes es hoy el punto donde un cliente se ata a
+un proveedor sin darse cuenta, porque es el único lugar del stack donde la opción abierta todavía
+no existe en forma madura. Nombrarlo temprano en un engagement es más valioso que resolverlo.
+
+**Dato de contexto que conviene tener a mano:** la revisión MCP `2026-07-28` resuelve
+**autenticación** sobre OAuth 2.1 —que **sigue siendo Internet-Draft, no RFC**— y **no define
+formato de audit trail**. El borrador AIMS no tiene adopción de working group. NIST abrió su
+**AI Agent Standards Initiative en febrero de 2026** sin producir norma todavía. **El estándar no
+está cerrado, y cualquiera que diga lo contrario está vendiendo.**
+
+## 12. La prensa técnica rellena los vacíos de categoría con repos de cero estrellas
+
+*Nueva en el pase 6, y es un modo de falla distinto a todos los que esta KB tenía registrados.*
+
+Los ciclos anteriores de esta familia de KBs catalogaron: licencias que mienten, estrellas
+infladas por el pipeline, badges falsos, y repos muertos que siguen en listados. Este pase
+encontró uno nuevo. Buscando "escáner de seguridad MCP open source", artículos y posts técnicos
+devuelven cuatro proyectos presentados como herramientas establecidas. Medidos:
+
+| Repo | Stars reales | Licencia |
+|------|-------------|----------|
+| `karmendra8386/mcplens` | **0** | MIT |
+| `glatinone/mcpscan` | **0** | MIT |
+| `sophiacave/mcp-shield` | **0** | **sin archivo de licencia** |
+| `Abanoub-Rodolf/mcp-scan` | **1** | MIT |
+
+Pueden ser código honesto. **Ninguno tiene tracción ni respaldo, y la prensa los presenta con el
+mismo peso editorial que proyectos corporativos.** Los dos que sí tienen standing:
+`cisco-ai-defense/mcp-scanner` (1 127★) e `invariantlabs-ai/mcp-scan`.
+
+**Por qué es peor acá que en otra categoría:** en seguridad, el artefacto que uno adopta es
+precisamente el que debería estar auditado. Adoptar un escáner de 0★ para auditar MCP servers es
+agregar superficie de ataque con la etiqueta de reducirla.
+
+**Contramedida concreta y medible:** `ossf/scorecard` (Apache-2.0, 5 861★) sobre cualquier repo
+que una búsqueda recomiende, **antes** de adoptarlo. Y el piso de esta KB: estrellas, `pushed_at`,
+`archived` y **archivo de licencia leído**, siempre.
+
+## 13. "Producción" es una palabra sin definición compartida, y el rango es 8x
+
+*Nueva en el pase 6.* Las cifras publicadas de adopción de agentes en producción van de **8.6%** a
+**70%** según la encuesta. No es ruido estadístico: es una definición distinta en cada una. La
+lectura defendible es **~10% con SLA, on-call y auditoría; ~65% con "algo corriendo con usuarios
+reales"**.
+
+**Para un integrador esto es una ventaja, no un problema.** Cualquier propuesta que cite un solo
+número de ese rango es refutable con otro del mismo rango. **Entrar definiendo el término —qué
+cuenta como producción, cómo se mide, contra qué SLA— y medir contra esa definición es vender
+rigor donde el resto vende una estadística.** La barrera declarada #1 lo confirma desde otro
+ángulo: casi **60% señala la integración con legacy**, y el audit trail exigido por compras y
+legales pasó de recomendación a **requisito de procurement**.
+
+## 14. Los dos protocolos quedaron bajo el mismo techo
+
+*Nueva en el pase 6.* **A2A llegó a v1.0 bajo gobernanza de la Linux Foundation el 2026-04-09 y
+en agosto de 2026 pasó a la Agentic AI Foundation**, la misma que aloja MCP, con **más de 150
+organizaciones**. El eje de competencia dejó de ser el protocolo.
+
+La división correcta, y conviene decirla así en una reunión: **MCP conecta un agente a
+herramientas; A2A conecta agentes entre sí.** Son complementarios y sus propias documentaciones lo
+dicen.
+
+**Caveat medido y hay que darlo:** el análisis independiente coincide en que **el despliegue real
+de A2A en producción es mucho menor que el de MCP** (que tiene del orden de 10 000+ servers y
+decenas de millones de descargas de SDK). Tratar A2A como apuesta de interoperabilidad a diseñar
+hacia ella, **no** como requisito de hoy.
+
+## 15. La consolidación tiene cadáveres, y esta vez son de Microsoft
+
+*Nueva en el pase 6.* Tres repos agentic de Microsoft medidos como **archivados** en un solo pase:
+**`microsoft/autogen`** (61 965★ — con una advertencia explícita del propio README: *"we continue
+to advise against production use"*), **`microsoft/TaskWeaver`** (6 154★) y
+**`microsoft/azure-trust-agents`**. El badge "Archived" de AutoGen apunta a
+`microsoft/agent-framework`, **que no es accesible anónimamente** (`ls-remote` pide credenciales;
+`raw.githubusercontent.com` da 404 en `main`, `master` y `dev`, con control de 200 corrido contra
+un repo público del mismo entorno).
+
+**La lectura no es "Microsoft está mal".** Es que **la consolidación de un vendor se paga con
+repos públicos que quedan quietos, y las listas de "mejores frameworks open source de 2026" no se
+actualizan cuando eso pasa.** AutoGen sigue apareciendo en esas listas como opción viva y MIT. Es
+MIT —en `LICENSE-CODE`, porque el `LICENSE` raíz es Creative Commons— y no está vivo.
+
+Y en el mismo pase: **`protectai/llm-guard` (3 223★) también está archivado**, y sigue siendo la
+primera recomendación de los listados de guardrails. Alternativas vivas medidas:
+`guardrails-ai/guardrails` y `NVIDIA-NeMo/Guardrails`.
 
 ---
 *Ver también: `intel/market.md` (mercado por región) y `compose/patterns.md` (recetas).*
