@@ -7,12 +7,20 @@ updated: 2026-11-23
 # 🏗️ Repos fundacionales — Technology
 
 > Bases sobre las cuales construir: inferencia, acceso a modelos, protocolo, memoria, vectores,
-> orquestación durable, evaluación/observabilidad, aislamiento/política/identidad, costo y
-> —**nuevo en este pase**— **contexto: cómo entra el material del cliente**. Los agentes se montan
-> arriba. **99 filas, 98 repos distintos** (`litellm` aparece dos veces a propósito: una por
-> neutralidad de proveedor, otra por tope de gasto). Licencias leídas del archivo, en la rama
-> correcta, **también en los subdirectorios** y —desde este pase— **también las de los pesos del
-> modelo, que son otra licencia y no están en ningún campo de la API**.
+> orquestación durable, evaluación/observabilidad, aislamiento/política/identidad, costo,
+> contexto y —**nuevo en este pase**— **entrega: qué prueba que lo que el agente escribió es
+> seguro de desplegar**. Los agentes se montan arriba. **131 filas, 130 repos distintos**
+> (`litellm` aparece dos veces a propósito: una por neutralidad de proveedor, otra por tope de
+> gasto). Licencias leídas del archivo, en la rama correcta, **también en los subdirectorios**,
+> **también las de los pesos del modelo** y —desde este pase— **resolviendo primero el nombre del
+> archivo**, porque `LICENSE` en mayúsculas no siempre existe (ver nota de método del pase 9).
+>
+> **Lo que agrega el pase 9:** el plano de **entrega** (sección 🚚), con **32 filas nuevas** y el
+> dato que lo ordena: el estudio de IOActive de mayo 2026 encuentra que **la categoría de código
+> que los modelos escriben peor es la de infraestructura y CI/CD** — Dockerfiles, Terraform,
+> pipelines. **El agente escribe peor justamente los archivos que controlan cómo llega todo lo
+> demás a producción.** Y, a diferencia de los pases 7 y 8, **este plano no es pasivo**: tiene
+> agentes reales, que están en `agents/top.md`.
 >
 > **Lo que agrega el pase 8:** el plano de **contexto** (sección 📥), con **30 filas nuevas y
 > 1 216 377★ combinadas que esta KB nunca había listado** — la ausencia más grande de su historia.
@@ -397,6 +405,187 @@ que sea la *canónica*. Un slug viejo escrito en una propuesta funciona hoy y en
 canonicalidad hay que cruzar con `search/repositories`** — y por eso los redirects no se registran
 como "muertes" ni como "hallazgos nuevos", sino como correcciones de slug.
 
+## 🚚 Entrega: del diff del agente al release verificado — **sección nueva (pase 9)**
+
+> **Por qué existe esta sección.** Los pases 6, 7 y 8 midieron tres planos: la **jaula** (dónde
+> corre el agente), el **costo** (qué paga por correr) y el **contexto** (qué lee). Faltaba el
+> cuarto y es el que el cliente firma: **qué prueba que lo que el agente escribió es seguro de
+> desplegar.** Este pase lo midió y encontró **32 repos que esta KB nunca había listado**.
+>
+> **El dato que ordena el plano:** el estudio de IOActive *The Security Gap in AI-Generated Code*
+> (mayo 2026; 27 modelos y herramientas, 730 prompts, 27 lenguajes, 219 categorías de
+> vulnerabilidad, prompts deliberadamente *sin* mencionar seguridad) encuentra que la categoría
+> **más** vulnerable no es el código de aplicación: es **el código de infraestructura y entrega —
+> Dockerfiles, Terraform, pipelines de CI/CD**. Es decir, **el agente escribe peor justamente los
+> archivos que controlan cómo llega todo lo demás a producción**.
+> ⚠️ **Las cifras de esa categoría están en conflicto entre fuentes y no se resuelven acá:** el
+> resumen del propio IOActive cita **70–97%** de tasa de vulnerabilidad y una reseña de DevOps.com
+> del mismo whitepaper cita **57,5% promedio** para infraestructura de despliegue. **El PDF
+> primario no es alcanzable desde este entorno** (`ioactive.com` no resuelve: fuera de los
+> dominios permitidos de la sesión). Se registran las dos cifras y el desacuerdo. **Cualquiera de
+> las dos sostiene la decisión de arquitectura; no hace falta elegir para actuar.**
+>
+> Dos datos que lo acompañan, también de búsqueda y no de fuente primaria: Veracode (informe
+> GenAI 2026) reporta **~44% de las tareas de generación de código introducen una vulnerabilidad
+> de riesgo** y una tasa de aprobación de seguridad de **56%, contra 55% del informe anterior** —
+> **un año sin mejora**; y Cycode reporta que **81% de las organizaciones no tiene visibilidad de
+> dónde y cómo se usa IA en su SDLC**, con 97% ya usando o pilotando asistentes.
+>
+> **Y el hallazgo de forma: este plano NO es pasivo.** Los pases 7 y 8 cerraron con la misma
+> conclusión —"la infraestructura parsea, indexa y cobra, pero nada decide"—. Acá eso **no se
+> cumple**, y la tendencia 23 queda corregida en `intel/trends.md`: hay agentes reales en el plano
+> de entrega, y están en `agents/top.md`.
+
+### Capa 1 — ¿el test prueba algo? (la pregunta que el agente no contesta solo)
+
+> Un agente que escribe código **también escribe los tests**, y un test escrito por quien escribió
+> el código tiende a pasar por construcción. **Mutation testing es la única técnica que responde
+> "¿este test detectaría un bug?" sin pedirle la respuesta al mismo modelo.** Es la capa barata y
+> la más salteada.
+
+| Repo | Licencia (archivo leído) | Stars | Último push | Por qué importa |
+|------|--------------------------|-------|-------------|-----------------|
+| [keploy/keploy](https://github.com/keploy/keploy) | **Apache-2.0** (11 341B) | 19969 | 2026-11-23 | Sandboxes de producción aislados para tests de API, integración y E2E: **genera el caso de prueba del tráfico real, no del criterio del modelo.** El más grande del plano y de origen **APAC (India)**. |
+| [stryker-mutator/stryker-js](https://github.com/stryker-mutator/stryker-js) | **Apache-2.0** (`master`, 11 358B) | 3417 | 2026-11-21 | Mutation testing para JS/TS. El stack donde más código escribe un agente hoy. |
+| [infection/infection](https://github.com/infection/infection) | **BSD-3-Clause** (`master`, 1513B) | 2276 | 2026-11-23 | Mutation testing para PHP. La licencia más permisiva de la capa. |
+| [hcoles/pitest](https://github.com/hcoles/pitest) | **Apache-2.0** (`master/LICENSE.txt`) | 1893 | 2026-11-16 | Mutation testing para la JVM. **La referencia del campo**: donde está el legacy del cliente bancario. |
+| [boxed/mutmut](https://github.com/boxed/mutmut) | **BSD-3-Clause** (1472B) | 1554 | 2026-11-19 | Mutation testing para Python. |
+| [sourcefrog/cargo-mutants](https://github.com/sourcefrog/cargo-mutants) | **MIT** (1069B) | 1412 | 2026-10-19 | Mutation testing para Rust. |
+
+> ⚠️ **Trampa de la capa — el único agente de generación de tests del vertical está dormido y es
+> copyleft.** [`qodo-ai/qodo-cover`](https://github.com/qodo-ai/qodo-cover) (ex Codium Cover) es
+> el proyecto citado en toda lista de "AI test generation": **5691★, pero `AGPL-3.0` (`LICENSE`
+> 34 524B leído) y sin push desde 2026-04-05 — siete meses y medio.** Es decir: la pieza que
+> debería cerrar esta capa **no se puede incorporar a un entregable sin análisis legal, y además
+> no se mantiene.** La capa se cubre con mutation testing clásico, que es permisivo y vivo.
+
+### Capa 2 — ¿la dependencia existe y es legítima?
+
+> El modo de falla propio de esta era: **el agente importa un paquete que no existe**, y alguien
+> registra ese nombre después. Tiene nombre —*slopsquatting*— y **no tiene herramienta**: ver
+> brechas, el repo más grande que se autodescribe así tiene **34★**.
+
+| Repo | Licencia (archivo leído) | Stars | Último push | Por qué importa |
+|------|--------------------------|-------|-------------|-----------------|
+| [anchore/grype](https://github.com/anchore/grype) | **Apache-2.0** (11 358B) | 13338 | 2026-11-20 | Escáner de vulnerabilidades sobre el SBOM que genera Syft. **Par natural de la pieza que esta KB ya listaba suelta.** |
+| [google/osv-scanner](https://github.com/google/osv-scanner) | **Apache-2.0** (11 359B) | 11603 | 2026-11-22 | Cliente de OSV.dev: cruza el lockfile contra la base de vulnerabilidades open source. **El chequeo más barato que existe contra una dependencia inventada.** |
+| [DependencyTrack/dependency-track](https://github.com/DependencyTrack/dependency-track) | **Apache-2.0** (`LICENSE.txt`) | 4507 | 2026-11-23 | Plataforma de inteligencia de componentes: **guarda los SBOM de todas las versiones y avisa cuando una dependencia vieja se vuelve vulnerable.** Es el único de la capa que responde "¿qué desplegamos hace seis meses que hoy es un problema?" — la pregunta exacta del artículo 14 del CRA. |
+| [oss-review-toolkit/ort](https://github.com/oss-review-toolkit/ort) | **Apache-2.0** (11 359B) | 2128 | 2026-11-23 | Análisis de **licencias** de toda la cadena de dependencias, con política declarativa. **La automatización de lo que esta KB hace a mano cada pase.** |
+
+> ⚠️ **Trampa de la capa:** [`renovatebot/renovate`](https://github.com/renovatebot/renovate)
+> (23 237★) es la herramienta estándar para que las dependencias se actualicen solas, y es
+> **AGPL-3.0**. Dos cosas la hacen difícil de ver: **la API la declara bien, pero el archivo de
+> licencia se llama `license` en minúsculas** —`LICENSE`, `LICENSE.md` y `COPYING` dan 404— así
+> que **la regla que esta KB adoptó en el pase 7 ("la licencia se lee del archivo") devuelve
+> "sin licencia" si no resuelve el nombre del archivo.** Ver la nota de método abajo. Como
+> servicio separado en CI es usable; **no se incorpora a un producto distribuible.**
+
+### Capa 3 — ¿qué entró al artefacto, y quién lo puso ahí?
+
+> Esta es la capa que la regulación ya toca. **CISA y socios publicaron el 2026-07-29 los
+> *2026 Minimum Elements for an SBOM*, que reemplazan la línea base NTIA de 2021** y agregan,
+> entre otros campos: **hash del componente, licencia del componente, nombre de la herramienta
+> que generó el SBOM y contexto de generación**, más **al menos un identificador procesable por
+> máquina por componente**. No es vinculante por sí misma; **la fuerza se la dan el procurement y
+> el CRA europeo.** Traducción práctica: **ya no alcanza con tener un SBOM, hay que poder decir
+> quién lo generó y en qué contexto** — que es exactamente la pregunta cuando el que escribió el
+> código fue un agente.
+
+| Repo | Licencia (archivo leído) | Stars | Último push | Por qué importa |
+|------|--------------------------|-------|-------------|-----------------|
+| [CycloneDX/cdxgen](https://github.com/CycloneDX/cdxgen) | **Apache-2.0** (`master`, 11 358B) | **excluido de la API de búsqueda** | — | Generador de SBOM CycloneDX multi-lenguaje. La alternativa a Syft cuando el cliente estandarizó en CycloneDX y no en SPDX. **Octava confirmación del falso negativo por repo en `search/repositories`**: vivo por `ls-remote`, licencia leída del archivo, estrellas no medibles desde este entorno y **se declaran no medidas en vez de estimarse**. |
+| [guacsec/guac](https://github.com/guacsec/guac) | **Apache-2.0** (11 347B) | 1581 | 2026-11-17 | Agrega SBOMs, attestations y metadatos de seguridad **en un grafo consultable**. Responde "¿qué de lo que corre en producción depende de este paquete?" en una consulta, no en una auditoría. |
+| [actions/attest-build-provenance](https://github.com/actions/attest-build-provenance) | **MIT** (1054B) | 1076 | 2026-08-21 | Procedencia de build firmada **desde el propio GitHub Actions**, sin montar infraestructura. **El camino de menor fricción para empezar**: una línea en el workflow. |
+| [in-toto/in-toto](https://github.com/in-toto/in-toto) | **Apache-2.0** (nota corta de 561B, © New York University) | 1056 | 2026-08-27 | El marco de integridad de cadena de suministro del que SLSA toma su modelo de attestations. **La API lo reporta `NOASSERTION`**: la licencia está en forma de nota breve, no en el texto completo. |
+| **[chainloop-dev/chainloop](https://github.com/chainloop-dev/chainloop)** | **Apache-2.0** (`LICENSE.md`, 11 358B) | **616** | 2026-11-23 | **La pieza del pase.** Se autodescribe como *"Agentic SDLC infrastructure… **signed records of what your AI coding agents and CI/CD pipelines did**, checked against policies as code"*: ingiere **sesiones de IA, SBOMs, VEX, SARIF y procedencia SLSA**, sobre Sigstore. **Es el único proyecto open source medido que trata "lo que hizo el agente" como evidencia firmable, y tiene 616★.** Contra el 81% de organizaciones sin visibilidad del uso de IA en su SDLC, **esta es la respuesta técnica y casi nadie la está mirando.** |
+| [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) | **Apache-2.0** (11 358B) | 610 | 2026-08-07 | Workflows reusables para alcanzar **SLSA Build L3** en Actions. 3 meses sin push: estable, no abandonado — el estándar al que sirve tampoco se mueve. |
+| [interlynk-io/sbomqs](https://github.com/interlynk-io/sbomqs) | **Apache-2.0** (11 343B) | 334 | 2026-11-09 | **Puntúa la calidad de un SBOM.** Chico y específico, y es el que contesta la pregunta que importa después de julio 2026: *¿nuestro SBOM cumple los mínimos, o es un archivo que existe?* |
+| [spdx/tools-python](https://github.com/spdx/tools-python) | **Apache-2.0** (11 357B) | 261 | **2026-03-13** | Tooling de referencia del formato SPDX. **8 meses sin push** — usable, no activo. |
+| [bomctl/bomctl](https://github.com/bomctl/bomctl) | **Apache-2.0** (11 358B) | 159 | **2025-11-20** | Operaciones sobre SBOMs (merge, split, diff) agnóstico de formato. **Un año exacto sin push.** Se lista porque cubre un hueco real; **no se propone como dependencia.** |
+
+> Las piezas que esta KB ya tenía y pertenecen a esta capa: **`anchore/syft`** (Apache-2.0, 9955★)
+> y **`sigstore/cosign`** (Apache-2.0, 6465★), listadas arriba en la capa transversal de seguridad.
+> La diferencia que introduce el pase 9 es que **dejan de ser "herramientas de seguridad" y pasan
+> a ser el mecanismo de prueba de un plano completo.**
+
+### Capa 4 — ¿qué está permitido desplegar? (la compuerta, no el consejo)
+
+> Un agente que abre PRs necesita un **no** que no dependa de que un humano esté mirando.
+> Las cuatro piezas son Apache-2.0 y las cuatro están vivas: **esta capa no tiene excusa de
+> licencia ni de mantenimiento.**
+
+| Repo | Licencia (archivo leído) | Stars | Último push | Por qué importa |
+|------|--------------------------|-------|-------------|-----------------|
+| [kyverno/kyverno](https://github.com/kyverno/kyverno) | **Apache-2.0** (11 358B) | 8373 | 2026-11-23 | Política para Kubernetes **en YAML, sin lenguaje nuevo**. El camino más corto a "esto no se despliega si no está firmado". |
+| [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) | **Apache-2.0** (`master`, 11 358B) | 4302 | 2026-11-21 | Admission controller de OPA para Kubernetes. Más potente que Kyverno y con la curva de Rego. |
+| [open-policy-agent/conftest](https://github.com/open-policy-agent/conftest) | **Apache-2.0** (nota corta de 646B) | 3299 | 2026-11-23 | **Tests de política contra archivos de configuración, en el pipeline, antes del cluster.** Es la compuerta que atrapa el Terraform que escribió el agente — la categoría que IOActive mide como la peor. La API lo reporta `NOASSERTION`. |
+| [sigstore/policy-controller](https://github.com/sigstore/policy-controller) | **Apache-2.0** (11 358B, archivo completo) | 183 | 2026-11-23 | Verifica **firmas y attestations** como condición de admisión. **Es el eslabón que convierte la capa 3 en un bloqueo real** y no en un informe. La API lo reporta `NOASSERTION` aunque el archivo es el texto Apache completo. |
+
+### Capa 5 — desplegar sin apostar todo
+
+| Repo | Licencia (archivo leído) | Stars | Último push | Por qué importa |
+|------|--------------------------|-------|-------------|-----------------|
+| [fluxcd/flagger](https://github.com/fluxcd/flagger) | **Apache-2.0** (11 358B) | 5436 | 2026-11-16 | Entrega progresiva (canary, blue/green, A/B) **con rollback automático por métricas**. CNCF. |
+| [argoproj/argo-rollouts](https://github.com/argoproj/argo-rollouts) | **Apache-2.0** (`master`, 11 353B) | 3626 | 2026-11-23 | Lo mismo en el ecosistema Argo, que es donde ya está el cliente si usa Argo CD. |
+| [open-feature/flagd](https://github.com/open-feature/flagd) | **Apache-2.0** (11 552B) | 1029 | 2026-11-23 | Evaluador de feature flags del estándar **OpenFeature** (CNCF). **La única pieza de flags del set sin carga de copyleft** — ver trampas. |
+
+> ⚠️ **Las dos plataformas de feature flags más citadas son copyleft, y los listados las presentan
+> como "open source" a secas:**
+> **[`Unleash/unleash`](https://github.com/Unleash/unleash)** — 14 337★, **AGPL-3.0** (`LICENSE`
+> 34 524B leído, "GNU AFFERO GENERAL PUBLIC LICENSE").
+> **[`flipt-io/flipt`](https://github.com/flipt-io/flipt)** — 4953★, **el `LICENSE` de `main` es
+> el texto completo de la GPL-3.0** (35 150B) y **la API lo reporta `NOASSERTION`**. Se registra
+> lo que dice el archivo hoy; el proyecto cambió de licencia más de una vez y **cualquier
+> referencia de memoria a su licencia anterior está vencida.**
+> Para una oferta gestionada por Globant, **la salida limpia de esta capa es `flagd`** (Apache-2.0,
+> estándar CNCF) y, si hace falta UI, construirla encima en vez de adoptar la de Unleash.
+
+### Capa 6 — ¿la entrega mejoró o sólo se aceleró?
+
+> **El hallazgo regulatorio del plano tiene su espejo en la medición.** La investigación de DORA
+> asocia mayor adopción de IA con **más throughput y más inestabilidad al mismo tiempo**
+> (encuesta *State of AI-assisted Software Development* 2025, ~5000 profesionales; el informe de
+> ROI de abril 2026 modela encima de eso, con una curva J y un "impuesto de inestabilidad" que es
+> **modelo, no medición**, y conviene no citarlo como dato). **La consecuencia operativa es
+> directa: si no hay línea base de las cuatro métricas antes de meter agentes, no hay forma de
+> distinguir "entregamos más" de "entregamos más y rompemos más".**
+
+| Repo | Licencia (archivo leído) | Stars | Último push | Por qué importa |
+|------|--------------------------|-------|-------------|-----------------|
+| [apache/devlake](https://github.com/apache/devlake) | **Apache-2.0** (25 182B) | 3205 | 2026-11-23 | Ingiere Git, Jira, GitHub, GitLab y CI y calcula **las métricas DORA** sobre datos propios. Proyecto **graduado de la ASF**: gobernanza de fundación, no de vendor. **Es la línea base que hay que tomar antes del primer agente, no después.** |
+| [dora-team/fourkeys](https://github.com/dora-team/fourkeys) | **Apache-2.0** (11 359B) | 2234 | **2024-01-23 — ARCHIVADO** | La implementación de referencia de las Four Keys, de Google. **`archived: true`, sin push desde enero de 2024.** Se lista para que nadie la proponga: **la referencia canónica para medir performance de entrega lleva casi dos años muerta, justo mientras la industria discute si los agentes la mejoran.** Usar DevLake. |
+
+### Capa 0 — el pipeline mismo, cuando el cliente no puede usar un SaaS
+
+| Repo | Licencia (archivo leído) | Stars | Último push | Por qué importa |
+|------|--------------------------|-------|-------------|-----------------|
+| [tektoncd/pipeline](https://github.com/tektoncd/pipeline) | **Apache-2.0** (11 359B) | 9113 | 2026-11-23 | CI/CD nativo de Kubernetes, CD Foundation. **Los pasos son contenedores**: es el runner que ya encaja con la jaula del pase 6. |
+| [woodpecker-ci/woodpecker](https://github.com/woodpecker-ci/woodpecker) | **Apache-2.0** (11 380B) | 8274 | 2026-11-23 | CI liviano self-hosted. **El par natural de Gitea** cuando el requisito es "el código no sale de acá" — EMEA soberano y cliente regulado. |
+| [github/codeql-action](https://github.com/github/codeql-action) | **MIT** (1064B) | 1672 | 2026-11-23 | SAST en el pipeline. **MIT y mantenido por GitHub** — la alternativa permisiva a Semgrep, que es LGPL-2.1 (ver trampa arriba). ⚠️ La Action es MIT; **el motor CodeQL tiene sus propios términos de uso.** |
+| [ossf/allstar](https://github.com/ossf/allstar) | **Apache-2.0** (11 358B) | 1467 | 2026-11-23 | Aplica políticas **sobre la configuración del repositorio** (branch protection, permisos de Actions). **La compuerta de la capa 4, pero para el forge en vez del cluster:** es lo que impide que un agente con permisos de admin se desactive sus propios controles. |
+
+### ⚠️ Nota de método del pase: **leer el archivo de licencia exige resolver primero su nombre**
+
+El pase 7 estableció la regla *"la licencia se lee del archivo, no del badge ni del campo de la
+API"*. Este pase encontró **dos casos donde la regla, aplicada literalmente, devuelve un falso
+"sin licencia"**:
+
+| Repo | `LICENSE` | Nombre real del archivo | Licencia real |
+|------|-----------|-------------------------|---------------|
+| `renovatebot/renovate` | **404** | **`license`** (minúsculas) | AGPL-3.0 (34 523B) |
+| `backnotprop/plannotator` | **404** | **`LICENSE-APACHE` + `LICENSE-MIT`** | **Doble licencia Apache-2.0 **o** MIT** — y **la API sólo reporta `Apache-2.0`**, ocultando que el cliente puede elegir MIT |
+
+**La regla corregida, que esta KB adopta desde este pase:** antes de concluir nada, probar
+`LICENSE`, `LICENSE.md`, `LICENSE.txt`, `COPYING`, **`license` en minúsculas** y **`LICENSE-*`**,
+**en `main` y en `master`**; y **si aparece más de un archivo `LICENSE-*`, es doble licencia y hay
+que decirlo**, porque el campo de la API colapsa la elección a una sola opción.
+
+**Y el contador del pase, que va en la dirección contraria a lo esperado: de 32 repos medidos,
+la API `search/repositories` declaró de menos en 4 casos** (`in-toto`, `conftest`,
+`sigstore/policy-controller` y `flipt` → `NOASSERTION` con archivo de licencia real) **y de más en
+ninguno.** Sumado a `plannotator`, el patrón es consistente: **la API se equivoca por omisión,
+no por invención.** Eso importa porque el escáner de licencias del cliente lee ese mismo campo.
+
 ## Brechas medidas, no silenciadas
 
 Consultas corridas sobre `search/repositories` el **2026-11-23**.
@@ -421,6 +610,16 @@ Una brecha informada es información; el silencio parece cobertura.
 | `RAG evaluation retrieval quality stars:>=500` | **0 — falso cero** | **Nuevo (pase 8).** La consulta corta `ragas` devuelve `vibrantlabsai/ragas` con 16 406★ y Apache-2.0. **Segunda confirmación de la lección de método del pase 7: las consultas largas y descriptivas producen ceros falsos.** Se registra el falso cero junto con su corrección para que la lección quede en el archivo, no en la memoria del pase |
 | Licencia de pesos en algún campo de la API | **ninguno** | **Nuevo (pase 8).** `marker` y `surya` reportan `Apache-2.0` en `license.spdx_id` y sus pesos son OpenRAIL-M con umbral de USD 5M. **No existe campo de API que exponga la licencia de los pesos**, así que ningún escáner automático de licencias —el que va a correr el cliente— la va a ver |
 | Columnas de IA en el estándar FOCUS | **abiertas, no liberadas** | Identidad de modelo y consumo de tokens (#2018), tokens cacheados vs no cacheados (#2099) y tiers de procesamiento (#2437) siguen siendo **issues abiertos**; el PR de AI Model Billing (#2605) sigue abierto. **El vocabulario estándar para facturar tokens todavía no existe en una versión liberada** — se registra como brecha del *estándar*, no de los repos |
+| `mutation testing agent stars:>=500` | **0** | **Nuevo (pase 9).** Nadie construyó un agente que decida *qué mutar*. La técnica que contesta "¿este test sirve?" existe y es permisiva, pero **la decisión sigue siendo manual** |
+| `slopsquatting stars:>=10` | **8, el mayor con 34★** | **Nuevo (pase 9).** El modo de falla con nombre propio de esta era —el agente importa un paquete que no existe y alguien lo registra después— **no tiene herramienta con tracción**: `sloppy-joe` (34★), `slopcop` (16★), `slopcheck` (11★), `deployproof` (13★). **Quinta confirmación de la tendencia 12**: categoría real, vacío de producto, y la prensa lo llena con repos de dos dígitos. El chequeo que sí funciona hoy es `osv-scanner` sobre el lockfile |
+| `hallucinated package stars:>=50` | **1** | **Nuevo (pase 9).** `Unclecheng-li/DeepSec` (518★, MIT), y no es específico del problema. Confirma lo anterior por el otro nombre de la misma cosa |
+| `CRA cyber resilience act sbom stars:>=50` | **1, y es una awesome-list** | **Nuevo (pase 9).** `cra-compliance-lab/awesome-cra-compliance` (58★, `NOASSERTION`). **Un reglamento europeo con obligaciones de reporte vigentes desde el 2026-09-11 no tiene ni una herramienta open source con ≥50★ que lo nombre.** Es la brecha con fecha de vencimiento más clara que mide esta KB: ver `intel/market.md` → EMEA |
+| `entrega continua agente stars:>=20` | **0** | **Nuevo (pase 9).** Sexto pase consecutivo con cero en español |
+| `pruebas automaticas IA stars:>=20` | **0** | **Nuevo (pase 9).** Ídem |
+| `cadena de suministro software stars:>=10` | **0** | **Nuevo (pase 9).** Ídem, con piso 10★ |
+| `agente despliegue stars:>=10` | **0** | **Nuevo (pase 9).** Ídem |
+| `SBOM español stars:>=5` | **0** | **Nuevo (pase 9).** Con piso **5★**. **El plano de entrega tampoco habla español, y es el plano donde el auditor del cliente sí lo hace** |
+| `release agent stars:>=1000` / `test generation agent stars:>=1000` | **7 y 1 — todos colisión de keyword** | **Nuevo (pase 9).** `release agent` devuelve awesome-lists y un panel de ops; `test generation agent` devuelve **un repo de CAD**. **El falso positivo por colisión es tan peligroso como el falso cero**: una consulta que "devuelve resultados" puede no tener ninguno del dominio buscado |
 
 ---
 *Ver también: `verticals/solutions.md` para plataformas verticales completas y

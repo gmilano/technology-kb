@@ -12,6 +12,140 @@ updated: 2026-11-23
 > agentes y skills ver `agents/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 9 *(cuarto pase del día; pase 6 14:58 UTC, pase 7 15:56 UTC, pase 8 16:57 UTC)*
+
+**Línea base nueva: el plano de entrega — del diff del agente al release verificado.
+32 repos, ninguno listado antes en esta KB.** Es el cuarto plano que mide esta KB (jaula → costo →
+contexto → entrega) y el primero que **la regulación ya toca con fechas en firme**.
+
+### El dato que ordena el plano, y el conflicto que no se resuelve
+
+El whitepaper de IOActive *The Security Gap in AI-Generated Code* (mayo 2026; **27 modelos y
+herramientas, 730 prompts, 27 lenguajes, 219 categorías de vulnerabilidad**, prompts
+deliberadamente **sin** mencionar seguridad) encuentra que la categoría de código más vulnerable
+**no es la de aplicación**: es **infraestructura y DevOps — Dockerfiles, Terraform, pipelines de
+CI/CD**.
+
+⚠️ **Las cifras están en conflicto entre fuentes y se registran sin resolver:** el resumen de
+IOActive cita **70–97%** de tasa de vulnerabilidad para esa categoría; una reseña de DevOps.com del
+**mismo** whitepaper cita **57,5% promedio** para infraestructura de despliegue. **El PDF primario
+no es alcanzable desde este entorno** (`ioactive.com` no resuelve: fuera de los dominios permitidos
+de la sesión), así que no hay forma de dirimirlo acá. **Las dos cifras sostienen la misma decisión
+de arquitectura**, de modo que el desacuerdo no bloquea nada; se deja anotado para que nadie lo
+cite como número redondo en una propuesta.
+
+Acompañan, también de búsqueda y no de fuente primaria:
+- **Veracode, informe GenAI 2026:** ~**44%** de las tareas de generación introducen una
+  vulnerabilidad de riesgo; tasa de aprobación de seguridad **56%, contra 55%** del informe
+  anterior — **un año sin mejora medible**.
+- **Cycode 2026:** **97%** de las organizaciones ya usan o pilotean asistentes de código y **81%
+  no tiene visibilidad de dónde y cómo se usa IA en su SDLC.**
+- **DORA:** mayor adopción de IA se asocia con **más throughput y más inestabilidad a la vez**
+  (encuesta *State of AI-assisted Software Development* 2025, ~5 000 profesionales). El informe de
+  ROI de abril 2026 construye encima una curva J y un "impuesto de inestabilidad" que son
+  **modelo, no medición**: no citarlos como dato.
+
+**La lectura conjunta es incómoda y es la venta:** el agente escribe peor justamente los archivos
+que controlan cómo llega todo lo demás a producción, entrega más rápido, rompe más seguido, y
+cuatro de cada cinco organizaciones no pueden decir qué parte de su código lo escribió una IA.
+
+### La regulación le puso fecha a este plano
+
+| Fecha | Qué | Estado hoy (2026-11-23) |
+|-------|-----|-------------------------|
+| **2026-07-29** | **CISA y socios publican los *2026 Minimum Elements for an SBOM***, reemplazando la línea base NTIA de 2021 | **Publicado.** Agrega, entre otros, **hash del componente, licencia del componente, nombre de la herramienta que generó el SBOM y contexto de generación**, más **al menos un identificador procesable por máquina por componente**. **No es vinculante**: la fuerza se la dan el procurement y el CRA |
+| **2026-09-11** | **CRA europeo: obligaciones de reporte en vigor** (Reglamento (UE) 2024/2847) | **VIGENTE.** Art. 14: **alerta temprana a las 24 h**, notificación a las **72 h**, informe final a los **14 días**. Plataforma única de reporte de ENISA operativa. **Alcanza a productos ya en el mercado** (art. 69(3)) |
+| **2027-12-11** | **CRA: obligación de SBOM legible por máquina** (Anexo I, Parte II, punto 1) | Pendiente. Cubre **al menos las dependencias de primer nivel** |
+
+**El efecto práctico del 11-sep-2026 no es el SBOM: es el reloj de 24 horas.** Para emitir una
+alerta temprana en un día hay que saber, sin investigar, qué componentes hay en el artefacto que
+está en producción y quién los puso ahí. **Ese es exactamente el inventario que `dependency-track`
+mantiene y que `chainloop` firma.**
+
+### Los 32 repos, por capa (licencia leída del archivo, en la rama correcta)
+
+| Capa | Repos |
+|------|-------|
+| **1 — ¿el test prueba algo?** | `keploy` (19 969★, Apache-2.0, **India**), `stryker-js` (3 417★, Apache-2.0), `infection` (2 276★, **BSD-3**), `pitest` (1 893★, Apache-2.0), `mutmut` (1 554★, **BSD-3**), `cargo-mutants` (1 412★, **MIT**) |
+| **2 — ¿la dependencia existe?** | `grype` (13 338★), `osv-scanner` (11 603★), `dependency-track` (4 507★), `ort` (2 128★) — **las cuatro Apache-2.0** |
+| **3 — evidencia firmada** | `cdxgen` (API-excluido), `guac` (1 581★), `attest-build-provenance` (1 076★, MIT), `in-toto` (1 056★), **`chainloop` (616★)**, `slsa-github-generator` (610★), `sbomqs` (334★), `spdx/tools-python` (261★, 8 meses quieto), `bomctl` (159★, **1 año quieto**) |
+| **4 — compuerta de política** | `kyverno` (8 373★), `gatekeeper` (4 302★), `conftest` (3 299★), `sigstore/policy-controller` (183★) — **las cuatro Apache-2.0 y vivas** |
+| **5 — desplegar sin apostar** | `flagger` (5 436★), `argo-rollouts` (3 626★), `flagd` (1 029★) — Apache-2.0 |
+| **6 — ¿mejoró la entrega?** | `apache/devlake` (3 205★, Apache-2.0, **graduado de la ASF**), `fourkeys` (2 234★, **ARCHIVADO desde 2024-01-23**) |
+| **0 — el pipeline propio** | `tektoncd/pipeline` (9 113★), `woodpecker` (8 274★), `codeql-action` (1 672★, MIT), `allstar` (1 467★) |
+
+### La pieza del pase tiene 616 estrellas
+
+[`chainloop-dev/chainloop`](https://github.com/chainloop-dev/chainloop), Apache-2.0 (`LICENSE.md`,
+11 358B), push de hoy. Su propia descripción: *"Agentic SDLC infrastructure… **signed records of
+what your AI coding agents and CI/CD pipelines did**, checked against policies as code… AI
+sessions, SBOMs, VEX, SARIF and SLSA provenance, built on Sigstore."*
+
+**Es el único proyecto open source medido que trata "lo que hizo el agente" como evidencia
+firmable.** Contra el 81% de organizaciones sin visibilidad del uso de IA en su SDLC y contra un
+reloj regulatorio de 24 horas, **esta es la respuesta técnica, y tiene 616 estrellas.** Se registra
+el contraste tal cual: **la madurez de un plano no se lee en las estrellas de sus piezas.**
+
+### La regla de licencias de esta KB cambia otra vez: **primero hay que resolver el nombre del archivo**
+
+El pase 7 estableció *"la licencia se lee del archivo, no del badge ni de la API"*. **Dos repos de
+este pase rompen la regla aplicada literalmente:**
+
+| Repo | `LICENSE` | Archivo real | Licencia real |
+|------|-----------|--------------|---------------|
+| `renovatebot/renovate` (23 237★) | **404** | **`license`**, en minúsculas | **AGPL-3.0** (34 523B) |
+| `backnotprop/plannotator` (14 626★) | **404** | **`LICENSE-APACHE` + `LICENSE-MIT`** | **Doble licencia Apache-2.0 *o* MIT** |
+
+**Regla corregida, vigente desde este pase:** probar `LICENSE`, `LICENSE.md`, `LICENSE.txt`,
+`COPYING`, **`license` en minúsculas** y **`LICENSE-*`**, en **`main` y `master`**; y **si hay más
+de un `LICENSE-*`, es doble licencia y hay que decirlo** — el campo de la API colapsa la elección a
+una sola opción y, en el caso de `plannotator`, **esconde que el cliente puede elegir MIT**.
+
+### El contador de la API va en la dirección contraria a la del pase 8
+
+De los 32 repos medidos, **`search/repositories` declaró de menos en 4** —`in-toto`, `conftest`,
+`sigstore/policy-controller` y `flipt` devuelven `NOASSERTION` con archivo de licencia real— **y de
+más en ninguno.** Sumado a `plannotator`, el patrón de este pase es nítido: **la API se equivoca
+por omisión, no por invención.** Importa porque el escáner de licencias que va a correr el cliente
+lee ese mismo campo, y por omisión **no bloquea: deja pasar.**
+
+### Copyleft donde menos conviene: la capa de feature flags
+
+**Las dos plataformas de feature flags más citadas del mercado son copyleft**, y los listados las
+presentan como "open source" a secas: **`Unleash/unleash`** (14 337★, **AGPL-3.0**, archivo de
+34 524B) y **`flipt-io/flipt`** (4 953★, **el `LICENSE` de `main` es el texto completo de la
+GPL-3.0**, 35 150B, que la API reporta `NOASSERTION`). Como los feature flags son **la** forma
+estándar de desplegar código escrito por un agente sin apostar todo, la trampa cae justo en la
+capa de mitigación. Salida permisiva medida: **`open-feature/flagd`** (Apache-2.0, estándar CNCF).
+
+### Dos slugs canónicos corregidos
+
+| Slug que circula | Canónico medido | Evidencia |
+|------------------|-----------------|-----------|
+| `apache/incubator-devlake` | **`apache/devlake`** | Mismo HEAD `aff36620…`; **graduó de la incubadora de la ASF**. El slug viejo responde a `ls-remote` y **devuelve 422 en búsqueda** |
+| `qodo-ai/pr-agent`, `Codium-ai/pr-agent` | **`The-PR-Agent/pr-agent`** | Mismo HEAD `48edc526…`; ver `agents/trending.md` para la historia de licencia |
+
+### Muertos y dormidos de este plano, medidos
+
+| Repo | Estado |
+|------|--------|
+| `dora-team/fourkeys` (2 234★) | **ARCHIVADO**, último push **2024-01-23** |
+| `qodo-ai/qodo-cover` (5 691★, **AGPL-3.0**) | Sin push desde **2026-04-05** — 7,5 meses |
+| `bomctl/bomctl` (159★) | Sin push desde **2025-11-20** — un año exacto |
+| `spdx/tools-python` (261★) | Sin push desde **2026-03-13** — 8 meses |
+| `actions/attest-build-provenance` (1 076★) | Sin push desde 2026-08-21 — **estable, no muerto**: el estándar al que sirve tampoco se mueve |
+| `slsa-framework/slsa-github-generator` (610★) | Sin push desde 2026-08-07 — ídem |
+| `qodo-ai/open-aware` (503★), `qodo-ai/qodo-ci` (27★) | Sin push desde 2025-10-29 y 2025-03-13 |
+
+### La brecha con fecha de vencimiento
+
+`CRA cyber resilience act sbom stars:>=50` devuelve **un (1) repositorio**, y es una **awesome-list**
+(`cra-compliance-lab/awesome-cra-compliance`, 58★, `NOASSERTION`). **Un reglamento europeo con
+obligaciones de reporte vigentes desde hace diez semanas no tiene ni una herramienta open source
+con ≥50★ que lo nombre.** Es la brecha más accionable que haya medido esta KB: no es un hueco
+especulativo, **es un hueco con artículo, fecha y plazo de 24 horas.** Ver `intel/market.md` → EMEA
+y `compose/patterns.md` → Receta 16.
+
 ## 2026-11-23 — pase 8 *(tercer pase del día; el pase 6 cerró 14:58 UTC y el pase 7 15:56 UTC)*
 
 **Línea base nueva: el plano de contexto — cómo entra el material del cliente.**

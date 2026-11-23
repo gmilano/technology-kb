@@ -9,12 +9,38 @@ updated: 2026-11-23
 > Agentes y harnesses open source para ingeniería de software. Foco: MIT / Apache 2.0 / BSD.
 > **Toda fila re-verificada el 2026-11-23** (pase 6): existencia por `git ls-remote`, estrellas /
 > `pushed_at` / `archived` por `search/repositories`, y **licencia leída del archivo de licencia**,
-> no del badge ni del campo de la API. **32 filas reales, cero filas de ejemplo.**
+> no del badge ni del campo de la API. **40 filas reales, cero filas de ejemplo** (32 del pase 6 + **8 agregadas en el pase 9**).
 >
 > **Las 28 filas del pase anterior siguen vivas: cero muertes en 48h.** Lo que cambió este pase
 > son **4 agregados**, y uno de ellos es grande: `NousResearch/hermes-agent` con **265 593★** nunca
 > había sido listado en esta KB. Era el tercer repo del vertical por estrellas y no estaba.
 
+> **Nota del pase 9 (2026-11-23, cuarto pase del día): este archivo vuelve a crecer, y crece
+> mucho — 8 filas nuevas, la mayor incorporación desde el pase 6.** El pase 9 midió el plano de
+> **entrega** (del diff del agente al release) y, a diferencia de los pases 7 y 8, **encontró
+> agentes ahí**: `opensre` (14 719★, *"the open-source agent for CI/CD reliability"*) y
+> `HolmesGPT` (3 965★, **CNCF Sandbox**). **La conclusión de los dos pases anteriores —"la
+> infraestructura es pasiva, nada decide"— no se cumple en este plano, y la tendencia 23 queda
+> corregida en `intel/trends.md` en vez de repetida.**
+>
+> Y volvió a aparecer el modo de falla de método del pase 6: **`alibaba/open-code-review`, con
+> 55 640★, nunca había estado listado.** Es el agente de code review más grande del vertical, es
+> Apache-2.0, es de Alibaba y su arquitectura es **híbrida —pipelines determinísticos + agente
+> LLM—**, que es exactamente la forma correcta contra el dato central del pase: **el código que
+> los modelos escriben peor es el de infraestructura y CI/CD** (IOActive, mayo 2026). Lo mismo con
+> `pbakaus/impeccable` (115 489★). **Dos repos de seis cifras y cinco cifras altas invisibles para
+> la consulta "coding agent": el filtro de categoría sigue siendo el principal productor de
+> ausencias de esta KB, y van tres pases seguidos.**
+>
+> La tercera incorporación es documental: **`PR-Agent` cambió de dueño y de licencia dos veces, y
+> las dos aflojando** (AGPL-3.0 → Apache-2.0 → MIT), con el slug canónico ahora en
+> `The-PR-Agent/pr-agent`. **Es el primer contraejemplo medido de la tendencia 8** ("la mitad del
+> vertical no es open source y se lista como si lo fuera"): acá el movimiento fue hacia afuera del
+> vendor, no hacia adentro.
+>
+> **No se re-midieron las 32 filas del pase 6**, por la misma razón que en los pases 7 y 8: a un
+> día de distancia se mide ruido, no serie. Las 32 siguen publicadas con la fecha de su medición.
+>
 > **Nota del pase 7 (2026-11-23, segundo pase del día):** este archivo **no se re-midió** en el
 > pase 7. Las 32 filas de abajo se verificaron a las 14:58 UTC de hoy en el pase 6; volver a
 > medirlas una hora después da ruido, no serie. El pase 7 agregó un plano distinto —**costo**—
@@ -57,6 +83,7 @@ updated: 2026-11-23
 | codex | [openai/codex](https://github.com/openai/codex) | Apache-2.0 | 136215 | 2026-11-23 | Coding agent de terminal de OpenAI. El CLI es Apache-2.0; la app de escritorio **no** es open source. |
 | **orca** | [stablyai/orca](https://github.com/stablyai/orca) | MIT | **134037** | 2026-11-23 | **Flota de agentes con tu propia suscripción** (Claude Code, Codex, Grok). Cada agente en su propio git worktree, disparable desde Slack / Linear / GitHub. **El crecimiento más violento que mide esta KB: 35 500★ en agosto (ciclo 4) → 134 037★ hoy, 3.8x en 3 meses.** El ciclo 5 no lo listó. Es la pieza correcta para migraciones paralelas multi-repo. |
 | **paperclip** | [paperclipai/paperclip](https://github.com/paperclipai/paperclip) | MIT | **116192** | 2026-11-23 | **NUEVO.** Server Node.js + UI React que **orquesta un equipo de agentes para operar un negocio**. Postgres embebido, soporte Docker, suite de tests, >2700 PRs mergeados: es herramienta, no demo. `LICENSE` en rama `master` (no `main`) — MIT real, 1068B. La capa "management de agentes" que faltaba entre harness y workflow. |
+| **impeccable** | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | Apache-2.0 | **115489** | 2026-11-23 | **NUEVO.** *"The design vocabulary for your coding agent… **catch AI slop before it ships**"*. Rust. **No es un agente ejecutable: es un paquete de vocabulario y skills de revisión**, el análogo de `superpowers` para el eje diseño/calidad, y se lista con el mismo criterio con que se lista aquél. Que un repo de 115k★ no estuviera en esta KB al noveno pase repite el patrón de `hermes-agent`: **el filtro "coding agent" no lo devuelve.** |
 | browser-use | [browser-use/browser-use](https://github.com/browser-use/browser-use) | MIT | 121834 | 2026-11-22 | El acceso de agentes al browser más usado del ecosistema. |
 | claude-mem | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Apache-2.0 | 119236 | 2026-11-23 | Contexto persistente entre sesiones: captura, comprime e inyecta. Multi-harness. |
 | gemini-cli | [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) | Apache-2.0 | 109021 | 2026-11-23 | Agente de terminal de Google. Cliente abierto, backend cerrado. |
@@ -67,6 +94,7 @@ updated: 2026-11-23
 | CrewAI | [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) | MIT | 61198 | 2026-11-23 | Orquestación multiagente por roles. El framework multiagente más adoptado. |
 | chrome-devtools-mcp | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | Apache-2.0 | 58974 | 2026-11-23 | Chrome DevTools expuesto a agentes por MCP. **Mantenido por el equipo de DevTools**, no por un tercero. |
 | goose | [block/goose](https://github.com/block/goose) | Apache-2.0 | **56.9k (página)** | — | Agente extensible de Block, donado a la Agentic AI Foundation (Linux Foundation). `LICENSE` leído: Apache-2.0 (11340B). Mismo caso que OpenHands: vivo por `ls-remote`, excluido de la API de búsqueda. |
+| **open-code-review** | [alibaba/open-code-review](https://github.com/alibaba/open-code-review) | Apache-2.0 | **55640** | 2026-11-23 | **NUEVO — y es el agente de review más grande del vertical.** Go, de Alibaba, *"battle-tested at Alibaba's scale"*. **Arquitectura híbrida y ese es el punto: pipelines determinísticos + agente LLM**, con comentarios a nivel de línea y un ruleset multi-lenguaje propio (NPE, thread-safety, XSS, SQL injection). Compatible con APIs de OpenAI y Anthropic. **Es la respuesta de ingeniería al dato de IOActive**: lo determinístico atrapa lo que el modelo escribe mal, el modelo explica el resto. Evidencia **APAC** fuerte y de primera línea. |
 | nanobot | [HKUDS/nanobot](https://github.com/HKUDS/nanobot) | MIT | 50287 | 2026-11-23 | Agente personal liviano, self-hosted. Laboratorio HKU (APAC). |
 | aider | [Aider-AI/aider](https://github.com/Aider-AI/aider) | Apache-2.0 | 50226 | **2026-05-22** | AI pair programming en terminal. **Seis meses exactos sin push** (medido dos pases seguidos, misma fecha): excelente referencia, **no una dependencia que se mueva**. |
 | codebase-memory-mcp | [DeusData/codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) | MIT | 49067 | 2026-11-21 | Code intelligence local para agentes vía MCP. |
@@ -77,10 +105,25 @@ updated: 2026-11-23
 | agent-desktop | [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop) | Apache-2.0 | 26293 | 2026-11-23 | Computer-use por árbol de accesibilidad del SO, no por píxeles. **El de mayor velocidad relativa del set: +461★ en 48h.** |
 | pydantic-ai | [pydantic/pydantic-ai](https://github.com/pydantic/pydantic-ai) | MIT | 21351 | 2026-11-23 | Agentes con salida tipada y validada. La puerta de entrada cuando el requisito es "que no alucine el schema". |
 | SWE-agent | [SWE-agent/SWE-agent](https://github.com/SWE-agent/SWE-agent) | MIT | 20855 | 2026-11-16 | Agente académico de resolución de issues (Princeton). La referencia reproducible. |
+| **PR-Agent** | [The-PR-Agent/pr-agent](https://github.com/The-PR-Agent/pr-agent) | **MIT** (1070B, © 2026 The PR Agent) | **16593** | 2026-11-23 | **NUEVO, y con la historia de licencia más limpia que midió esta KB.** Revisor de PRs. **Tres slugs comparten HEAD** (`Codium-ai` → `qodo-ai` → `The-PR-Agent`) y la licencia recorrió **AGPL-3.0 (v0.35.0) → Apache-2.0 (v0.36.0–v0.39.0) → MIT (v0.40.0 en adelante)**: dos relicenciamientos, **los dos aflojando**. Su propia descripción marca la separación: *"The Original Open-Source PR Reviewer. **This project is not the Qodo free tier.**"* Usar el slug `The-PR-Agent`. |
+| **opensre** | [Tracer-Cloud/opensre](https://github.com/Tracer-Cloud/opensre) | Apache-2.0 | **14719** | 2026-11-23 | **NUEVO — y es el que rompe el patrón de dos pases.** *"The open-source agent for CI/CD reliability"*. Los pases 7 y 8 cerraron diciendo que la infraestructura es pasiva; **en el plano de entrega eso es falso: hay un agente de 14.7k★ cuyo trabajo es la confiabilidad del pipeline.** Es la pieza que mira el CI que el agente de código acaba de modificar. |
+| **plannotator** | [backnotprop/plannotator](https://github.com/backnotprop/plannotator) | **Apache-2.0 *o* MIT** (doble licencia: `LICENSE-APACHE` + `LICENSE-MIT`; la API sólo reporta Apache) | **14626** | 2026-11-23 | **NUEVO. No es un agente: es la consola del humano que supervisa agentes** — planear, anotar, revisar código y devolver todo el feedback de una. Se lista acá porque esta KB sostiene desde el pase 4 que **sin superficie de human-in-the-loop no hay producción**, y ésta es la primera pieza medida que la cubre de punta a punta. **Doble licencia: el cliente puede elegir MIT**, dato que el campo de la API esconde. |
+| **hunk** | [modem-dev/hunk](https://github.com/modem-dev/hunk) | MIT (1068B) | **9880** | 2026-11-22 | **NUEVO.** *"Review-first terminal diff viewer for agentic coders"*. Herramienta, no agente. Resuelve un problema concreto y creciente: **cuando una flota de agentes abre diez PRs por hora, el cuello de botella es el ojo humano sobre el diff.** |
 | **Orkas** | [Orkas-AI/Orkas](https://github.com/Orkas-AI/Orkas) | MIT | **9555** | 2026-11-23 | **NUEVO.** App de escritorio **local-first** (macOS/Windows): un agente "Commander" descompone objetivos y coordina 16 especialistas internos **más** CLIs externos (Claude Code, Codex). Datos en la máquina por defecto. **Es la única pieza del set diseñada para el requisito "nada sale del equipo"** — relevante directo para EMEA soberano y para cliente regulado. |
 | claude-code-security-review | [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) | MIT | 7063 | **2026-02-11** | GitHub Action de revisión de seguridad. **Dormido 9+ meses**: útil como patrón de Action, no como herramienta mantenida. |
+| **HolmesGPT** | [HolmesGPT/holmesgpt](https://github.com/HolmesGPT/holmesgpt) | Apache-2.0 (`master`, 10 209B) | **3965** | 2026-11-23 | **NUEVO. Agente de SRE y es proyecto Sandbox de la CNCF** — respaldo de fundación, no de vendor. Investiga alertas y responde "¿por qué se rompió esto?" contra la observabilidad existente. **Es el otro extremo del plano de entrega**: `opensre` cuida el pipeline, HolmesGPT cuida lo que ya está corriendo. |
+| **twinny** | [twinnydotdev/twinny](https://github.com/twinnydotdev/twinny) | MIT | **3708** | 2026-11-21 | **NUEVO.** Asistente de codificación para VS Code —agente, autocompletado, chat, ediciones y reviews— con **modelos locales u hospedados**: *"Your models, your infrastructure"*. Chico, pero **es de los pocos del set que se instala en un entorno sin salida a internet**, que es el requisito de EMEA soberano y de cliente regulado. |
 
 ## ⚠️ Verificar antes de usar — trampas medidas
+
+### Nuevas en el pase 9 (2026-11-23) — el plano de entrega
+
+| Repo | Lo que parece | Lo que es realmente |
+|------|---------------|---------------------|
+| [qodo-ai/qodo-cover](https://github.com/qodo-ai/qodo-cover) | 5 691★, "el agente de generación de tests", primera opción en toda lista de *AI test generation* | **`AGPL-3.0`** (`LICENSE` 34 524B leído, "GNU AFFERO GENERAL PUBLIC LICENSE") **y sin push desde 2026-04-05: siete meses y medio dormido.** Es decir, la única pieza que cerraría la capa de "¿el test prueba algo?" **no se puede incorporar a un entregable sin análisis legal y además no se mantiene.** El resto de la organización `qodo-ai` cuenta la misma historia: `open-aware` (503★) sin push desde 2025-10-29, `qodo-ci` (27★) sin push desde 2025-03-13. **La capa se cubre con mutation testing clásico** (Stryker, PIT, mutmut, Infection, cargo-mutants — Apache/BSD/MIT, todos vivos): ver `repos/foundations.md` → 🚚 capa 1. |
+| [Unleash/unleash](https://github.com/Unleash/unleash) y [flipt-io/flipt](https://github.com/flipt-io/flipt) | 14 337★ y 4 953★, las dos plataformas de feature flags que todo listado llama "open source" | **Unleash es `AGPL-3.0`** (archivo de 34 524B) y **el `LICENSE` de `flipt` en `main` es el texto completo de la `GPL-3.0`** (35 150B), que la API reporta como `NOASSERTION`. **Los feature flags son la forma estándar de desplegar código de agente sin apostar todo, y las dos piezas de referencia de esa capa son copyleft.** Salida permisiva medida: `open-feature/flagd` (Apache-2.0, estándar CNCF). **Nota: Flipt cambió de licencia más de una vez; lo que vale es el archivo de hoy, no el recuerdo.** |
+| [dora-team/fourkeys](https://github.com/dora-team/fourkeys) | La implementación de referencia de las métricas DORA, de Google, Apache-2.0 | **ARCHIVADO, sin push desde 2024-01-23.** Casi dos años muerta — **exactamente el período en que la industria empezó a discutir si los agentes mejoran o empeoran la entrega.** La medición de performance de entrega se hace con `apache/devlake` (Apache-2.0, proyecto graduado de la ASF, push de hoy). |
+| Las herramientas de *slopsquatting* que devuelve una búsqueda | Proyectos presentados como defensa contra "el agente importó un paquete que no existe" | **Medidos: el mayor tiene 34★** (`brennhill/sloppy-joe`), seguido de `slopcop` (16★), `deployproof` (13★) y `slopcheck` (11★). **Quinta repetición del patrón de la tendencia 12**: el modo de falla es real y tiene nombre propio, el producto no existe, y la prensa técnica llena el vacío con repos de dos dígitos. **Lo que sí funciona hoy es `google/osv-scanner` sobre el lockfile**, que no se autodescribe con esa palabra. |
 
 ### Nuevas en este pase (2026-11-23)
 
@@ -114,6 +157,8 @@ updated: 2026-11-23
 |------------------|----------------------|-----------|
 | `NVIDIA/NeMo-Guardrails` | **`NVIDIA-NeMo/Guardrails`** | 7 557★, push 2026-11-19. El viejo slug redirige (`ls-remote` responde) pero **la API solo indexa el nuevo**. NVIDIA reorganizó NeMo en su propia org. La API reporta `NOASSERTION`; el archivo `LICENSE.md` (653B) dice **Apache-2.0**. |
 | `microsandbox/microsandbox` | **`superradcompany/microsandbox`** | 9 182★, Apache-2.0 (`LICENSE` 11 323B), push 2026-11-23. El slug de org propia redirige pero no está indexado. |
+| `qodo-ai/pr-agent` / `Codium-ai/pr-agent` | **`The-PR-Agent/pr-agent`** | **Los tres slugs comparten HEAD** (`48edc526…`), así que es un traspaso, no un fork divergente. 16 593★, push de hoy. **La licencia cambió con el traspaso:** `AGPL-3.0` en v0.35.0 → `Apache-2.0` en v0.36.0–v0.39.0 → **`MIT` desde v0.40.0**, con copyright "© 2026 The PR Agent". La descripción del repo aclara la separación: *"not the Qodo free tier"*. |
+| `apache/incubator-devlake` | **`apache/devlake`** | Mismo HEAD (`aff36620…`); el proyecto **graduó de la incubadora de la ASF**. 3 205★, Apache-2.0, push de hoy. El slug viejo responde a `ls-remote` pero **devuelve 422 en el índice de búsqueda**: el mismo patrón que `sst/opencode`. |
 | `sst/opencode` | **`anomalyco/opencode`** | Confirmado por tercer pase: mismo HEAD, solo el segundo es indexable. |
 
 ## Nota de método: tres límites reales del entorno, medidos con control

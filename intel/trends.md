@@ -443,6 +443,23 @@ abierta es rica, permisiva y pasiva; el agente que decide sobre ella no existe.*
 consultora eso es la definición de dónde poner IP propia: no hay nada abierto que adoptar, así que
 lo que se construya es diferencial y no commodity. Las recetas 12 y 13 lo implementan.
 
+> ### ⚠️ Corrección del pase 9: esto vale para costo y contexto, **no es una ley del ecosistema**
+>
+> El pase 9 midió el cuarto plano —**entrega**— esperando el mismo vacío, y **no lo encontró**:
+> `Tracer-Cloud/opensre` (**14 719★**, Apache-2.0) se define como *"the open-source agent for
+> CI/CD reliability"* y `HolmesGPT/holmesgpt` (**3 965★**, Apache-2.0) es un **agente de SRE con
+> estatus Sandbox en la CNCF**. Son agentes reales, grandes y vivos, decidiendo sobre
+> infraestructura.
+>
+> **La generalización estaba construida sobre dos casos y se publicó como forma del ecosistema.**
+> Lo que sobrevive a la corrección es más chico y más útil: **el plano de entrega tiene agentes
+> donde el trabajo es diagnosticar (pipeline roto, incidente en producción) y no los tiene donde
+> el trabajo es elegir** — `mutation testing agent stars:>=500` devuelve **0**, igual que
+> "qué documento re-parsear" y "esta tarea no vale lo que cuesta". **La brecha no es "nada decide
+> sobre infraestructura": es que nadie construyó el agente que elige entre opciones costosas y
+> parecidas.** Ese sigue siendo el lugar de la IP propia, y ahora está delimitado en vez de
+> asumido.
+
 ## 24. El ranking global de embeddings no transfiere al idioma del cliente
 
 *Nueva en el pase 8.* El benchmark **MTEB-BR** (portugués de Brasil) evalúa **93 modelos, 73 de
@@ -469,3 +486,126 @@ sobre una base de tokens más cara, cada fragmento ahorrado vale más en LATAM q
 región. Calidad y costo apuntan para el mismo lado.** La herramienta existe y es permisiva
 (`embeddings-benchmark/mteb`, Apache-2.0); lo que falta es correrla sobre el corpus del cliente
 **antes** de elegir el modelo.
+
+## 25. El modelo escribe peor el código que controla cómo se despliega todo lo demás
+
+*Nueva en el pase 9.* El whitepaper de **IOActive** *The Security Gap in AI-Generated Code*
+(mayo 2026) probó **27 modelos y herramientas** con **730 prompts** en **27 lenguajes** y **219
+categorías de vulnerabilidad**, con prompts que **deliberadamente no mencionan seguridad** —es
+decir, como escribe un developer real—. El resultado que reordena la arquitectura: **la categoría
+más vulnerable no es el código de aplicación, es el de infraestructura y DevOps: Dockerfiles,
+Terraform y pipelines de CI/CD.**
+
+⚠️ **Las cifras de esa categoría están en conflicto y no se resuelven acá:** el resumen de IOActive
+cita **70–97%**; una reseña de DevOps.com del **mismo** whitepaper cita **57,5% promedio**. El PDF
+primario **no es alcanzable desde este entorno** (`ioactive.com` fuera de la política de red de la
+sesión). **Las dos cifras sostienen la misma decisión**, así que el desacuerdo no bloquea nada,
+pero **ninguna de las dos se cita como número redondo en una propuesta.**
+
+**Por qué es una tendencia y no una curiosidad:** la respuesta instintiva a "los agentes escriben
+código inseguro" es poner un revisor sobre el código de aplicación. **Este dato dice que la
+compuerta más rentable está una capa más abajo, en el archivo que decide cómo y con qué permisos
+corre todo lo demás** — y esa compuerta es barata, determinística y existe:
+`open-policy-agent/conftest` (Apache-2.0) corre política sobre archivos de configuración **en el
+pipeline, antes de tocar el cluster**.
+
+Dos datos que lo acompañan: **Veracode** (informe GenAI 2026) mide **~44% de tareas de generación
+que introducen una vulnerabilidad de riesgo** y una tasa de aprobación de **56% contra 55%** del
+informe anterior —**un año sin mejora**—; y **Cycode 2026** reporta **97%** de organizaciones
+usando o piloteando asistentes y **81% sin visibilidad de dónde y cómo se usa IA en su SDLC**.
+**Esperar que el modelo mejore solo no es una estrategia: la serie de Veracode dice que no mejoró.**
+
+## 26. La entrega se aceleró y se desestabilizó al mismo tiempo, y casi nadie tiene la línea base
+
+*Nueva en el pase 9.* La investigación de **DORA** asocia mayor adopción de IA con **más throughput
+y más inestabilidad simultáneamente** (encuesta *State of AI-assisted Software Development* 2025,
+~5 000 profesionales). Su explicación es estructural, no anecdótica: **la IA acelera el desarrollo
+y esa aceleración expone las debilidades que ya estaban aguas abajo** —testing automatizado débil,
+control de versiones inmaduro, feedback lento—; sin esos controles, **más volumen de cambio produce
+inestabilidad**.
+
+⚠️ **Precisión de fuente, porque se cita mal con frecuencia:** el hallazgo throughput↑/estabilidad↓
+es de la encuesta **2025**. El informe de **ROI de abril 2026** construye encima una curva J y un
+"impuesto de inestabilidad" que son **modelo, no medición** (una caída de productividad del 15% a
+tres meses, una tasa de fallo de cambios de 5%→6%). **No citar esos números como datos.**
+
+**La consecuencia operativa es la que importa y es incómoda:** sin las cuatro métricas medidas
+**antes** del primer agente, un equipo no puede distinguir *"entregamos más"* de *"entregamos más y
+rompemos más"*, y va a atribuir a la IA lo que mida después, en la dirección que ya creía. **Y la
+implementación de referencia para medirlas está muerta:** `dora-team/fourkeys` (Apache-2.0, 2 234★)
+está **archivado, sin push desde 2024-01-23** — casi dos años, exactamente el período en que la
+industria empezó a discutir si los agentes mejoran la entrega. **La alternativa viva es
+`apache/devlake`** (Apache-2.0, 3 205★, proyecto **graduado** de la ASF). Receta 17.
+
+## 27. La procedencia dejó de ser higiene y pasó a tener artículo, fecha y reloj
+
+*Nueva en el pase 9.* Dos movimientos de 2026 convierten la cadena de suministro de software de
+buena práctica en obligación con plazo:
+
+| Fecha | Qué cambió |
+|-------|-----------|
+| **2026-07-29** | **CISA y socios publican los *2026 Minimum Elements for an SBOM***, que reemplazan la línea base NTIA de 2021 y agregan **hash del componente, licencia del componente, nombre de la herramienta que generó el SBOM y contexto de generación**, más **al menos un identificador procesable por máquina por componente**. **No es vinculante por sí misma**: la fuerza se la dan el procurement y el CRA |
+| **2026-09-11** | **CRA europeo: obligaciones de reporte EN VIGOR.** Art. 14: **alerta temprana a las 24 h**, notificación a las **72 h**, informe final a los **14 días**. Plataforma única de ENISA operativa. **Alcanza a productos ya puestos en el mercado** (art. 69(3)) |
+| **2027-12-11** | **CRA: SBOM legible por máquina obligatorio** (Anexo I, Parte II, punto 1), cubriendo **al menos las dependencias de primer nivel** |
+
+**El detalle que cambia la arquitectura es "nombre de la herramienta que generó el SBOM y contexto
+de generación": ya no alcanza con tener la lista de componentes, hay que poder decir quién la
+produjo y en qué condiciones.** Cuando quien escribió el código fue un agente, esa pregunta deja de
+ser trámite.
+
+**Y el reloj de 24 horas, no el SBOM, es lo que fuerza la inversión ahora.** Para emitir una alerta
+temprana en un día hay que saber **sin investigar** qué hay dentro de lo que está corriendo. Eso
+exige un inventario histórico vivo (`DependencyTrack/dependency-track`, Apache-2.0) y evidencia
+firmada de cada build (`sigstore/cosign` + `anchore/syft` + `chainloop-dev/chainloop`).
+**Un cliente europeo que vende software en la UE ya está bajo esta obligación mientras lee esto.**
+
+## 28. El plano con la regulación más dura es el que menos herramientas tiene
+
+*Nueva en el pase 9.* Las dos mediciones, juntas, son el argumento comercial más limpio que registró
+esta KB:
+
+| Medición | Resultado |
+|----------|-----------|
+| `CRA cyber resilience act sbom stars:>=50` | **1 repositorio, y es una awesome-list** (`cra-compliance-lab/awesome-cra-compliance`, 58★, `NOASSERTION`) |
+| Proyecto open source que firme **lo que hizo el agente** | **uno: `chainloop-dev/chainloop`, 616★** |
+| `slopsquatting stars:>=10` | **8 repos, el mayor con 34★** |
+| `mutation testing agent stars:>=500` | **0** |
+
+**Un reglamento con obligaciones vigentes desde hace diez semanas y un plazo de 24 horas no tiene
+ni una herramienta open source con cincuenta estrellas que lo nombre.** Y el modo de falla propio
+de esta era —el agente importa un paquete que no existe y alguien lo registra después,
+*slopsquatting*— tiene nombre, prensa y **ninguna herramienta con tracción**: quinta repetición del
+patrón de la tendencia 12.
+
+**La lectura correcta no es "el ecosistema está vacío".** Las piezas existen y son permisivas
+—Syft, Cosign, Dependency-Track, GUAC, in-toto, sbomqs, conftest, policy-controller, todas
+Apache-2.0 o MIT—. **Lo que no existe es el ensamblado**: nadie empaquetó esas piezas contra un
+artículo concreto de un reglamento concreto con un plazo concreto. **Para una consultora ese hueco
+es mejor que un repo faltante, porque el ensamblado es servicio, no producto, y el plazo lo pone
+otro.** Receta 16.
+
+## 29. Un proyecto volvió a la comunidad y se volvió más permisivo: el primer contraejemplo
+
+*Nueva en el pase 9.* La tendencia 8 de esta KB —*la mitad del vertical no es open source y se
+lista como si lo fuera*— acumuló nueve pases de confirmaciones **en una sola dirección**: n8n,
+Dify, NocoBase, Twenty, Phoenix, hypit, Morphik, Airbyte, rtk. Todos cerrándose.
+
+**`pr-agent` va al revés, y está documentado tag por tag:**
+
+| Versión | Licencia leída del archivo |
+|---------|----------------------------|
+| `v0.30`, `v0.35.0` | **AGPL-3.0** |
+| `v0.36.0` – `v0.39.0` | **Apache-2.0** |
+| `v0.40.0` – `v0.50.0`, `main` | **MIT** (© 2026 The PR Agent) |
+
+Tres slugs comparten HEAD (`48edc526…`): `Codium-ai/pr-agent` → `qodo-ai/pr-agent` →
+**`The-PR-Agent/pr-agent`** (16 593★). La descripción del repo marca la separación:
+*"The Original Open-Source PR Reviewer. **This project is not the Qodo free tier.**"*
+
+**Por qué se registra como tendencia y no como anécdota:** una KB que sólo anota cierres termina
+produciendo una regla falsa —"todo se cierra"— y esa regla hace que nadie vuelva a mirar un
+proyecto que ya se descartó. **Un contraejemplo verificado obliga a re-verificar antes de
+descartar, y esa es exactamente la disciplina que esta KB le pide al resto del ecosistema.**
+La contracara del mismo pase: **el único agente de generación de tests, `qodo-ai/qodo-cover`,
+quedó AGPL-3.0 y sin push desde 2026-04-05.** La organización soltó lo permisivo y se quedó con lo
+copyleft dormido.

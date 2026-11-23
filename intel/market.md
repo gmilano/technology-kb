@@ -221,6 +221,47 @@ documental auditable*. No "hacemos RAG": **de qué documento, qué parser, qué 
 fragmento y con qué score de recuperación** — con `ragas` dando el número. Es lo que convierte un
 PoC en algo que pasa una auditoría, y es exactamente lo que la encuesta de Dentons dice que falta.
 
+#### Actualización del pase 9 (2026-11-23) — la brecha ahora tiene duración, no sólo porcentaje
+
+**El dato nuevo más útil de la región es temporal.** Una encuesta de Codiste a **53 CTOs de
+empresas estadounidenses** reporta **83% de adopción agentic financiada en 2026 y sólo 41% llegando
+a producción**, con un dato que ninguna otra fuente de esta KB daba: **la mediana de tiempo entre
+financiar un proyecto de agentes y desplegarlo en producción pasó de 7,8 meses en 2025 a 11,4 meses
+en 2026.** ⚠️ **Procedencia:** es una encuesta de una consultora de desarrollo, con n=53. Se
+registra por la *forma* del dato —la mediana creció **46%** mientras la adopción crecía—, no por el
+decimal.
+
+**Esa es la misma brecha que esta KB mide desde el pase 4, vista por el otro eje: no es que los
+pilotos fracasen, es que tardan cada vez más en cruzar.** Y lo que se alarga es precisamente lo que
+mide el pase 9 —tests que prueben algo, evidencia de qué se despliega, compuerta de política,
+rollback—, porque es lo que un comité de riesgo pide antes de firmar. **El entregable que acorta la
+mediana es la compuerta de entrega, no un agente más.**
+
+**Gobernanza, mismo cuadro por otra fuente:** una encuesta de OneTrust reporta **87% de
+organizaciones que fomentan el uso de agentes y 47% que dice tener gobernanza y controles claros
+detrás.** Cuarenta puntos de distancia entre el permiso y el control.
+
+**Regulación — el vector sigue siendo estatal y ahora hay cuenta:** a agosto de 2026 hay **cinco
+leyes estatales de IA que ya obligan**, entre ellas la ley de modelos frontera de California
+(**SB 53**), **TRAIGA** en Texas y las reglas de Illinois sobre IA en empleo. **Colorado derogó y
+reemplazó su AI Act en mayo de 2026**: la versión nueva abandona el encuadre de "IA de alto riesgo"
+y regula la **decisión automatizada en decisiones consecuentes**, con entrada en vigor reportada
+para el **1 de enero de 2027**. El borrador federal de preemption **está trabado desde junio de
+2026**. El **NIST AI RMF** sigue siendo voluntario y sigue siendo la referencia que piden los
+contratos.
+
+**Y un dato de cadena de suministro que es de esta región y pega en todas:** CISA, NSA, FBI y
+socios internacionales publicaron el **2026-07-29** los ***2026 Minimum Elements for an SBOM***,
+que reemplazan la línea base NTIA de 2021 y agregan **licencia del componente, hash, nombre de la
+herramienta que generó el SBOM y contexto de generación**. **No es vinculante**, pero es lo que va
+a aparecer en los pliegos: en Norteamérica el mecanismo de cumplimiento es el **procurement**, no
+la multa.
+
+**La segunda oferta que se desprende, nueva en este pase:** *acortar la mediana de 11,4 meses*.
+Se vende como reducción de time-to-production con un número de partida medible (DevLake sobre los
+datos del cliente, antes de tocar nada) y una compuerta de entrega auditable como entregable.
+Receta 15 y Receta 17.
+
 ### EMEA
 
 **Estado.** La región donde la regulación es el producto. Dos fechas importan y **las fuentes se
@@ -359,6 +400,48 @@ lead time. Nada de lo medido este pase lo cambia.
 Veeam dice que el cliente ya perdió esa visibilidad; recuperarla es un engagement con entregable
 concreto, y es anterior —y vendible por separado— a cualquier agente.
 
+#### Actualización del pase 9 (2026-11-23) — **el CRA ya está vigente, y el ecosistema no lo acompañó**
+
+**Este es el hallazgo regional más accionable que registró esta KB, y es europeo.**
+
+| Fecha | Obligación | Estado hoy |
+|-------|-----------|------------|
+| **2026-09-11** | **CRA (Reglamento (UE) 2024/2847): obligaciones de reporte.** Art. 14 — **alerta temprana a las 24 h**, notificación a las **72 h**, informe final a los **14 días** (para incidentes graves, un mes desde la notificación de 72 h). Plataforma única de reporte de **ENISA operativa** | **EN VIGOR hace diez semanas.** Alcanza **productos ya puestos en el mercado** (art. 69(3)); las vulnerabilidades cuya explotación ya se conocía antes de esa fecha no requieren reporte retroactivo |
+| **2027-12-11** | **SBOM legible por máquina obligatorio** (Anexo I, Parte II, punto 1), al menos **dependencias de primer nivel** | Pendiente |
+
+⚠️ **Procedencia:** las fechas y el artículo 14 vienen de la página de la Comisión sobre reporte
+CRA; **el detalle del Anexo I y el alcance del art. 69(3) vienen de guías de proveedores, no del
+texto del Diario Oficial**, que no es alcanzable desde este entorno. Verificar contra el texto
+antes de ponerlo en un contrato.
+
+**Lo que hace que esto sea una oportunidad y no una nota legal:** la consulta
+`CRA cyber resilience act sbom stars:>=50` devuelve **un (1) repositorio en todo GitHub, y es una
+awesome-list** (58★, `NOASSERTION`). **Un reglamento con obligaciones vigentes y un plazo de 24
+horas no tiene herramienta open source que lo nombre.**
+
+**Las piezas para construirla sí existen y son todas permisivas** —`dependency-track` (Apache-2.0,
+el inventario histórico), `syft` + `cdxgen` (el SBOM), `cosign` + `in-toto` + `slsa-github-generator`
+(la firma y la procedencia), `sbomqs` (¿cumple los mínimos o es un archivo que existe?),
+`chainloop` (Apache-2.0, **el único que firma lo que hizo el agente**)—. **Lo que falta es el
+ensamblado contra el artículo, y eso es servicio, no producto.** Receta 16.
+
+**Por qué encaja con lo que esta región ya compra:** el pase 7 registró que `sovereign AI europe
+stars:>=100` devuelve **0** porque la soberanía europea no es un artefacto de código sino
+regulación, procurement y datacenters. **El CRA es la misma observación con fecha de vencimiento:
+no se resuelve adoptando un repo, se resuelve con un expediente que alguien tiene que armar.**
+
+**Contexto de mercado que sigue vigente y se confirma este pase:** la aplicación del AI Act arrancó
+el **2026-08-02** y el *AI omnibus* entró en vigor el **2026-07-27**; el **Cloud and AI Development
+Act (CADA)** fue **propuesto el 2026-06-03 y NO es ley** —conviene no presentarlo como vigente—;
+la licitación de *AI gigafactories* cerró el **2026-11-12**; y Gartner proyecta el gasto europeo en
+IaaS de nube soberana pasando de **USD 6 900 M (2025) a USD 12 600 M (2026)**. **La demanda de
+soberanía es presupuesto asignado, no discurso.**
+
+**Nota de permisividad para esta región:** en un entorno sin salida a internet, el set medido que
+funciona es `woodpecker-ci` + `gitea` + `tektoncd/pipeline` + `flagd` + `twinny` con modelos
+locales — **todo Apache-2.0 o MIT**. Las dos plataformas de feature flags más citadas, **Unleash
+(AGPL-3.0) y Flipt (GPL-3.0)**, quedan afuera de un entregable distribuible.
+
 ### APAC
 
 **Estado.** La región que tiene el código. Dos de los tres agentes nuevos más fuertes del
@@ -479,6 +562,40 @@ no proponer el equivalente estadounidense y descubrirlo después.**
 **La oferta que se desprende:** *la capa de datos antes que el agente*, dicho con el número de
 Confluent en la primera lámina. Es la región donde no hay que argumentar que el problema existe:
 la mitad del mercado ya lo declaró.
+
+#### Actualización del pase 9 (2026-11-23) — la región produjo la pieza central del plano de entrega
+
+**El plano de entrega es, otra vez, territorio APAC.** Las dos piezas más grandes que este pase
+agregó a la KB salieron de la región:
+
+- **[`alibaba/open-code-review`](https://github.com/alibaba/open-code-review)** — **55 640★**,
+  Apache-2.0, Go, push de hoy. *"Battle-tested at Alibaba's scale."* **Arquitectura híbrida:
+  pipelines determinísticos + agente LLM**, con ruleset multi-lenguaje propio (NPE, thread-safety,
+  XSS, SQLi) y comentarios a nivel de línea, compatible con APIs de OpenAI y Anthropic.
+  **Es el agente de code review más grande del vertical y no estaba listado en esta KB hasta hoy.**
+- **[`keploy/keploy`](https://github.com/keploy/keploy)** — **19 969★**, Apache-2.0, **origen
+  India**. Sandboxes de producción aislados: **genera el caso de prueba del tráfico real**, no del
+  criterio del mismo modelo que escribió el código.
+
+**La lectura estratégica es la misma de pases anteriores y se refuerza:** cuando esta KB mide un
+plano nuevo, **la pieza de mayor escala suele ser APAC y suele ser permisiva.** Para una propuesta
+en cualquier región, eso significa que **descartar repos por origen deja afuera lo mejor del set** —
+y que la revisión de licencia y mantenimiento es el filtro correcto, no la geografía.
+
+**Regulación, estado al día de hoy:**
+
+| País | Estado |
+|------|--------|
+| **China** | El régimen más vinculante: PIPL + CSL + DSL más las medidas de recomendación algorítmica, síntesis profunda e IA generativa. **Más de 550 servicios de IA generativa registrados a mediados de 2026**; sanciones reportadas de hasta **50 millones de yuanes** |
+| **Corea del Sur** | **AI Basic Act en vigor desde el 2026-01-22**, la ley general más amplia de la región. **El período de gracia termina y las multas administrativas entran plenamente hacia principios de 2027** — dato nuevo de este pase: la ventana de preparación se está cerrando |
+| **Japón** | **AI Promotion Act: ley marco sin sanciones**, enfoque de promoción y principios |
+| **India** | **Sin ley de IA dedicada**; DPDP Act más guías voluntarias. El gobierno **señaló en julio de 2026** que podría ir hacia legislación específica de enfoque basado en riesgo. **Se registra como no resuelto** |
+
+**La oferta que se desprende para la región, en este plano:** *compuerta de entrega
+multi-jurisdiccional*. Un cliente con operación en China, Corea y Japón enfrenta **tres regímenes
+con tres niveles de exigibilidad**, y la política de despliegue —qué se puede desplegar, dónde, con
+qué registro— es declarativa y versionable con `conftest` y `kyverno` (ambos Apache-2.0). **La
+política como código es la única forma de que tres regímenes no se conviertan en tres pipelines.**
 
 ### LATAM
 
@@ -665,6 +782,46 @@ medida en esta KB de que **no tiene repositorio con tracción**.
 `OCR español stars:>=50` → **0**. **El plano cuyo problema central es el idioma del documento no
 tiene una sola herramienta que se describa en español.** Es, otra vez, el lugar donde lo que se
 construya es diferencial y no commodity.
+
+#### Actualización del pase 9 (2026-11-23) — una restricción nueva de infraestructura y un sexto cero
+
+**El dato nuevo de la región no es de software: es de hardware, y es de la semana pasada.** El
+**2026-11-16** el Bureau of Industry and Security del Departamento de Comercio de EE.UU. emitió una
+**regla interina final que exige licencia para exportar, reexportar o transferir chips de IA
+avanzados a Brasil**, junto con Indonesia, Malasia, Singapur y Tailandia, con **revisión caso por
+caso**. ⚠️ **No es una prohibición**, y **las empresas con casa matriz en EE.UU. quedan exentas del
+requisito de licencia si cumplen obligaciones de reporte**. La regla además **deroga formalmente la
+AI Diffusion Rule** de la administración anterior. **Procedencia:** resúmenes de estudios jurídicos
+y prensa especializada; **el texto del Federal Register no es alcanzable desde este entorno.**
+
+**Por qué cambia la conversación con un cliente brasileño:** la planificación de capacidad de GPU
+en Brasil pasa a tener un trámite con tiempo indeterminado en el medio. **Eso empuja exactamente
+hacia donde esta KB ya venía empujando en LATAM:** modelos abiertos chicos corriendo local
+(`ollama`, `vLLM`), compresión de contexto antes de enviar (pase 7) y **gasto de inferencia medido
+y tope duro**, en vez de arquitecturas que asumen GPU disponible a demanda. **No es una tendencia
+regulatoria de IA: es una restricción de cadena de suministro con efecto directo sobre la
+arquitectura**, y conviene nombrarla antes de que la nombre el cliente.
+
+**Adopción, con las fuentes a la vista y en desacuerdo:** el informe de la **Linux Foundation**
+sobre impacto económico y laboral de la IA en Latinoamérica ubica a **México en 65% y Brasil en
+46%** sobre una medida de uso; otras fuentes dan ~**47% de despliegue empresarial regional** con
+Brasil a la cabeza y **Brasil, Chile y Uruguay como los únicos de la región en el top 50 global**.
+**México arriba de Brasil contradice todo lo demás que esta KB registró**, y se deja sin resolver:
+**son medidas distintas (uso individual vs despliegue empresarial), no versiones de la misma.**
+
+**Regulación:** sin cambios de fondo. **Brasil sigue siendo el caso testigo** — el **PL 2.338/2023**
+(enfoque basado en riesgo) fue aprobado por el Senado en diciembre de 2024 y **sigue en la Cámara
+de Diputados**, así que el texto todavía puede cambiar. **México sigue sin ley de IA.** El patrón
+regional que registran varias fuentes: **las empresas proactivas adoptan los principios del AI Act
+europeo como estándar de facto**, a falta de norma local. **Para una compuerta de entrega eso es
+una ventaja operativa: la política que se escribe para EMEA se reusa en LATAM casi tal cual.**
+
+**Sexto pase consecutivo con cero resultados en español, ahora en el plano de entrega:**
+`entrega continua agente stars:>=20` → **0**; `pruebas automaticas IA stars:>=20` → **0**;
+`agente despliegue stars:>=10` → **0**; `cadena de suministro software stars:>=10` → **0**;
+**`SBOM español stars:>=5` → 0**, con piso de cinco estrellas. **Seis pases, cuatro planos, cero
+herramientas que se describan en español.** Y en este plano el detalle muerde distinto: **el
+auditor que va a leer el expediente de cumplimiento sí habla español.**
 
 ## Posicionamiento Globant
 

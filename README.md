@@ -36,8 +36,69 @@ technology-kb/
    agente: está roto lo que lee.**
 7. **Engagement en español o portugués**: `compose/patterns.md` → Receta 14 + `intel/market.md` →
    LATAM. **No elegir el modelo de embeddings por el ranking global.**
-8. **Mantenerse al día**: el curador automático actualiza este KB por rotación horaria.
-   `agents/trending.md` y `repos/trending.md` son **append-only**: la sección más reciente arriba
+8. **Cuando la pregunta es "¿esto se puede desplegar?"**: `compose/patterns.md` → Receta 15
+   (compuerta de entrega) + `repos/foundations.md` → 🚚 entrega. **El código que los modelos
+   escriben peor no es el de aplicación: es el Terraform, el Dockerfile y el pipeline.**
+9. **Cliente que vende software en Europa**: `compose/patterns.md` → Receta 16 +
+   `intel/market.md` → EMEA. **Las obligaciones de reporte del CRA están vigentes desde el
+   2026-09-11 y el plazo de alerta temprana es de 24 horas.**
+10. **Antes de escalar una flota de agentes**: `compose/patterns.md` → Receta 17. **Tomar la línea
+    base de entrega ocho semanas antes; después, cualquier número es una opinión.**
+11. **Mantenerse al día**: el curador automático actualiza este KB por rotación horaria.
+    `agents/trending.md` y `repos/trending.md` son **append-only**: la sección más reciente arriba
+
+## Estado de verificación (2026-11-23 — pase 9)
+
+**Cuarto pase del mismo día** (pase 6: 14:58 UTC, pase 7: 15:56 UTC, pase 8: 16:57 UTC). No
+re-mide lo que aquéllos acaban de medir: **mide el cuarto plano — del diff del agente al release
+verificado.**
+
+**Qué agrega este pase.**
+
+- **32 filas nuevas** en `repos/foundations.md` (sección **🚚 entrega**, siete capas), que pasa a
+  **131 filas / 130 repos distintos**. Cubre mutation testing, verificación de dependencias,
+  evidencia firmada, compuerta de política, entrega progresiva, medición DORA y el pipeline propio.
+- **8 agentes nuevos** en `agents/top.md`, que pasa a **40 filas reales**. Entre ellos
+  `alibaba/open-code-review` (**55 640★**, Apache-2.0, review **híbrido: determinístico + LLM**) y
+  `pbakaus/impeccable` (**115 489★**), **ninguno de los dos listado antes acá**. Tercer pase
+  consecutivo en que el mayor productor de ausencias es **el filtro de categoría**, no la falta de
+  búsqueda.
+- **El dato que ordena todo el plano:** el estudio de IOActive (mayo 2026; 27 modelos, 730 prompts,
+  27 lenguajes, 219 categorías) encuentra que **la categoría de código que los modelos escriben
+  peor es infraestructura y CI/CD — Dockerfiles, Terraform, pipelines**. ⚠️ Las cifras de esa
+  categoría **están en conflicto entre fuentes (70–97% vs 57,5%) y se registran sin resolver**: el
+  PDF primario no es alcanzable desde este entorno. **Las dos sostienen la misma decisión.**
+- **La regulación le puso fecha a este plano.** CRA europeo: **obligaciones de reporte vigentes
+  desde el 2026-09-11** (alerta temprana **24 h**, notificación 72 h, informe final 14 días; alcanza
+  productos ya en el mercado), **SBOM obligatorio desde el 2027-12-11**. Y los ***2026 Minimum
+  Elements for an SBOM*** de CISA (**2026-07-29**) ahora exigen **licencia del componente, hash,
+  nombre de la herramienta generadora y contexto de generación**. → Receta 16.
+- **La brecha con fecha de vencimiento:** `CRA cyber resilience act sbom stars:>=50` devuelve **un
+  repositorio en todo GitHub, y es una awesome-list**. Las piezas existen y son permisivas; **el
+  ensamblado contra el artículo no existe, y eso es servicio, no producto.**
+- **Una conclusión anterior corregida, no repetida.** Los pases 7 y 8 concluyeron que *"la
+  infraestructura es pasiva, nada decide"* (tendencia 23). **En el plano de entrega eso es falso:**
+  `Tracer-Cloud/opensre` (**14 719★**) y `HolmesGPT/holmesgpt` (3 965★, **CNCF Sandbox**) son
+  agentes reales decidiendo sobre infraestructura. **La generalización estaba hecha sobre dos casos
+  y se había publicado como forma del ecosistema.** Lo que sobrevive es más chico y más útil: hay
+  agentes para **diagnosticar**, no para **elegir** entre opciones caras y parecidas.
+- **⚠️ La regla de licencias cambia otra vez: hay que resolver el nombre del archivo primero.**
+  `renovatebot/renovate` (23 237★, **AGPL-3.0**) tiene el archivo en **minúsculas** (`license`);
+  `backnotprop/plannotator` lo tiene como **`LICENSE-APACHE` + `LICENSE-MIT`** — **doble licencia
+  que la API colapsa a una sola**, escondiendo que el cliente puede elegir MIT. Probar `LICENSE`,
+  `LICENSE.md`, `LICENSE.txt`, `COPYING`, `license` y `LICENSE-*`, en `main` **y** `master`.
+- **El contador de la API va al revés que en el pase 8:** de 32 repos, **declaró de menos en 4**
+  (`in-toto`, `conftest`, `sigstore/policy-controller`, `flipt`) **y de más en ninguno**. Importa
+  porque **por omisión el escáner del cliente no bloquea: deja pasar.**
+- **Un contraejemplo de la tendencia 8, el primero en nueve pases:** `pr-agent` recorrió
+  **AGPL-3.0 → Apache-2.0 → MIT** y salió del vendor; el slug canónico es ahora
+  **`The-PR-Agent/pr-agent`** (16 593★). Documentado tag por tag.
+- **Tres recetas nuevas** (15, 16, 17) y **cinco plataformas nuevas** en `verticals/solutions.md`
+  (Keploy, Woodpecker CI, Dependency-Track, Apache DevLake, Chainloop — **las cinco Apache-2.0**),
+  con dos trampas en la capa donde más duelen: **Unleash (AGPL-3.0) y Flipt (GPL-3.0)**, las dos
+  plataformas de feature flags más citadas.
+- **Sexto pase consecutivo con cero en español**, ahora en el plano de entrega: `SBOM español
+  stars:>=5` → **0**. **El auditor que lee el expediente sí habla español.**
 
 ## Estado de verificación (2026-11-23 — pase 8)
 

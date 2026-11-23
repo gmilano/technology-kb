@@ -636,6 +636,162 @@ vender como diagnóstico corto antes de un engagement grande.
 estrategia de chunking que lo acompaña y (d) **la reducción de tokens por consulta** que resulta
 de recuperar mejor, medida con el tokenizador real.
 
+## Receta 15 — Compuerta de entrega para código escrito por agentes *(nueva, pase 9)*
+
+**Para quién.** El cliente que ya tiene agentes abriendo PRs —o está por tenerlos— y cuyo comité de
+riesgo todavía no firmó. **Es la receta que acorta la mediana de 11,4 meses entre financiar y
+desplegar** (ver `intel/market.md` → North America).
+
+**El dato que la justifica, y es contraintuitivo:** el estudio de IOActive (mayo 2026, 27 modelos,
+730 prompts) encuentra que **la categoría de código que los modelos escriben peor no es la de
+aplicación: es infraestructura y CI/CD — Dockerfiles, Terraform, pipelines.** ⚠️ Las cifras de esa
+categoría están en conflicto entre fuentes (70–97% según IOActive, 57,5% promedio según una reseña
+de DevOps.com del mismo whitepaper) y **no se resuelven**; las dos sostienen la misma decisión.
+**La compuerta más rentable está una capa debajo de donde todos la ponen.**
+
+**Las piezas — todas Apache-2.0 o MIT, todas con push de la última semana:**
+
+| Pieza | Licencia | Rol en la compuerta |
+|-------|----------|---------------------|
+| [open-policy-agent/conftest](https://github.com/open-policy-agent/conftest) | Apache-2.0 | **Primero y más barato**: política sobre el Terraform y el Dockerfile **en el pipeline**, antes del cluster |
+| [alibaba/open-code-review](https://github.com/alibaba/open-code-review) | Apache-2.0 | **Review híbrido**: ruleset determinístico (NPE, XSS, SQLi, thread-safety) + agente LLM, comentarios línea a línea |
+| [github/codeql-action](https://github.com/github/codeql-action) | MIT | SAST. **MIT**, a diferencia de Semgrep (LGPL-2.1) |
+| [google/osv-scanner](https://github.com/google/osv-scanner) | Apache-2.0 | **La dependencia inventada**: cruza el lockfile contra OSV. El antídoto barato al *slopsquatting*, que no tiene herramienta propia (el mayor repo del tema: **34★**) |
+| `stryker-js` / `pitest` / `mutmut` / `infection` / `cargo-mutants` | Apache-2.0 / BSD / MIT | **¿El test del agente prueba algo?** Mutation testing es la única técnica que lo responde sin preguntarle al mismo modelo |
+| [anchore/syft](https://github.com/anchore/syft) + [anchore/grype](https://github.com/anchore/grype) | Apache-2.0 | SBOM del artefacto y vulnerabilidades sobre ese SBOM |
+| [sigstore/cosign](https://github.com/sigstore/cosign) | Apache-2.0 | Firma del artefacto y de las attestations |
+| [sigstore/policy-controller](https://github.com/sigstore/policy-controller) | Apache-2.0 | **El bloqueo real**: no admite lo que no esté firmado y verificado |
+| [ossf/allstar](https://github.com/ossf/allstar) | Apache-2.0 | Política sobre el **repositorio** — impide que un agente con permisos se desactive los controles |
+| [fluxcd/flagger](https://github.com/fluxcd/flagger) u [argo-rollouts](https://github.com/argoproj/argo-rollouts) | Apache-2.0 | Canary con **rollback automático por métricas** |
+| [open-feature/flagd](https://github.com/open-feature/flagd) | Apache-2.0 | Feature flags. ⚠️ **Unleash es AGPL-3.0 y Flipt tiene GPL-3.0 en su `LICENSE`**: para un entregable distribuible, `flagd` |
+| [backnotprop/plannotator](https://github.com/backnotprop/plannotator) | Apache-2.0 **o** MIT | La consola del humano que supervisa la flota |
+
+**El orden importa y es de más barato a más caro:**
+
+1. **Conftest sobre IaC y configuración de pipeline.** Minutos de CPU, cero llamadas a modelo, y
+   pega donde el dato dice que está el problema. **Si sólo se hace un paso de esta receta, es éste.**
+2. **osv-scanner sobre el lockfile en el mismo job.** Atrapa la dependencia que no existe antes de
+   que alguien la registre.
+3. **Review híbrido sobre el diff.** El ruleset determinístico primero, el agente después y sólo
+   sobre lo que el ruleset no cubre: es más barato y más reproducible que mandar todo al modelo.
+4. **Mutation testing sobre los tests que el agente escribió, no sobre todo el repo.** Correrlo
+   completo es carísimo; correrlo sobre los archivos tocados por el PR es viable en cada PR.
+5. **SBOM + firma en el build.** Syft produce, Cosign firma, y queda la evidencia de la receta 16.
+6. **policy-controller en admisión.** Acá el "no" deja de depender de que alguien esté mirando.
+7. **Canary con rollback automático.** La última red: si las métricas empeoran, vuelve solo.
+
+**⚠️ Lo que hace honesta a esta receta:** los pasos 1 a 4 corren en el pipeline del cliente y
+**pueden volver lento el CI**. El entregable incluye **el tiempo agregado por paso medido sobre sus
+repos**, y el paso 4 es el primero que se poda si no paga. **Una compuerta que el equipo desactiva
+porque tarda no es una compuerta.**
+
+**Esfuerzo realista:** 4–6 semanas para los pasos 1, 2, 3 y 5 sobre un pipeline existente;
+10–12 semanas con admisión, canary y flags. **No empieza por el agente: empieza por el archivo que
+el agente escribe peor.**
+
+---
+
+## Receta 16 — Expediente CRA: evidencia firmada antes del reloj de 24 horas *(nueva, pase 9 — la receta de EMEA)*
+
+**Para quién.** Cualquier cliente que ponga software en el mercado europeo. **No es prospectivo:
+las obligaciones de reporte del CRA están vigentes desde el 2026-09-11**, alcanzan **productos ya
+puestos en el mercado** (art. 69(3)) y el artículo 14 fija **alerta temprana a las 24 horas**,
+notificación a las **72** e informe final a los **14 días**, sobre la plataforma única de ENISA.
+
+**Por qué es un engagement y no una compra:** la consulta
+`CRA cyber resilience act sbom stars:>=50` devuelve **un repositorio en todo GitHub, y es una
+awesome-list**. **Las piezas existen y son permisivas; el ensamblado contra el artículo no existe.**
+
+**La pregunta que hay que poder responder en un día**, sin investigar: *¿qué componentes hay en lo
+que está corriendo en producción, en qué versión, quién los puso ahí y con qué evidencia?*
+
+| Pieza | Licencia | Qué aporta al expediente |
+|-------|----------|--------------------------|
+| [anchore/syft](https://github.com/anchore/syft) / [CycloneDX/cdxgen](https://github.com/CycloneDX/cdxgen) | Apache-2.0 | El SBOM en SPDX o CycloneDX — **el formato lo decide el cliente, no la herramienta** |
+| [interlynk-io/sbomqs](https://github.com/interlynk-io/sbomqs) | Apache-2.0 | **¿Ese SBOM cumple los mínimos o es un archivo que existe?** Desde los *2026 Minimum Elements* de CISA (2026-07-29) hacen falta **hash, licencia del componente, nombre de la herramienta generadora y contexto de generación** |
+| [DependencyTrack/dependency-track](https://github.com/DependencyTrack/dependency-track) | Apache-2.0 | **El corazón del reloj de 24 h**: guarda el SBOM de **cada versión desplegada** y avisa cuando algo viejo se vuelve vulnerable |
+| [sigstore/cosign](https://github.com/sigstore/cosign) + [in-toto/in-toto](https://github.com/in-toto/in-toto) | Apache-2.0 | Firma y attestations: **prueba**, no declaración |
+| [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) o [actions/attest-build-provenance](https://github.com/actions/attest-build-provenance) | Apache-2.0 / MIT | Procedencia de build. **La Action de GitHub es el camino de menor fricción: una línea en el workflow** |
+| [guacsec/guac](https://github.com/guacsec/guac) | Apache-2.0 | Grafo consultable: *"¿qué de lo que corre depende de este paquete?"* en una consulta |
+| **[chainloop-dev/chainloop](https://github.com/chainloop-dev/chainloop)** | Apache-2.0 | **La pieza que nadie está mirando (616★):** registros **firmados de lo que hicieron los agentes de código y los pipelines**, contrastados contra política. Ingiere sesiones de IA, SBOMs, VEX, SARIF y procedencia SLSA |
+| [oss-review-toolkit/ort](https://github.com/oss-review-toolkit/ort) | Apache-2.0 | Linaje de **licencias** de toda la cadena, con política declarativa |
+
+**El montaje, en orden:**
+
+1. **SBOM en cada build y puntuarlo con `sbomqs` el mismo día.** Un SBOM que no cumple mínimos no
+   es un entregable, y es mejor saberlo en la semana 1 que en el primer incidente.
+2. **Cada SBOM va a Dependency-Track, versión por versión.** Esto es lo que convierte la pregunta
+   de 24 horas en una consulta. **Sin histórico, el reloj no se puede cumplir.**
+3. **Firmar artefacto y attestations con Cosign; procedencia con la Action de GitHub.**
+4. **Chainloop encima, y acá está la IP del engagement:** las sesiones de los agentes de código
+   entran como evidencia firmada igual que un SBOM. **Contra el 81% de organizaciones que no sabe
+   dónde se usa IA en su SDLC** (Cycode 2026), esto es lo que convierte "creemos que un agente tocó
+   esto" en un registro verificable.
+5. **Ensayo del reloj.** Simular una vulnerabilidad explotada activamente en una dependencia y
+   **cronometrar**: identificar productos afectados, redactar la alerta temprana, presentarla.
+   **Si no se ensaya, el plazo de 24 horas se descubre el día que corre.**
+6. **ORT para el linaje de licencias**, que resuelve el otro problema del mismo expediente.
+
+**⚠️ Procedencia y límite, explícitos:** las fechas y el art. 14 vienen de la página de la Comisión
+sobre reporte CRA; **el detalle del Anexo I y el alcance del art. 69(3) vienen de guías de
+proveedores, no del Diario Oficial**, que no es alcanzable desde este entorno. **Esta receta es
+ingeniería de evidencia, no asesoramiento legal**, y el alcance regulatorio lo confirma el equipo
+legal del cliente. Lo que sí es sólido: **el inventario, la firma y el ensayo del plazo sirven
+igual aunque el encuadre legal se mueva.**
+
+**Esfuerzo realista:** 6–8 semanas hasta el ensayo del reloj sobre una línea de producto.
+**Se vende por línea de producto, no por organización**, y la primera es la que paga el montaje.
+
+---
+
+## Receta 17 — Línea base antes del primer agente *(nueva, pase 9 — North America y LATAM)*
+
+**Para quién.** El cliente que está por escalar de un piloto a una flota de agentes, y el que ya
+escaló y no puede explicar qué pasó con su entrega.
+
+**El dato:** la investigación de DORA asocia mayor adopción de IA con **más throughput y más
+inestabilidad al mismo tiempo** (encuesta 2025, ~5 000 profesionales). ⚠️ El informe de ROI de
+abril 2026 agrega una curva J y un "impuesto de inestabilidad" que son **modelo, no medición**: no
+se citan como dato. **Y la implementación de referencia para medir todo esto está muerta:**
+`dora-team/fourkeys` **archivado, sin push desde 2024-01-23**.
+
+| Pieza | Licencia | Rol |
+|-------|----------|-----|
+| [apache/devlake](https://github.com/apache/devlake) | Apache-2.0 | **La línea base.** Ingiere Git, Jira, GitHub/GitLab y CI, calcula las métricas DORA sobre datos del cliente. **Proyecto graduado de la ASF**: gobernanza de fundación |
+| [grafana/grafana](https://github.com/grafana/grafana) | **AGPL-3.0** — servicio separado, no se incorpora al producto | La superficie donde el cliente ya mira sus métricas |
+| [Tracer-Cloud/opensre](https://github.com/Tracer-Cloud/opensre) | Apache-2.0 | Agente de confiabilidad de CI/CD: ataca el *lead time* perdido en pipelines rotos |
+| [HolmesGPT/holmesgpt](https://github.com/HolmesGPT/holmesgpt) | Apache-2.0, **CNCF Sandbox** | Agente de SRE: ataca el **MTTR**, que es la métrica que la IA empeora |
+| [Helicone/helicone](https://github.com/Helicone/helicone) | Apache-2.0 | El costo de los agentes **al lado** de la métrica de entrega |
+
+**La secuencia, y el orden es el valor:**
+
+1. **Medir ocho semanas antes de tocar nada.** DevLake sobre los repos y el CI existentes. **Si la
+   línea base se toma después, cualquier número posterior es una opinión.**
+2. **Publicar las cuatro métricas con su definición escrita.** "Producción" sin definición produce
+   el rango de 8x que esta KB ya midió (ver `intel/trends.md` → tendencia 13).
+3. **Recién entonces introducir agentes, de a un equipo.** El equipo sin agentes es el control.
+4. **Mirar las cuatro juntas, nunca el throughput solo.** El patrón esperado —y hay que decirlo
+   antes, no después— es **frecuencia y lead time mejorando mientras tasa de fallo y MTTR
+   empeoran.** Un informe que sólo muestra las dos primeras es marketing.
+5. **Atacar lo que empeoró con las piezas de la receta 15**, no con más agentes de código.
+   `opensre` para el pipeline, `holmesgpt` para el incidente, compuerta para la causa.
+6. **Costo al lado.** Un throughput 20% mejor con una factura 3x no es una mejora: es una decisión,
+   y la toma el cliente con los dos números a la vista.
+
+**⚠️ Lo que hace honesta a esta receta:** puede terminar **recomendando no escalar la flota**. Ese
+resultado es un entregable válido y conviene decirlo en la propuesta, **antes** de que los datos lo
+digan. Un cliente que descubre a los seis meses que la medición existía para justificar la decisión
+ya tomada no vuelve a contratar.
+
+**Variante LATAM.** Encadenar con la receta 11 (*comprimir primero, porque el idioma cuesta*) y
+sumar la restricción nueva de infraestructura: desde el **2026-11-16** la exportación de chips de
+IA avanzados a **Brasil** requiere licencia con revisión caso por caso (**no es prohibición**, y
+hay exención para empresas con casa matriz en EE.UU. que cumplan reporte). **Planificar capacidad
+de GPU en Brasil ahora incluye un trámite de duración indeterminada**, lo que vuelve la línea base
+de costo —no sólo de entrega— parte del mismo entregable.
+
+---
+
 ## Lo que NO conviene prometer
 
 1. **Merge automático.** Ninguna receta acá mergea sin humano. Gartner proyecta >40% de

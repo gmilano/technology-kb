@@ -11,6 +11,91 @@ updated: 2026-11-23
 > Este archivo sigue **agentes y skills**. Para infraestructura ver `repos/trending.md`.
 > **Hasta hoy los dos archivos eran byte-por-byte idénticos en el remoto; desde este ciclo son distintos.**
 
+## 2026-11-23 — pase 9 *(cuarto pase del día; pase 6 a las 14:58 UTC, pase 7 a las 15:56 UTC, pase 8 a las 16:57 UTC)*
+
+### Hallazgo del pase: **el plano de entrega SÍ tiene agentes, y eso corrige la conclusión de los dos pases anteriores**
+
+Los pases 7 (costo) y 8 (contexto) cerraron con la misma frase: *la infraestructura es pasiva —
+comprime, parsea, indexa, cobra— y **nada decide**.* El pase 8 la elevó a tendencia 23. **Este pase
+midió el cuarto plano —entrega: del diff del agente al release— y ahí la frase es falsa.**
+
+| Consulta | Resultado | Lectura |
+|----------|-----------|---------|
+| `agent in:description CI reliability stars:>=500` | **1** | `Tracer-Cloud/opensre` — **14 719★, Apache-2.0, push de hoy** |
+| `sre agent in:name,description stars:>=1000` | **4, uno relevante** | `HolmesGPT/holmesgpt` — 3 965★, Apache-2.0, **CNCF Sandbox** |
+| `code review agent in:name,description stars:>=3000` | **9** | entre ellos `alibaba/open-code-review` (**55 640★**) y `pbakaus/impeccable` (**115 489★**) |
+| `mutation testing agent stars:>=500` | **0** | la **única** sub-capa del plano que sí está vacía |
+
+**Dos agentes reales, de 14.7k y 3.9k★, cuyo trabajo es la confiabilidad del pipeline y la
+investigación de incidentes.** La tendencia 23 no se repite: **se corrige** (ver `intel/trends.md`).
+Y la corrección tiene valor propio como lección de método: **"los tres planos que medí están
+vacíos" habría sido una generalización de dos casos, publicada como ley.**
+
+### Cuatro agentes grandes que la KB no tenía — tercer pase consecutivo con el mismo modo de falla
+
+| Repo | Stars | Licencia (archivo leído) | Qué es |
+|------|-------|--------------------------|--------|
+| [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | **115 489** | Apache-2.0 (10 767B) | Vocabulario de diseño y skills de revisión para coding agents. *"Catch AI slop before it ships."* Rust |
+| [alibaba/open-code-review](https://github.com/alibaba/open-code-review) | **55 640** | Apache-2.0 (11 357B) | Code review **híbrido: pipelines determinísticos + agente LLM**, ruleset propio (NPE, thread-safety, XSS, SQLi), Go, de Alibaba |
+| [The-PR-Agent/pr-agent](https://github.com/The-PR-Agent/pr-agent) | **16 593** | **MIT** (1070B) | El revisor de PRs original, ahora fuera del vendor |
+| [Tracer-Cloud/opensre](https://github.com/Tracer-Cloud/opensre) | **14 719** | Apache-2.0 (10 933B) | *"The open-source agent for CI/CD reliability"* |
+
+**Van tres pases seguidos en que el mayor productor de ausencias de esta KB no es la falta de
+búsqueda: es el filtro de categoría.** Pase 6: `hermes-agent` (265k★) invisible porque no es un
+*coding* agent. Pase 8: seis repos de >70k★ invisibles porque son de *contexto*. Pase 9:
+`impeccable` (115k★) y `open-code-review` (55k★) invisibles porque son de *revisión y entrega*.
+**La consulta "top open source AI agents" devuelve el mismo top-20 todas las veces; el vertical es
+mucho más ancho que ese top-20 y las piezas que faltan son justamente las que diferencian una
+propuesta.**
+
+### PR-Agent: el primer contraejemplo medido de la tendencia 8
+
+La tendencia 8 de esta KB dice que *"la mitad del vertical no es open source y se lista como si lo
+fuera"*, y nueve pases la confirmaron en una sola dirección: proyectos que se cierran. **PR-Agent
+va al revés y está documentado tag por tag:**
+
+| Versión | Licencia leída del archivo |
+|---------|----------------------------|
+| `v0.30`, `v0.35.0` | **AGPL-3.0** |
+| `v0.36.0` – `v0.39.0` | **Apache-2.0** |
+| `v0.40.0` – `v0.50.0`, `main` | **MIT** (© 2026 The PR Agent) |
+
+Tres slugs comparten el mismo HEAD (`48edc526…`): `Codium-ai/pr-agent` → `qodo-ai/pr-agent` →
+**`The-PR-Agent/pr-agent`**. La descripción del repo marca la separación explícitamente:
+*"The Original Open-Source PR Reviewer. **This project is not the Qodo free tier.**"*
+**Un proyecto salió del vendor y se volvió más permisivo, no menos.** Se registra con la misma
+exigencia de evidencia que se usa para los cierres.
+
+### Lo que NO se encontró, dicho explícitamente
+
+- **No hay agente de mutation testing.** `mutation testing agent stars:>=500` → **0**. La técnica
+  que responde "¿este test detectaría un bug?" existe, es permisiva y está viva en cinco lenguajes,
+  **y la decisión de qué mutar sigue siendo manual.** Es el hueco de IP más limpio del plano.
+- **No hay agente que decida desplegar.** `release agent stars:>=1000` devuelve 7 resultados y
+  **ninguno es del dominio**: awesome-lists, un panel de ops chino, un repo político.
+  `test generation agent stars:>=1000` devuelve **1, y es de CAD**. **El falso positivo por
+  colisión de keyword es tan peligroso como el falso cero**, y es nuevo en el registro de método
+  de esta KB: hasta ahora sólo se habían anotado ceros.
+- **Nada en español, sexto pase consecutivo.** `entrega continua agente`, `pruebas automaticas IA`,
+  `agente despliegue`, `cadena de suministro software`, `SBOM español` → **0, 0, 0, 0, 0**, el
+  último con piso de **5★**.
+
+### Tres piezas medidas que NO son agentes y dónde quedaron
+
+`backnotprop/plannotator` (14 626★) y `modem-dev/hunk` (9 880★) **son consolas humanas**: una para
+supervisar flotas, la otra para leer diffs en terminal. Se listan en `agents/top.md` **etiquetadas
+como lo que son**, porque esta KB sostiene desde el pase 4 que sin superficie de human-in-the-loop
+no hay producción, y hasta hoy esa superficie no tenía piezas medidas.
+`chainloop-dev/chainloop` (616★) **es infraestructura** y vive en `repos/foundations.md` → 🚚.
+
+### Sin re-medición de las 32 filas del pase 6 — con el mismo control de daños
+
+A un día de distancia una re-medición completa produce ruido, no serie. **Se controlaron los
+cuatro agregados nuevos y los dos más grandes del archivo:** `rea`, `openclaw`, `impeccable`,
+`open-code-review`, `pr-agent` y `opensre` — **seis de seis vivos, sin archivar, licencia leída del
+archivo, push de hoy salvo `hunk` (ayer).** Las 32 filas del pase 6 siguen publicadas con la fecha
+de su medición, que es 2026-11-23 a las 14:58 UTC.
+
 ## 2026-11-23 — pase 8 *(tercer pase del día; pase 6 a las 14:58 UTC, pase 7 a las 15:56 UTC)*
 
 ### Hallazgo del pase: **el plano de contexto no tiene agente, y es medible**
