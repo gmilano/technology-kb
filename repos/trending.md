@@ -1,8 +1,46 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-23
+updated: 2026-11-28
 ---
+
+## 2026-11-28 — pase 13 (12:39 UTC): los motores de accesibilidad, y **la licencia doble que la API no puede expresar**
+
+**El hallazgo de licencia más consecuente de este pase, y es nuevo en esta familia de KBs:**
+`veraPDF/veraPDF-library` —la validación **PDF/UA** de referencia, la que hace falta para los
+documentos que caen bajo la EAA— tiene **dos archivos de licencia en la raíz**: `LICENSE.MPL`
+(15.920 B, texto íntegro de MPL-2.0) y `LICENSE.GPL` (35.140 B, GPL-3.0). **La API de GitHub
+reporta sólo `GPL-3.0`.**
+
+El campo `license` de la API **es un único valor y estructuralmente no puede expresar una licencia
+doble**, así que reporta una de las dos y —en este caso— reporta la restrictiva. Un filtro de
+licencias habría **descartado un repo que Globant sí puede usar**, porque la opción **MPL-2.0 está
+disponible y es del propio proyecto**. Esto es una **cuarta forma** del defecto de licencia de esta
+familia de KBs, y es la más engañosa porque el valor reportado **no es falso, es parcial**:
+
+1. pase 9 (`retail`): un badge que apunta a nada.
+2. pase 8 (`retail`): `NOASSERTION` **ocultando** una licencia real (80% de error medido).
+3. pase 13 (`travel`): un Apache-2.0 **modificado**.
+4. **este pase: un SPDX correcto pero parcial, que esconde la opción permisiva de un repo de doble licencia.**
+
+**Regla operativa:** ante cualquier repo que la API reporte como GPL/AGPL y que Globant necesite,
+**listar la raíz antes de descartarlo** (`git ls-tree` en un clon `--filter=blob:none`): si hay dos
+archivos de licencia, hay una opción.
+
+| Repo trending del plano | Licencia **leída del archivo** | ★ | Default branch, último commit | Rol |
+|---|---|---|---|---|
+| `veraPDF/veraPDF-library` | **DOBLE: MPL-2.0 + GPL-3.0** (dos archivos) | 353 | `integration` 2026-11-17 | Validación PDF/UA parte 1 y 2. La API dice sólo GPL-3.0. |
+| `dequelabs/axe-core` | MPL-2.0 (`LICENSE`, 15.920 B) | 7.906 | `develop` 2026-11-23 | El motor de reglas de facto del plano. |
+| `GoogleChrome/lighthouse` | Apache-2.0 | 31.223 | `main` 2026-11-25 | El repo más estrellado del plano; a11y es **una** de sus categorías. |
+| `nvaccess/nvda` | **GPL-2.0-or-later con dos excepciones** (`copying.txt`, 53.407 B) | 2.698 | `master` 2026-11-27 | Lector de pantalla. **Oráculo de prueba, no dependencia.** |
+| `act-rules/act-rules.github.io` | **W3C Software and Document License** (el `LICENSE.md` de 83 B es un **puntero**) | 171 | `develop` 2026-10-26 | Las reglas ACT: el denominador común entre motores. |
+
+**Dos grafías nuevas para la lista de nombres de archivo de licencia** (el pase 13 de `travel-kb`
+perdió un Apache-2.0 por esto mismo): **`copying.txt` en minúscula** (NVDA — mi lista de 13 grafías
+tenía `COPYING` y `COPYING.txt` en mayúscula y **falló**) y **`license.txt` en minúscula**
+(WordPress, 19.902 B). Y **`drupal/drupal` tiene la licencia en `core/LICENSE.txt`**, no en la raíz
+—GPL-2.0, 18.001 B—, que es la razón por la que la API la reporta como `NULL`: **segunda
+confirmación de la tendencia 17 de esta KB** ("la licencia se esconde en el subdirectorio").
 
 ## 2026-11-23 — pase 12 (20:49 UTC): el substrato de comprensión que faltaba, y los compiladores con la licencia al revés
 

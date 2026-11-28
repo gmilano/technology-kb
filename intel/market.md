@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-23
+updated: 2026-11-28
 ---
 
 # 🗺️ Mapa de mercado — Technology
@@ -408,6 +408,38 @@ la peor de las tres categorías; 97% de los fallos se creen éxitos). → **Rece
 COBOL→Java en 2026" y "desarrolladores COBOL: 220 000 en 2026 → 18 000 en 2030". **Ninguna tiene
 fuente primaria localizable; se registran para poder reconocerlas en un pliego, no para citarlas.**
 
+#### Pase 13 (2026-11-28) — el plano de accesibilidad: **el plazo público se corrió un año, el litigio privado no se movió**
+
+> **El plazo se corrió y el requisito quedó.** La regla de **ADA Title II** sobre web y apps de
+> entidades públicas se extendió **un año** por *interim final rule* de abril de 2026 (las fuentes
+> secundarias discrepan entre el 17 y el 20): **2027-04-26** para entidades que sirven a ≥50.000
+> personas y **2028-04-26** para las de <50.000 y distritos especiales. **`28 CFR 35.200(b)` sigue
+> exigiendo WCAG 2.1 A y AA.** Una fuente todavía publica las fechas viejas (2026-04-24 /
+> 2027-04-24): está desactualizada.
+> **Segunda industria consecutiva con este movimiento** —`retail-kb` midió FSMA 204 corriéndose de
+> 2026-01-20 a 2028-07-20 con requisitos intactos—, así que **no vender el plazo en NA**.
+>
+> **El reloj real es el litigio, y es privado.** Seyfarth Shaw: **3.117 demandas web federales en
+> 2025**, +27% interanual, **36% de todas las ADA Title III**; **5.006 presentaciones Title III en
+> el primer semestre de 2026** contra un promedio de 4.463 para los primeros semestres de los
+> últimos cuatro años. UsableNet, que además cuenta tribunales estatales, proyecta **≈6.176 para
+> 2026**, con **≈79% contra e-commerce**. Seyfarth **no** publicó todavía el corte web de mitad de
+> año: no inventar esa cifra.
+>
+> **La oportunidad, y el anti-producto.** Vender **reducción de riesgo de litigio con evidencia**
+> (reporte normalizado + expediente ACR + diffs aprobados por humano), no cumplimiento de un plazo
+> que se corrió. Y **no** vender overlay: entre **~20%** (UsableNet) y **27,4%** (mayo 2026) de los
+> demandados **ya tenía uno instalado**, la FTC multó a accessiBe y en febrero de 2026 avanzó
+> parcialmente una class action contra UserWay. El mercado de **servicios** de remediación
+> (≈USD 7.160 M en 2026) es **8x** el de software (≈USD 850–930 M): este plano es un negocio de
+> servicios, que es exactamente la forma de Globant.
+>
+> **Lo que está roto del lado público y es una oportunidad concreta:** `GSA/openacr`, la herramienta
+> **oficial** del gobierno de EE.UU. para el expediente ACR/VPAT, tiene el **mainline muerto desde
+> 2024-03-12** (26 meses de divergencia contra su `pushed_at`). El **formato** sirve y está adoptado;
+> el **repo** no se mantiene. Un cliente del sector público con fecha 2027-04-26 necesita ese
+> expediente y la herramienta de referencia está abandonada.
+
 ### EMEA
 
 > **Actualización del pase 10 (2026-11-23).**
@@ -683,6 +715,41 @@ local-first), ya listados.
 cruce entre el **AI Act** y modernización. Las fuentes de modernización en EMEA fueron **blogs de
 vendor**; la única autoritativa del bloque es el DNB. **Se declara el hueco en vez de rellenarlo.**
 
+#### Pase 13 (2026-11-28) — accesibilidad: **la región donde el plazo sí aguantó, y donde las sanciones divergen tanto que hay que leer la ley nacional**
+
+> **El plazo pasó y se mantiene.** La **European Accessibility Act** (Directiva (UE) 2019/882)
+> aplica desde **2025-06-28** —hace 17 meses— y alcanza a quien **vende productos o servicios
+> cubiertos a consumidores de la UE, sin importar dónde esté la empresa**. **Exención de
+> microempresas** para servicios: menos de 10 personas **y** facturación o balance ≤ €2 M. Lo que
+> cambia ahora es la **intensidad de la fiscalización**, no la fecha.
+>
+> **La conformidad se demuestra contra EN 301 549**, y acá hay un dato que **hay que verificar antes
+> de citarlo en una propuesta**: una fuente sostiene que la versión **4.1.1 mueve los requisitos web
+> a WCAG 2.2 AA** (publicación un 2 de septiembre, con el año en disputa entre las fuentes) mientras
+> otras siguen diciendo WCAG 2.1 AA. **Confirmar la versión vigente de EN 301 549 en la publicación
+> oficial antes de fijar el nivel objetivo de un contrato**: es la diferencia entre 2.1 AA y 2.2 AA.
+>
+> **Las sanciones las fija cada Estado y las fuentes se contradicen fuerte.** Coincidencia sólida:
+> **España €1.000.000** (Ley 11/2023) e **Italia por tramos hasta 5% de la facturación anual**.
+> Contradicción abierta: **Alemania €100.000 contra €500.000** según la fuente; **Francia €75.000
+> por infracción con multas diarias hasta €3.000 (tope €300.000)** contra €250.000; **Estonia €5.000
+> contra €32.000**. Una fuente afirma que **Irlanda es el único Estado con sanciones penales** por
+> incumplimiento grave, y otra reporta que **en junio de 2026 un tribunal ordenó a Carrefour Francia
+> hacer accesibles su sitio de e-commerce *y* su app**: **ambos son de fuente única, verificar antes
+> de usarlos como precedente.** Todas las multas del primer año habrían recaído sobre operadores con
+> presencia doméstica en el Estado que sanciona: **todavía no hay acción transfronteriza de
+> referencia**.
+>
+> **El enganche con el AI Act, que es el argumento de arquitectura de esta región.** El
+> **artículo 16(1)(l)** obliga a los proveedores de sistemas de IA de alto riesgo a cumplir el resto
+> del derecho de la UE aplicable, y para sistemas usados por consumidores de la UE **eso incluye la
+> EAA**. La lectura práctica —y es interpretación de fuente secundaria, no texto legal— es que
+> **todo componente de IA que forme parte de la interfaz de un servicio cubierto cae bajo la EAA**:
+> un chatbot de atención, un formulario generado por IA, un asistente de compra **tienen que ser
+> operables por teclado y por lector de pantalla**. Dicho de otro modo: **cada agente que Globant
+> pone en el front-end de un cliente EMEA es superficie regulada por dos regímenes a la vez.** Esa
+> frase es vendible en una reunión de compras y casi nadie la está diciendo.
+
 ### APAC
 
 > **Actualización del pase 10 (2026-11-23) — el mapa regulatorio, por país y con fechas.**
@@ -932,6 +999,35 @@ ministerio.**
 legado, ni regulación APAC específica del plano, pese a que India es el mayor polo de servicios de
 mainframe del mundo. **Las búsquedas por región de este pase devolvieron Japón y nada más: eso es
 un hueco de cobertura, no evidencia de ausencia.**
+
+#### Pase 13 (2026-11-28) — accesibilidad: **un reloj a 2027 y un gobierno que admite estar atrasado contra su propio plazo**
+
+> **Japón, y es fuente primaria —la página de la propia Agencia Digital (`digital.go.jp`)—.** El
+> objetivo declarado es **nivel AA de JIS X 8341-3:2016 más 18 criterios A/AA adicionales**, con
+> **fecha 2027-03-31**. Y el dato que vale el pase: **al 2026-03-31 la propia Agencia Digital
+> reporta conformidad sólo *parcial* con el nivel A**. **El gobierno que fija el estándar va atrasado
+> contra su propio plazo, y lo publica.** JIS X 8341-3:2016 está alineada con WCAG 2.0 (una fuente
+> secundaria dice que desde 2024 se actualizó hacia WCAG 2.1 — **sin confirmar**). Obligatorio para
+> el sector público; **voluntario para el privado**.
+>
+> **Corea del Sur: las fuentes discrepan en la versión.** Una cita **KWCAG 2.2** (publicada en 2022)
+> como obligatoria para sitios de gobierno; otra cita **KWCAG 2.1** mapeada a WCAG 2.1 AA. Una
+> sostiene que la **National Informatization Act** obliga a sitios **públicos y privados grandes**.
+> **Ninguna de las tres está confirmada en fuente primaria: verificar en el documento KWCAG oficial
+> antes de comprometer un nivel.**
+>
+> **Australia: discrepancia de versión, igual de sin resolver.** La **Disability Discrimination Act**
+> más el **Digital Service Standard** de la DTA exigirían **WCAG 2.1 AA** para el gobierno federal
+> según dos fuentes, mientras otras dicen que la **Australian Human Rights Commission** usa
+> **WCAG 2.0 AA** como referencia. La DDA se aplica a sitios web desde el caso *Maguire*. **No
+> encontré el texto del mandato de la DTA en fuente primaria.**
+>
+> **La oportunidad de la región, y es de arquitectura:** los tres relojes se satisfacen con **un
+> único artefacto** —un sitio que pasa **WCAG 2.1 AA** con el expediente que lo demuestra—, porque
+> JIS AA, KWCAG y el Digital Service Standard están todos mapeados sobre la misma base WCAG. **Una
+> implementación cubre tres jurisdicciones**, igual que el pase 8 de `retail-kb` encontró que un
+> element string GS1 correcto cubría China e India a la vez. Y el atraso declarado de Japón **con
+> fecha a 16 meses** es el gancho comercial más concreto de APAC en este plano.
 
 ### LATAM
 
@@ -1255,6 +1351,43 @@ de la jubilación** — convertir lo que saben tres personas que se van en grafo
 documentación verificable, **en el idioma del comentario del código**, antes de intentar cualquier
 migración. Es más barato que un rewrite, no compite con los integradores instalados y **produce el
 insumo que todo rewrite posterior necesita**. → **Receta 24.**
+
+#### Pase 13 (2026-11-28) — accesibilidad: **la única región donde no pude establecer la línea de base, y eso es una brecha de cobertura, no de actividad**
+
+> **Esto es lo que buscaba y no encontré, escrito como lo que es.** Corrí una búsqueda dirigida en
+> español a los instrumentos concretos de la región (**NBR 17060** de Brasil, **Ley 26.653** de
+> Argentina, normas mexicanas) y **no obtuve confirmación de ningún plazo de 2026 ni de 2027 en
+> ninguno de los tres países**. **NBR 17060 no apareció en absoluto** en los resultados. En las
+> otras tres regiones pude fechar el reloj; **en LATAM no**, y la diferencia es de **cobertura de
+> mis fuentes**, no evidencia de que la región esté quieta — cuatro pases consecutivos de
+> `retail-kb` encontraron a LATAM **adelantada** respecto de su narrativa, así que la hipótesis por
+> defecto no debe ser "acá no pasa nada".
+>
+> **Lo que sí quedó establecido, con sus contradicciones a la vista:**
+> **Argentina** — la **Ley 26.653** es el marco; alcanza al sector público y, según una fuente,
+> también a privados que contratan con el Estado. Su base técnica **derivó con el tiempo**: una guía
+> ONTI de 2011 apuntaba a WCAG 1.0, una disposición de 2014 adoptó **WCAG 2.0**, y una fuente de 2026
+> (sitio de derechos del consumidor, **poco confiable**) afirma WCAG 2.1. **Contradicción de
+> reglamentación: Decreto 656/2019 según una fuente, Decreto 614/2011 según otra.**
+> **Brasil** — la **Lei 13.146/2015 (LBI)** es el instrumento. Un mapa legal sostiene que exige
+> accesibilidad digital a sitios de gobierno **y a empresas de más de 100 empleados**: ese umbral
+> **no está corroborado por ninguna otra fuente** y no debe citarse a un cliente todavía.
+> **México** — las fuentes **nombran normas distintas**: una dice **NMX-I-270-NYCE-2022** (WCAG 2.1
+> AA para dependencias federales), otra nombra **NOM-151**. **NOM-151 es de conservación de mensajes
+> de datos y sellado de tiempo: es otro instrumento y no debe confundirse con accesibilidad.**
+>
+> **Trabajo concreto para el pase 14, con la fuente nombrada:** catálogo de **ABNT** para NBR 17060,
+> **Infoleg** para el decreto reglamentario vigente de la Ley 26.653, y **DOF** para la norma
+> mexicana aplicable. Son tres consultas a fuente primaria y cierran la única región que este pase
+> no pudo fechar.
+>
+> **Y la oportunidad que no depende de resolver eso:** el patrón regional que esta KB ya registró en
+> el pase 10 —las empresas proactivas de LATAM **adoptan el estándar europeo como de facto**
+> anticipando la ley local— **aplica a la accesibilidad mejor que a casi cualquier otro plano**,
+> porque el objetivo técnico es **el mismo WCAG 2.1/2.2 AA en las cuatro regiones**. El trabajo de
+> conformidad hecho para un cliente EMEA bajo EN 301 549 **se reutiliza casi íntegro** en LATAM, sin
+> esperar a que se fije el plazo local. **Es el plano con el mayor reuso transregional de los que
+> midió esta KB.**
 
 ## Posicionamiento Globant
 

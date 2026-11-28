@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-23
+updated: 2026-11-28
 ---
 
 # 🎯 Agentes AI — Technology
@@ -324,3 +324,61 @@ Apache-2.0 legible, pero `search/repositories` no lo devuelve — el mismo 2,4% 
 *Verificación: `git ls-remote` para existencia; contenido del archivo de licencia para licencia;
 `search/repositories` para estrellas, `pushed_at` y `archived`; página pública solo para los tres
 repos excluidos de la API, y marcada como tal.*
+
+## ♿ El plano de la accesibilidad digital — **sección nueva (pase 13)**
+
+Sondeo de vocabulario acotado sobre la KB **antes** de buscar en la web: `accessibility`, `WCAG`,
+`a11y`, `axe-core`, `pa11y`, `lighthouse`, `VPAT`, `Section 508`, `EN 301 549`, `disabilit`,
+`assistive`, `remediation`, `contrast ratio`, `keyboard navigation`, `overlay` → **0 menciones en
+6.058 líneas y 12 pases**. (`aria` devolvía 101 hits y **todos** eran substring —*prim**aria***,
+*v**aria**ble*—: un recuento de keyword sin inspección habría declarado el plano cubierto.)
+
+**8 repos reales de agentes, 4 usables.** La mitad del tier —y es el tier *más nuevo* del plano—
+**no tiene archivo de licencia** bajo 13 grafías. Funcionan y no son adoptables.
+
+| Agente | Repo | Licencia (leída del archivo) | ★ | Rama default, último commit | Qué hace y qué **no** afirma |
+|---|---|---|---|---|---|
+| **Testaro** | `github.com/jrpool/testaro` | **MIT** (`LICENSE`, 1.193 B, © 2021–2025 CVS Health) | **n/d** (ver nota de método) | `main` **2026-11-28** | v78.9.0. **1.300 pruebas de 12 motores con reporte normalizado.** La pieza más completa del plano y la más activa: commit el día de este pase. |
+| **Testilo** | `github.com/jrpool/testilo` | **MIT** (`LICENSE`, 1.106 B, © 2024 CVS Health) | 2 | `main` 2026-08-30 | v52.1.21. Prepara los jobs de Testaro y procesa sus reportes. Es la mitad operativa del par. |
+| **accessibility-skills** | `github.com/zivtech/accessibility-skills` | GPL-3.0 | 16 | `main` 2026-11-27 | Skills para Claude Code: planner, critic, tester Playwright/axe-core, revisión con lector de pantalla, bug reports y **borrador de ACR en formato OpenACR**. Su propia doc dice que encuentra y explica barreras: **no afirma conformidad**. |
+| **ally** | `github.com/Andersseen/ally` | Apache-2.0 | 0 | `main` 2026-09-12 | Orquestador: corre axe-core + IBM Equal Access + Alfa + QualWeb + un analizador de teclado, **normaliza, deduplica y puntúa**. 0★ y es la arquitectura correcta del plano. |
+| **508-Agent** | `github.com/Maximilian741/508-Agent` | MIT | 1 | `main` 2026-09-21 | Remediación de **documentos** (PDF/DOCX/PPTX) contra Section 508 y WCAG 2.1 AA: reglas deterministas + inferencia semántica, **aprobación humana por cada fix**. |
+| AAA_Accessiblity_Agent | `github.com/ksmuvva/AAA_Accessiblity_Agent-` | **SIN ARCHIVO DE LICENCIA** (13 grafías) | 0 | `main` 2026-11-25 | Multiagente contra los **86 criterios de WCAG 2.2**. Lo honesto: deja en `needs_review` lo indecidible en vez de marcarlo `pass`. **No adoptable.** |
+| wcag-ai-skill | `github.com/Raze-Systems/wcag-ai-skill` | **SIN ARCHIVO DE LICENCIA** | 2 | `main` 2026-05-10 | Skill de guía WCAG 2.2; redacta un plan de remediación a partir de notas de auditoría. Aconseja, no edita código. **No adoptable.** |
+| ai-accessibility-agent | `github.com/loki2002-tech/ai-accessibility-agent` | **SIN ARCHIVO DE LICENCIA** | 0 | `main` 2026-09-28 | axe-core + capa de razonamiento + Human Review Workflow. **No adoptable.** |
+| WCAG-Accessibility-Auditor | `github.com/AP24110011695/WCAG-Accessibility-Auditor` | **SIN ARCHIVO DE LICENCIA** | 0 | `main` 2026-10-25 | Auditor WCAG. **No adoptable.** |
+
+### ⚠️ Las dos trampas del plano, y la segunda es comercial, no técnica
+
+1. **El techo del 30–40% es del plano entero, no de una herramienta.** Los chequeos automáticos
+   detectan del orden de **30–40% de los *tipos* de incumplimiento WCAG**; el resto exige juicio
+   humano (orden de foco con sentido, texto alternativo *correcto* y no sólo presente, etiquetas
+   que describan el control). Cualquier promesa de "cumplimiento automático" choca con este número.
+   Los dos repos más honestos del tier lo dicen ellos mismos: `AAA_Accessiblity_Agent` deja
+   `needs_review` y `accessibility-skills` declara que no certifica.
+2. **El overlay es un generador de litigio, y hay números.** Entre **~20%** (UsableNet, que cuenta
+   también tribunales estatales) y **27,4%** (mayo 2026, un tracker) de los sitios demandados por
+   accesibilidad **ya tenían instalado un widget u overlay**; en julio de 2026, **113 de 401**
+   empresas demandadas corrían uno. La FTC multó a **accessiBe** (el mayor proveedor) y en
+   **febrero de 2026** un Magistrate Judge federal recomendó dar curso parcial a una **class action
+   contra UserWay**. **Ningún tribunal ha sostenido que un overlay satisfaga la ADA.** Lo que esto
+   significa para Globant está en `compose/patterns.md`, receta 26: el entregable es remediación
+   **en la fuente**, y vender una capa de IA sobre el DOM es vender la pieza que está siendo
+   demandada.
+
+### Nota de método del pase 13 — **octava confirmación del falso negativo de `search/repositories`, con el control más limpio hasta ahora**
+
+La nota de método de esta KB ya registra que `search/repositories` devuelve 422 **por repo y no por
+organización** (séptima confirmación, pase 11). Este pase aporta el **caso control**: del **mismo
+dueño**, `jrpool/testilo` se devuelve normalmente (2★, MIT) y **`jrpool/testaro` devuelve 422**
+—mismo owner, misma licencia, misma toolchain, uno indexado y el otro no—.
+
+Consecuencias que importan y que un pase futuro no debe volver a descubrir:
+
+- **La ausencia en el índice de búsqueda NO es evidencia de inexistencia.** `jrpool/testaro` existe,
+  tiene **78 versiones mayores** y **commit del día de este pase**: es el repo *más activo del
+  plano* y el que la API declara inexistente. `git ls-remote` es la autoridad sobre existencia.
+- **Sus estrellas no se pueden leer en este entorno.** El pase 11 sugería leerlas de la página
+  pública, pero `github.com` devuelve **403 para todos los repos** vía `curl` (nota 2 de esta
+  sección, corroborada por el pase 8 de `retail-kb`). Por eso la fila de Testaro dice **n/d** y no
+  un número: **no hay fuente de estrellas para un repo que la API no indexa.**

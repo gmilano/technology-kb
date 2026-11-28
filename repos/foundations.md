@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-23
+updated: 2026-11-28
 ---
 
 # 🏗️ Repos fundacionales — Technology
@@ -880,3 +880,74 @@ Una brecha informada es información; el silencio parece cobertura.
 ---
 *Ver también: `verticals/solutions.md` para plataformas verticales completas y
 `compose/patterns.md` para las recetas que usan este plano de seguridad.*
+
+## ♿ Accesibilidad: el substrato de motores — **sección nueva (pase 13)**
+
+El plano no tenía ninguna mención en la KB (15 términos → 0 en 6.058 líneas). **16 repos reales,
+verificados uno por uno**: existencia por `git ls-remote`, licencia **leída del archivo** en la
+rama default correcta, y **último commit de la rama default** (no `pushed_at` — ver la nota de
+método al final de esta sección).
+
+### Capa 1 — Los motores de reglas (lo que decide si algo incumple)
+
+| Repo | Licencia (del archivo) | ★ | Rama default, último commit | Rol |
+|---|---|---|---|---|
+| `dequelabs/axe-core` | **MPL-2.0** (15.920 B) | 7.906 | `develop` 2026-11-23 | El motor de facto. Casi todo lo demás del plano lo envuelve. |
+| `dequelabs/axe-core-npm` | **MPL-2.0** | 742 | 2026-11-24 (`pushed_at`) | Integraciones CLI / WebdriverIO / Playwright de axe-core. |
+| `IBMa/equal-access` | **Apache-2.0** | 788 | `main-4.x` 2026-11-13 | Checker de IBM con su propio set de reglas. Default branch **no es `main`**. |
+| `Siteimprove/alfa` | **MIT** | 135 | `main` 2026-10-29 | Motor construido **sobre las reglas W3C ACT**. La licencia más permisiva de la capa. |
+| `squizlabs/HTML_CodeSniffer` | BSD-3-Clause | 1.148 | `master` **2022-08-15** | Motor histórico. **Mainline muerto hace más de 4 años** (`pushed_at` dice 2024-01-07: 17 meses de divergencia). |
+| `Asqatasun/Asqatasun` | AGPL-3.0 | 241 | `master` **2022-12-19** | "El líder opensource en a11y desde 2007". **El espejo de GitHub está congelado**; la actividad está en GitLab. Copyleft fuerte: no es base de producto. |
+| `qualweb/core` | ISC (735 B) | 12 | `master` 2024-12-30, **ARCHIVADO** | ISC es ideal para Globant y **el repo está archivado**. Útil como referencia de reglas, no como dependencia. |
+
+### Capa 2 — Los runners y los gates de CI (lo que lo corre en el pipeline)
+
+| Repo | Licencia | ★ | Rama default, último commit | Rol |
+|---|---|---|---|---|
+| `GoogleChrome/lighthouse` | **Apache-2.0** | 31.223 | `main` 2026-11-25 | El más estrellado del plano. En Chrome DevTools y en CI. a11y es una de sus categorías, no toda su superficie. |
+| `pa11y/pa11y` | LGPL-3.0 | 4.605 | `main` 2026-11-01 | El runner CLI clásico. **LGPL-3.0: enlazable, pero hay que saberlo antes de empaquetar.** |
+| `pa11y/pa11y-ci` | LGPL-3.0 | 649 | `main` 2026-11-01 | Gate multi-URL para CI. |
+| `jsx-eslint/eslint-plugin-jsx-a11y` | **MIT** | 3.632 | `main` 2026-01-03 | El turno más a la izquierda que existe: falla en el lint, antes del navegador. 11 meses sin commit en mainline. |
+| `microsoft/accessibility-insights-web` | **MIT** | 966 | `main` 2026-11-03 | Assessments **guiados**: ataca justamente la parte que no se automatiza. |
+
+### Capa 3 — El ensamble (la capa que vuelve comparable lo que dicen los motores)
+
+**Es la capa que resuelve el problema real del plano** —cada motor reporta distinto, y un cliente
+quiere *un* número— y es **MIT**, y la banca la paga un cliente, no una fundación:
+
+| Repo | Licencia | ★ | Rama default, último commit | Rol |
+|---|---|---|---|---|
+| `jrpool/testaro` | **MIT** (© 2021–2025 **CVS Health**) | n/d (422 en la API) | `main` **2026-11-28** | **1.300 pruebas de 12 motores, reporte normalizado.** v78.9.0. |
+| `jrpool/testilo` | **MIT** (© 2024 **CVS Health**) | 2 | `main` 2026-08-30 | Prepara los jobs y procesa los reportes de Testaro. v52.1.21. |
+| `Andersseen/ally` | **Apache-2.0** | 0 | `main` 2026-09-12 | axe-core + Equal Access + Alfa + QualWeb + teclado → normaliza, deduplica, puntúa. |
+| `act-rules/act-rules.github.io` | **W3C Software and Document License** | 171 | `develop` 2026-10-26 | Las **reglas ACT**: el denominador común que hace comparables a los motores. |
+
+### Capa 4 — Documentos y el expediente de conformidad (la capa que la EAA activa y que casi nadie mira)
+
+| Repo | Licencia | ★ | Rama default, último commit | Rol |
+|---|---|---|---|---|
+| `veraPDF/veraPDF-library` | **MPL-2.0 *o* GPL-3.0** (doble, dos archivos) | 353 | `integration` 2026-11-17 | Validación **PDF/UA** 1 y 2. La API reporta sólo GPL-3.0 y **esconde la opción usable**. |
+| `GSA/openacr` | **CC0-1.0** + datos W3C (ver abajo) | 130 | `main` **2024-03-12** | Formato abierto de **ACR/VPAT**. **El mainline está muerto hace más de 2 años y medio.** |
+| `nvaccess/nvda` | **GPL-2.0-or-later con dos excepciones** (`copying.txt`, 53.407 B) | 2.698 | `master` 2026-11-27 | El lector de pantalla libre. **Es el oráculo contra el que se prueba, no una dependencia que se enlaza** — esa distinción es la que vuelve irrelevante su GPL en un engagement. |
+
+### ⚠️ Nota de método del pase 13 — **tres mediciones que cambian lo que esta KB puede afirmar**
+
+1. **`pushed_at` no es actividad de la rama default, y acá hay un récord.** `GSA/openacr` reporta
+   `pushed_at` **2026-05-18** y su rama default tiene el último commit en **2024-03-12**:
+   **26 meses de divergencia**, el triple del récord anterior de esta familia de KBs (9 meses,
+   pase 8 de `retail-kb`). Es la herramienta **oficial del gobierno de EE.UU.** para el expediente
+   de conformidad, y su mainline está muerto. Todas las fechas de esta sección son **de la rama
+   default leída en un clon**, salvo `axe-core-npm`, marcada como `pushed_at`.
+2. **Una licencia puede ser una *mezcla* declarada, y es una forma nueva.** `GSA/openacr`
+   (`LICENSE.md`, 2.628 B) dice textualmente que el proyecto es **una mezcla**: obra del gobierno
+   de EE.UU. en **dominio público + CC0 1.0** para todo, **excepto** los archivos de datos de
+   **WCAG 2.0 y 2.1 embebidos**, que quedan bajo la **W3C Software and Document Notice and
+   License**. **Regla que generaliza a las doce industrias:** toda herramienta que **embebe el texto
+   de un estándar** hereda la licencia del cuerpo de estándares **sobre esos datos**, aunque el
+   código sea dominio público. Vale igual para GS1 en `retail-kb` y para cualquier KB de
+   cumplimiento.
+3. **Un `LICENSE` de 83 bytes es un puntero, no una licencia.** `act-rules/act-rules.github.io`
+   tiene un `LICENSE.md` de **83 B** cuyo contenido es *"W3C COMMUNITY CONTRIBUTOR LICENSE AGREEMENT
+   (CLA) [Learn More](./pages/license.md)"*. El destino (1.911 B) es la **W3C Software and Document
+   Notice and License**, que es permisiva. El `NOASSERTION` de la API es aquí **defendible** —no es
+   una licencia SPDX estándar— pero **sí existe una licencia y sí es usable**.

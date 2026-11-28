@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-23
+updated: 2026-11-28
 ---
 
 # 📡 Tendencias — Technology
@@ -921,3 +921,140 @@ de legado, la decisión *"¿el transpilador corre en nuestra infraestructura o e
 primera semana**, no en la última.
 
 ---
+
+## 39. El plano con **más presión legal y más litigio** que midió esta KB **no produjo herramienta abierta nueva**
+
+Medición del pase 13 (2026-11-28). La presión sobre la accesibilidad digital es la más alta de
+cualquier plano que esta familia de KBs haya mirado, y es **presión de las dos clases a la vez**:
+
+- **Legal, y el plazo ya pasó:** la **European Accessibility Act** (Directiva (UE) 2019/882) aplica
+  desde **2025-06-28**, hace 17 meses. Sanciones fijadas por cada Estado miembro: **España €1.000.000**
+  (Ley 11/2023, la cifra en la que coinciden todas las fuentes), **Italia hasta 5% de la facturación
+  anual**.
+- **Litigio, y con números de un despacho que los publica desde años:** **3.117 demandas web
+  federales en EE.UU. en 2025** (+27% interanual, **36% de todas las Title III**, conteo Seyfarth
+  Shaw); **5.006 presentaciones Title III en el primer semestre de 2026** contra un promedio de
+  4.463 para los primeros semestres de los últimos cuatro años; **proyección UsableNet ≈6.176 para
+  2026** contando tribunales estatales, con **≈79% contra e-commerce**.
+- **Dinero, y el segmento de servicios es 8x el de software:** remediación como **servicio**
+  ≈**USD 7.160 M en 2026** (GII Research, CAGR 5,6% a USD 10.030 M en 2032), contra un mercado de
+  **software** de accesibilidad de ≈**USD 850–930 M** (P&S Intelligence ≈850 M; Fortune Business
+  Insights ≈930 M; Mordor ≈850 M — tres estimaciones que **sí** concuerdan, algo infrecuente).
+
+**Y el tier abierto no se movió.** Los motores maduros del plano son **todos anteriores a los
+plazos**: `axe-core` (MPL-2.0), `pa11y` (LGPL-3.0), `Lighthouse` (Apache-2.0),
+`HTML_CodeSniffer` (BSD-3, **mainline muerto desde 2022-08-15**), `Asqatasun` (AGPL-3.0, **espejo
+congelado desde 2022-12-19**), `qualweb/core` (ISC, **archivado**). La herramienta **oficial del
+gobierno de EE.UU.** para el expediente de conformidad, `GSA/openacr`, tiene el **mainline muerto
+desde 2024-03-12**. Y el tier *nuevo* —los agentes de 2026— tiene **4 de 8 repos sin archivo de
+licencia**.
+
+## 40. La ley de las tres industrias, revisada: **el litigio coordina al demandado, no al voluntario**
+
+El pase 8 de `retail-kb` propuso que *"un plazo legal cercano produce tooling abierto más rápido que
+una oportunidad de lucro"*. El pase 13 de `travel-kb` lo refinó: *"los plazos ya pasaron y la capa
+de cumplimiento sigue en cero; un plazo coordina voluntarios de **estándares**, no de
+**integración**"*. Este plano es el test más duro de los tres, porque tiene plazo pasado **y**
+litigio **y** un mercado de servicios de 7.000 millones, y el resultado obliga a **reescribir la
+ley, no a confirmarla**:
+
+> **Lo que se abre es lo que alguien internaliza como costo propio.** Un plazo regulatorio pone el
+> costo en el *cuerpo de estándares* → se abren **reglas y wire formats** (GS1, openEPCIS, ACT
+> rules: permisivos y vivos). El litigio pone el costo en el **demandado** → la herramienta aparece
+> **dentro de una empresa grande** y sale permisiva. Y lo que **nadie** internaliza —la integración,
+> el conector, el expediente— **se queda en cero en las tres industrias**.
+
+**La evidencia más limpia del pase, y es una sola fila de una tabla:** la única pieza nueva, madura
+y **MIT** del plano —`jrpool/testaro`, **1.300 pruebas de 12 motores**, v78.9.0, commit **el día de
+este pase**, con su compañero `jrpool/testilo` v52.1.21— es **© CVS Health**. No la publicó una
+fundación, ni el W3C, ni un gobierno: la publicó **una corporación del sector más demandado**, que
+tenía que resolver el problema para sí misma y liberó el resultado con la licencia más permisiva del
+plano.
+
+**Predicción falsable, para que el pase 14 la verifique:**
+1. Hasta fines de 2027 el tier abierto de accesibilidad **crecerá sobre todo por repos de autoría
+   corporativa** (la forma CVS Health), no por voluntarios ni por gobiernos.
+2. **`GSA/openacr` no revivirá** su mainline antes del **2027-04-26** (la nueva fecha de ADA Title II).
+3. **Si durante 2027 el tooling líder del plano resulta ser de origen voluntario o financiado por un
+   gobierno, la afirmación es falsa y hay que tacharla.**
+
+## 41. **Norteamérica se retiró por segunda industria consecutiva**, y el requisito no cambió
+
+La regla de **ADA Title II** sobre web y apps de entidades públicas **se corrió un año** por *interim
+final rule* de **abril de 2026** (las fuentes secundarias discrepan en el día: 17 o 20 de abril):
+
+| | Antes | **Ahora** |
+|---|---|---|
+| Entidades públicas que sirven a ≥50.000 personas | 2026-04-24 | **2027-04-26** |
+| Entidades <50.000 y distritos especiales | 2027-04-24 | **2028-04-26** |
+
+**El estándar no se tocó:** `28 CFR 35.200(b)` sigue exigiendo **WCAG 2.1 niveles A y AA**.
+
+Esto es **exactamente la forma** que el pase 8 de `retail-kb` midió en alimentos: **FSMA 204 se
+corrió de 2026-01-20 a 2028-07-20 con los requisitos intactos**. Dos industrias seguidas, el mismo
+movimiento: **en NA el plazo público se corre y la obligación queda**. La conclusión comercial es la
+misma y vale repetirla: **no vender el plazo en NA**. Lo que no se corrió es el **litigio privado**
+—5.006 presentaciones Title III en el primer semestre de 2026— y **ese** es el reloj real del
+cliente norteamericano.
+
+## 42. El overlay de accesibilidad es un **generador de litigio**, y por primera vez hay porcentaje
+
+Entre **~20%** (UsableNet, que cuenta tribunales estatales) y **27,4%** (mayo de 2026, un tracker
+sectorial) de los sitios demandados **ya tenían instalado un widget u overlay de accesibilidad**. En
+**julio de 2026**, **113 de 401** empresas demandadas corrían uno. AudioEye reporta **38,5%** de las
+demandadas en 2025 con "alguna solución instalada", cifra más alta que probablemente refleja una
+definición más amplia. Del lado de los proveedores: la **FTC multó a accessiBe** (el mayor del
+rubro) y en **febrero de 2026** un Magistrate Judge federal recomendó **dar curso parcial a una
+class action contra UserWay**.
+
+**Ningún tribunal ha sostenido que un overlay satisfaga la ADA** —y tampoco hay norma que lo
+prohíba—. Para Globant la lectura es de posicionamiento y es tajante: **la capa de IA que reescribe
+el DOM en runtime es justamente el producto que está siendo demandado.** El entregable defendible es
+el diff al código fuente con aprobación humana (receta 26).
+
+## 43. El techo del **30–40%** es del plano entero, y los repos honestos lo dicen ellos mismos
+
+Los chequeos automáticos detectan del orden de **30–40% de los *tipos* de incumplimiento WCAG**. No
+es una limitación de `axe-core`: es la frontera entre lo que una regla puede decidir y lo que exige
+juicio (si el `alt` es *correcto*, si el orden de foco tiene *sentido*, si la etiqueta *describe* el
+control). La literatura de benchmarking advierte explícitamente contra apoyarse sólo en pruebas
+automáticas.
+
+Lo notable es que **los dos repos más honestos del tier lo declaran en su propio README**:
+`ksmuvva/AAA_Accessiblity_Agent-` deja los criterios indecidibles en **`needs_review`** en vez de
+marcarlos `pass`, y `zivtech/accessibility-skills` dice que encuentra y explica barreras y **no**
+que certifique conformidad. **Un agente que devuelve un porcentaje de cumplimiento sin una categoría
+`needs_review` está mintiendo por construcción**, y eso es ahora un criterio de selección.
+
+## 44. Cuarta forma del defecto de licencia: **un SPDX correcto pero parcial**
+
+`veraPDF/veraPDF-library` tiene **dos archivos de licencia en la raíz** —`LICENSE.MPL` (15.920 B,
+MPL-2.0 íntegra) y `LICENSE.GPL` (35.140 B, GPL-3.0)— y la API de GitHub reporta **sólo `GPL-3.0`**.
+El campo `license` **es un único valor y no puede expresar una licencia doble**. Las cuatro formas
+medidas por esta familia de KBs, en orden de descubrimiento:
+
+1. Un badge que apunta a nada (`retail`, pase 9).
+2. `NOASSERTION` **ocultando** una licencia real — **80% de error medido** sobre 5 repos (`retail`, pase 8).
+3. Un Apache-2.0 **modificado**, con bloques faltantes (`travel`, pase 13).
+4. **Un SPDX correcto pero *parcial*, que esconde la opción permisiva de un repo de doble licencia** (este pase).
+
+La cuarta es la peor para Globant porque **descarta repos usables en silencio**: el valor reportado
+no es falso, es incompleto, así que no dispara ninguna alarma. **Regla:** ante un repo que la API
+reporte GPL/AGPL y que haga falta, **listar la raíz antes de descartarlo**.
+
+## 45. En este plano **el tier oficial es el tier muerto** — tercera industria con la misma forma
+
+- El **gobierno**: `GSA/openacr`, formato abierto de ACR/VPAT de la GSA de EE.UU., **mainline muerto
+  desde 2024-03-12**, con **26 meses** de divergencia contra su `pushed_at` (2026-05-18) — el récord
+  de esta familia de KBs, el triple del anterior.
+- El **cuerpo de estándares**: `act-rules/act-rules.github.io` está **vivo** (`develop` 2026-10-26)
+  pero no es software: son **reglas bajo licencia W3C**, con un `LICENSE.md` de **83 bytes** que es
+  un **puntero**.
+- La **corporación demandada**: `jrpool/testaro`, **MIT**, 1.300 pruebas, **commit hoy**.
+
+El pase 8 de `retail-kb` encontró la misma forma en trazabilidad (`loamCode/GDST`, el repo del propio
+estándar GDST, sin licencia y muerto desde 2020, mientras `openepcis/openepcis-core` Apache-2.0 se
+movía el día del pase) y el pase 13 de `travel-kb` la encontró en el registro de alojamientos (dos
+protocolos abiertos con campo tipado y **cero conectores**). **Tercera industria, misma conclusión:
+no estimar la salud de un plano por la autoridad de quien lo publica.**
+

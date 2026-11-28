@@ -1,8 +1,36 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-23
+updated: 2026-11-28
 ---
+
+## 2026-11-28 — pase 13 (12:39 UTC): el plano de la **accesibilidad digital**
+
+**Primer pase desde el 2026-11-23** (los pases 6–12 fueron todos de ese día). Esta KB era la **más
+vieja de las doce** al empezar: `technology-kb` llevaba 5 días sin tocar y `education-kb` 5 también,
+contra `travel-kb` actualizada **44 minutos antes** de este pase. Sondeo de frescura hecho primero,
+con **una** llamada.
+
+**Plano nuevo, elegido por sondeo de vocabulario acotado sobre la KB antes de buscar en la web:**
+15 términos de accesibilidad → **0 menciones en 6.058 líneas y 12 pases**.
+
+**El tier de agentes de accesibilidad existe y está partido en dos mitades limpias:**
+
+| Novedad de este pase | Repo | Licencia | ★ | Default branch | Nota |
+|---|---|---|---|---|---|
+| **Testaro v78.9.0** — 1.300 pruebas de 12 motores | `jrpool/testaro` | **MIT** (© CVS Health) | n/d | `main` **2026-11-28** | Commit **el día del pase**. La API de búsqueda lo declara inexistente (422). |
+| **Testilo v52.1.21** — prepara jobs y procesa reportes de Testaro | `jrpool/testilo` | **MIT** (© CVS Health) | 2 | `main` 2026-08-30 | Mismo dueño que Testaro y **sí** está indexado: el control del falso negativo. |
+| **accessibility-skills v1.2.0** — skills a11y para Claude Code | `zivtech/accessibility-skills` | GPL-3.0 | 16 | `main` 2026-11-27 | Redacta ACR en formato OpenACR. No afirma conformidad. |
+| **ally** — orquestador de 4 motores + teclado | `Andersseen/ally` | Apache-2.0 | 0 | `main` 2026-09-12 | Normaliza, deduplica y puntúa. 0★ y la arquitectura correcta. |
+| **508-Agent** — remediación de PDF/DOCX/PPTX | `Maximilian741/508-Agent` | MIT | 1 | `main` 2026-09-21 | Aprobación humana por fix. |
+| **4 agentes más, todos sin archivo de licencia** | `ksmuvva/AAA_Accessiblity_Agent-`, `Raze-Systems/wcag-ai-skill`, `loki2002-tech/ai-accessibility-agent`, `AP24110011695/WCAG-Accessibility-Auditor` | **ninguna** (13 grafías) | 0–2 | 2026-05 a 2026-11 | El tier más nuevo del plano es el no adoptable. |
+
+**Lo que este pase mide y contradice la expectativa:** el plano con **más presión legal y más
+litigio de todos los que midió esta familia de KBs** (≈3.117 demandas web federales en 2025, +27%;
+5.006 presentaciones Title III en el **primer semestre de 2026**; proyección UsableNet ≈6.176 para
+2026 contando tribunales estatales) **no produjo herramienta abierta nueva**. Los motores maduros
+—axe-core, pa11y, Lighthouse— **son todos anteriores a los plazos**. Detalle y la ley revisada en
+`intel/trends.md`, tendencias 39–44.
 
 ## 2026-11-23 — pase 12 (20:49 UTC): el plano de la **comprensión del código legado**
 

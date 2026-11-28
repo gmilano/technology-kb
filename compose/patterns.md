@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-23
+updated: 2026-11-28
 ---
 
 # 🧩 Patrones de composición — Technology
@@ -1176,6 +1176,119 @@ esa honestidad es lo que hace que las tres personas colaboren en vez de bloquear
 9. **Un escáner de seguridad MCP porque lo recomendó un artículo.** Tres de los cuatro que
    devuelve una búsqueda tienen **0 estrellas** y uno **no tiene archivo de licencia**. Correr
    `ossf/scorecard` antes de adoptar, siempre.
+
+## Receta 25 — El gate de accesibilidad en el pipeline *(nueva, pase 13 — las cuatro regiones)*
+
+**Problema:** el cliente descubre los incumplimientos en una auditoría externa, cuando ya están en
+producción y cuestan un rediseño.
+
+**Stack, todo permisivo salvo donde se indica:**
+
+1. **Lint (el turno más a la izquierda que existe):** `jsx-eslint/eslint-plugin-jsx-a11y` (**MIT**,
+   3.632★). Falla en el commit, antes de que exista un navegador. Es la capa más barata del plano y
+   la que más gente se saltea.
+2. **Motor en CI:** `dequelabs/axe-core` (**MPL-2.0**, 7.906★) vía `dequelabs/axe-core-npm`
+   (**MPL-2.0**) dentro de Playwright, **o** `GoogleChrome/lighthouse` (**Apache-2.0**, 31.223★) si
+   el cliente ya corre Lighthouse CI para performance —en ese caso se activa la categoría a11y y no
+   se agrega herramienta nueva—.
+3. **Ensamble y número único:** `jrpool/testaro` + `jrpool/testilo` (**MIT**, © CVS Health):
+   **1.300 pruebas de 12 motores con reporte normalizado**. Resuelve el problema real —cada motor
+   reporta distinto y el cliente quiere *un* número comparable entre sprints—. Alternativa
+   Apache-2.0 más chica: `Andersseen/ally` (axe-core + Equal Access + Alfa + QualWeb + teclado,
+   normaliza y deduplica).
+4. **Monitoreo visible:** `pa11y/pa11y-dashboard` (**GPL-3.0**, 1.098★) sobre `pa11y/pa11y-ci`
+   (LGPL-3.0). Se despliega como servicio propio: el copyleft no contamina el código del cliente.
+
+**La regla que hace que esto no mienta:** el gate **falla el build** por las reglas decidibles
+(contraste, `alt` ausente, roles inválidos, orden de tabulación roto) y **abre un ticket
+`needs_review`** —nunca un `pass`— por lo que exige juicio humano. Sin esa segunda categoría el
+pipeline reporta verde sobre el **60–70% de los tipos de incumplimiento que no sabe medir**
+(tendencia 43).
+
+## Receta 26 — Remediación en la fuente, con diff aprobado por humano *(nueva, pase 13 — la receta de North America)*
+
+**Problema:** el cliente norteamericano tiene riesgo de demanda **ahora** (3.117 demandas web
+federales en 2025, +27%; 5.006 Title III en el primer semestre de 2026) y el mercado le ofrece un
+overlay, que es la pieza con **20–27% de los demandados encima**.
+
+**Por qué el overlay no es una opción, en una frase para la reunión:** ningún tribunal sostuvo que
+un overlay satisfaga la ADA, la FTC multó a accessiBe, y en febrero de 2026 avanzó parcialmente una
+class action contra UserWay. **Vender la capa de IA que reescribe el DOM es vender el producto que
+está siendo demandado.**
+
+**El cableado, que es el modelo que ya usan los dos agentes licenciados del tier:**
+
+1. **Detección** con el gate de la receta 25 → inventario priorizado por criterio WCAG 2.1 AA
+   (el nivel que exige `28 CFR 35.200(b)`).
+2. **El agente propone un *diff al código fuente***, no un parche en runtime. Patrón de referencia:
+   `Maximilian741/508-Agent` (**MIT**) para documentos —reglas deterministas primero, inferencia
+   semántica sólo como *fallback*, **aprobación humana por cada fix**— y
+   `zivtech/accessibility-skills` (GPL-3.0) para el flujo planner → critic → tester Playwright/axe →
+   revisión con lector de pantalla.
+3. **Verificación con el oráculo real:** `nvaccess/nvda` (**GPL-2.0-or-later con dos excepciones**).
+   Punto de licencia que decide la viabilidad del engagement: **NVDA se *usa* como lector de
+   pantalla para probar, no se *enlaza* en el producto**, así que su copyleft **no alcanza al código
+   del cliente**. Esa distinción hay que tomarla en la semana uno, igual que la del transpilador
+   GPL en el plano de legado (tendencia 38).
+4. **Lo que no se automatiza se presupuesta:** assessments guiados de
+   `microsoft/accessibility-insights-web` (**MIT**) para la parte que decide un humano.
+
+**El entregable que se factura** no es "el sitio cumple": es **el inventario, los diffs aprobados,
+la evidencia de regresión y el expediente de la receta 27**. Es defendible en litigio, y "cumple" no.
+
+## Receta 27 — El expediente de conformidad, y el repo oficial está muerto *(nueva, pase 13 — EMEA y el sector público de NA)*
+
+**Problema:** la EAA (vigente desde 2025-06-28) y ADA Title II (2027-04-26 / 2028-04-26) no piden
+un sitio bonito: piden **poder demostrar conformidad**. El formato de ese expediente es el
+**ACR/VPAT**, y la herramienta oficial de la GSA, `GSA/openacr` (**CC0-1.0**, 130★), tiene el
+**mainline muerto desde 2024-03-12**.
+
+**Cómo armarlo igual:**
+
+1. **El formato sí sirve** —está adoptado y es CC0—: se usa el esquema de `GSA/openacr` y **se
+   asume su mantenimiento**. **Ojo con la licencia, que es una mezcla declarada:** el proyecto es
+   dominio público + CC0, **excepto los archivos de datos de WCAG 2.0 y 2.1 embebidos**, que están
+   bajo la **W3C Software and Document Notice and License**. Al redistribuir el expediente, esa
+   parte viaja con la licencia del W3C.
+2. **Generación del borrador:** `zivtech/accessibility-skills` ya redacta ACR **en formato
+   OpenACR**. Es GPL-3.0: se corre como herramienta interna, no se empaqueta en el producto.
+3. **Los documentos, que es la mitad olvidada de la EAA:** `veraPDF/veraPDF-library` valida
+   **PDF/UA parte 1 y 2**. **Usar la opción MPL-2.0** —el repo es de **doble licencia**, con
+   `LICENSE.MPL` y `LICENSE.GPL` en la raíz, y la API de GitHub reporta sólo GPL-3.0 (tendencia 44)—.
+   Un PDF de términos y condiciones inaccesible incumple igual que el HTML.
+4. **El nivel objetivo se fija contra la norma, no contra WCAG directamente:** en EMEA la conformidad
+   se demuestra contra **EN 301 549**, y **hay que confirmar su versión vigente** antes de firmar:
+   una fuente indica que la **4.1.1 mueve los requisitos web a WCAG 2.2 AA** mientras otras siguen en
+   2.1 AA.
+
+## Receta 28 — Un artefacto, cuatro regímenes: el plano con mayor reuso transregional *(nueva, pase 13 — APAC y LATAM)*
+
+**El hecho que la habilita:** las cuatro regiones apuntan a **la misma base técnica**. NA exige
+**WCAG 2.1 A y AA** (`28 CFR 35.200(b)`); EMEA lo exige vía **EN 301 549**; APAC lo exige vía
+**JIS X 8341-3 AA** (Japón), **KWCAG** (Corea) y el **Digital Service Standard** (Australia), todos
+mapeados sobre WCAG; y en LATAM el instrumento local **deriva del mismo estándar** (Argentina adoptó
+WCAG 2.0 por disposición de 2014; México apunta a WCAG 2.1 AA según NMX-I-270-NYCE-2022).
+
+**Entonces el entregable se construye una vez:** un sitio que pasa **WCAG 2.1 AA** (o 2.2 AA si se
+confirma EN 301 549 v4.1.1) **con el expediente de la receta 27** satisface simultáneamente cuatro
+regímenes, y **sólo cambia la carátula del expediente**: ACR/OpenACR para NA, declaración de
+conformidad contra EN 301 549 para EMEA, el set JIS AA + 18 criterios para Japón.
+
+**Es la misma economía que el pase 8 de `retail-kb` encontró en GS1** —un element string correcto
+cubría China e India a la vez— y **acá cubre cuatro regiones en vez de dos**, sin una línea de
+copyleft en el camino si se usa el stack de la receta 25.
+
+**Los dos ganchos comerciales concretos, por región:**
+
+- **Japón, con fecha y con la admisión publicada:** la Agencia Digital fija **2027-03-31** para
+  JIS AA + 18 criterios y **reporta al 2026-03-31 conformidad sólo parcial con el nivel A** en su
+  propio sitio. Es el único caso de las cuatro regiones donde **el regulador documenta su propio
+  atraso**: un cliente del sector público japonés tiene 16 meses y un precedente incómodo.
+- **LATAM, sin esperar el plazo local:** el trabajo hecho para un cliente EMEA bajo EN 301 549
+  **se reutiliza casi íntegro**, lo que permite vender conformidad en LATAM **antes** de que se fije
+  la fecha local —y el pase 13 no pudo fechar ninguna de las tres jurisdicciones principales
+  (ver `intel/market.md`, LATAM)—. Es el patrón que esta KB ya registró en el pase 10: las empresas
+  proactivas de la región adoptan el estándar europeo como de facto.
 
 ---
 *Ver también: `verticals/solutions.md` (plataformas) y `intel/market.md` (contexto regional).*

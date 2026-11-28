@@ -1,7 +1,7 @@
 ---
 industry: technology
 region: Global
-updated: 2026-11-23
+updated: 2026-11-28
 ---
 
 # 🏭 Verticales de partida — Technology
@@ -156,3 +156,39 @@ El patrón que funciona con estas plataformas, en orden:
 
 ---
 *Ver también: `repos/foundations.md` (infraestructura) y `compose/patterns.md` (recetas concretas).*
+
+## ♿ Plataformas donde la accesibilidad se remedia de verdad — **sección nueva (pase 13)**
+
+La accesibilidad no se vende como producto nuevo: **se remedia sobre la plataforma que el cliente ya
+opera**. Las tres superficies de abajo concentran la mayor parte del web público regulado, y las
+tres son copyleft —lo cual **no es un problema acá**, porque el entregable de Globant es el tema,
+el módulo y la configuración, no un fork del core.
+
+| Plataforma | Repo | Licencia (leída del archivo) | ★ | Default branch | Por qué es la superficie de remediación |
+|---|---|---|---|---|---|
+| **Drupal** | `github.com/drupal/drupal` | **GPL-2.0** (`core/LICENSE.txt`, 18.001 B) | 4.305 | `main` 2026-11-28 | El CMS del sector público en EMEA y NA. Su licencia **no está en la raíz** sino en `core/`, que es por qué la API la reporta `NULL`. |
+| **WordPress** | `github.com/WordPress/WordPress` | **GPL-2.0** (`license.txt` en minúscula, 19.902 B) | 21.569 | `master` 2026-11-27 | La base instalada más grande del web público. La API dice `NOASSERTION`. |
+| **Moodle** | `github.com/moodle/moodle` | **GPL-3.0** | 7.657 | `main` 2026-11-24 | El LMS del sector educativo público: cae bajo EAA en EMEA y bajo ADA Title II en NA **a la vez**. |
+
+### El monitoreo continuo, que es lo que convierte una auditoría en un contrato
+
+| Plataforma | Repo | Licencia | ★ | Default branch | Rol |
+|---|---|---|---|---|---|
+| **Pa11y Dashboard** | `github.com/pa11y/pa11y-dashboard` | **GPL-3.0** | 1.098 | `main` 2026-11-03 | Dashboard web de monitoreo a11y sobre pa11y. Es el "antes y después" que el cliente mira. |
+| **Testaro + Testilo** | `github.com/jrpool/testaro`, `github.com/jrpool/testilo` | **MIT** (ambos, © CVS Health) | n/d, 2 | `main` 2026-11-28 / 2026-08-30 | **El par MIT**: 1.300 pruebas de 12 motores y el procesamiento de sus reportes. Lo único permisivo y completo del plano. |
+
+### Cómo customizar con AI sobre esto, sin vender la pieza que se demanda
+
+1. **El gate, no el overlay.** `eslint-plugin-jsx-a11y` (MIT) en el lint, `pa11y-ci` o Lighthouse CI
+   en el pipeline, y Testaro para el reporte normalizado. El agente **propone un diff al código
+   fuente** y un humano lo aprueba —exactamente el modelo de `508-Agent` y de `ally`—. **No** una
+   capa de IA que reescribe el DOM en runtime: ese es el producto con 20–27% de los demandados
+   encima (`agents/top.md`, trampa 2).
+2. **El expediente, que es el entregable que sobrevive a la auditoría.** `GSA/openacr` define el
+   formato abierto de ACR/VPAT y **su mainline está muerto desde 2024-03-12**: el formato sirve, el
+   repo no se mantiene. `zivtech/accessibility-skills` (GPL-3.0) ya redacta borradores en ese
+   formato. Para documentos, `veraPDF` con la **opción MPL-2.0** valida PDF/UA 1 y 2.
+3. **El oráculo humano sigue siendo obligatorio.** Los motores cubren **30–40% de los tipos** de
+   incumplimiento. NVDA (GPL-2.0+, se *usa*, no se enlaza) y los assessments guiados de
+   `accessibility-insights-web` (MIT) cubren la parte que decide un humano. **Presupuestar esa
+   parte explícitamente** es la diferencia entre una auditoría que cierra y una que rebota.
